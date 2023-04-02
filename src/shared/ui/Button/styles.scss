@@ -1,0 +1,48 @@
+.button {
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 24px;
+	color: var(--color-secondary);
+	transition: color 0.3s, background 0.3s, border-color 0.3s;
+	&.full-width {
+		width: 100%;
+	}
+	&.primary {
+		background: var(--color-primary);
+		border: 2px solid var(--color-secondary);
+		border-radius: 14px;
+		&:hover {
+			background: var(--color-secondary);
+			border: 2px solid var(--color-primary);
+			color: var(--color-primary);
+		}
+		&:hover svg {
+			fill: var(--color-primary);
+		}
+	}
+	&.medium {
+		padding: 13px 13px;
+	}
+	&.tiny {
+		padding: 7px 36px;
+	}
+	&.warning {
+		background: var(--color-red);
+		color: var(--color-white);
+		border: 2px solid var(--color-red);
+		border-radius: 14px;
+	}
+	&.secondary {
+		background: transparent;
+		border: 2px solid var(--color-white);
+		border-radius: 14px;
+	}
+	&.with-icon {
+		display: grid;
+		grid-template-columns: repeat(2, fit-content(100%));
+		justify-content: center;
+		grid-gap: 16px;
+	}
+}
