@@ -1,9 +1,11 @@
+import { IconNamesTypes } from '../Icons/types';
+
 export interface ButtonProps {
 	onClick: () => void;
 	className: string;
 	size: 'tiny' | 'medium';
 	variant: 'primary' | 'secondary' | 'warning';
 	fullWidth: boolean;
-	icon?: React.ReactNode;
+	icon?: IconNamesTypes;
 	title: string;
 }

@@ -36,6 +36,6 @@ const icons: Record<IconNamesTypes, React.ReactNode> = {
 	sun: <SunIcon />,
 };
 
-export function Icon({ iconName }: IconProps) {
-	return <span className="icon">{icons[iconName]}</span>;
+export function Icon({ name }: IconProps) {
+	return <span className="icon">{icons[name]}</span>;
 }

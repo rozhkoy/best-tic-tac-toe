@@ -1,5 +1,5 @@
 export interface IconProps {
-    iconName: IconNamesTypes;
+	name: IconNamesTypes;
 }
 
 // const iconNames = [
@@ -21,18 +21,18 @@ export interface IconProps {
 // ];
 
 export type IconNamesTypes =
-    | "back"
-    | "facebook"
-    | "github"
-    | "google"
-    | "behance"
-    | "linkedin"
-    | "cup"
-    | "logout"
-    | "login"
-    | "moon"
-    | "music"
-    | "restart"
-    | "search"
-    | "sound"
-    | "sun";
+	| 'back'
+	| 'facebook'
+	| 'github'
+	| 'google'
+	| 'behance'
+	| 'linkedin'
+	| 'cup'
+	| 'logout'
+	| 'login'
+	| 'moon'
+	| 'music'
+	| 'restart'
+	| 'search'
+	| 'sound'
+	| 'sun';
