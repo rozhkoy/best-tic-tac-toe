@@ -3,7 +3,10 @@
 	grid-template-columns: 59% 41%;
 	grid-template-rows: 1fr;
 	min-height: 100vh;
-	&__content-box {
+
+	&__container {
+		height: 100%;
+		position: relative;
 	}
 
 	&__decor {
@@ -17,11 +20,19 @@
 		object-fit: cover;
 	}
 	&__wrap {
+		height: 100%;
+		display: flex;
+		align-items: center;
 	}
 }
 .auth-frame-header {
 	width: 100%;
-	padding: 65px 0 0 0;
+	padding: 65px 15px 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
 	&__logo {
 	}
 }

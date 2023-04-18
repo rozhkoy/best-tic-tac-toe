@@ -8,7 +8,7 @@ export const AuthFrame: React.FC<PropsWithChildren> = ({ children }) => {
 	return (
 		<div className="auth-frame">
 			<div className="auth-frame__content-box">
-				<Container size={'large'}>
+				<Container className="auth-frame__container" size={'large'}>
 					<div className="auth-frame-header">
 						<div className="auth-frame-header__logo">
 							<Logo />
