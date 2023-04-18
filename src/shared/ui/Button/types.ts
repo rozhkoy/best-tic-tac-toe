@@ -1,11 +1,12 @@
 import { IconNamesTypes } from '../Icons/types';
 
 export interface ButtonProps {
-	onClick: () => void;
+	onClick?: () => void;
 	className: string;
 	size: 'tiny' | 'medium';
 	variant: 'primary' | 'secondary' | 'warning';
 	fullWidth: boolean;
 	icon?: IconNamesTypes;
 	title: string;
+	type: 'button' | 'submit';
 }

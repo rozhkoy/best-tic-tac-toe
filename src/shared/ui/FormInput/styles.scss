@@ -1,0 +1,15 @@
+.form-input {
+	border: 2px solid var(--color-light-gray);
+	border-radius: 10px;
+	padding: 13px 15px;
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	letter-spacing: 0.04em;
+	color: var(--color-secondary);
+}
+.form-input::placeholder {
+	color: var(--color-light-gray);
+}

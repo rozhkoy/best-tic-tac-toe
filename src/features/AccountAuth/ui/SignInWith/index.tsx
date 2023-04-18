@@ -14,6 +14,7 @@ export const SignInWith = () => {
 					fullWidth={true}
 					title={'Sign in with Google'}
 					icon={'google'}
+					type={'button'}
 				/>
 				<Button
 					onClick={() => alert('test')}
@@ -23,6 +24,7 @@ export const SignInWith = () => {
 					fullWidth={true}
 					title={'Sign in with Facebook'}
 					icon={'facebook'}
+					type={'button'}
 				/>
 			</div>
 		</div>

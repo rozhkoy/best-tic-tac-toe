@@ -9,7 +9,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
 		'with-icon': !!props.icon,
 	});
 	return (
-		<button className={className}>
+		<button type={props.type} className={className}>
 			{props.icon && <Icon name={props.icon} />}
 			<span className="button__label">{props.title}</span>
 		</button>
