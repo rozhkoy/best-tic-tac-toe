@@ -1,5 +1,6 @@
 export interface IconProps {
 	name: IconNamesTypes;
+	className?: string;
 }
 
 // const iconNames = [

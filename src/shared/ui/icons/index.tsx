@@ -17,6 +17,7 @@ import {
 } from './Static';
 import { IconNamesTypes, IconProps } from './types';
 import './styles.scss';
+import classNames from 'classnames';
 
 const icons: Record<IconNamesTypes, React.ReactNode> = {
 	back: <BackArrowIcon />,
@@ -36,6 +37,7 @@ const icons: Record<IconNamesTypes, React.ReactNode> = {
 	sun: <SunIcon />,
 };
 
-export function Icon({ name }: IconProps) {
-	return <span className="icon">{icons[name]}</span>;
+export function Icon({ name, className }: IconProps) {
+	const classes = classNames('icon', className);
+	return <span className={classes}>{icons[name]}</span>;
 }
