@@ -4,5 +4,15 @@
 	left: 0;
 	right: 0;
 	width: 100%;
-	padding: 24px 0;
+	padding: 24px 44px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&__side-panel {
+		display: flex;
+	}
+	&__logo {
+		margin: 0 64px 0 0;
+	}
 }

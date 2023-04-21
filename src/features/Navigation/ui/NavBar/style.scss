@@ -1,0 +1,31 @@
+.nav-bar {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+
+	&__logo {
+		margin: 0 64px 0 0;
+	}
+
+	&__item {
+		margin: 0 38px 0 0;
+		&:last-child {
+			margin: 0;
+		}
+	}
+
+	&__item-link {
+		font-family: 'Poppins';
+		font-style: normal;
+		font-weight: 400;
+		font-size: 20px;
+		line-height: 150%;
+		display: flex;
+		align-items: center;
+		text-transform: uppercase;
+		color: var(--color-light-gray);
+		&--active {
+			color: var(--color-secondary);
+		}
+	}
+}
