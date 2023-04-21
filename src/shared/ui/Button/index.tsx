@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { ButtonProps } from './types';
 import './styles.scss';
-import { Icon } from '../Icons';
+import { Icon } from '../icon';
 
 export const Button: React.FC<ButtonProps> = (props) => {
 	const className = classNames('button', props.className, props.variant, props.size, {

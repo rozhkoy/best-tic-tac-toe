@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { SignIn } from 'pages/SignIn';
-import { SignUp } from 'pages/SignUp';
-import { Wrap } from 'pages/Wrap';
+import { SignIn } from 'pages/signIn';
+import { SignUp } from 'pages/signUp';
+import { Wrap } from 'pages/wrap';
 import { routes } from 'app/provider/routes';
 
 export const Provider = () => {

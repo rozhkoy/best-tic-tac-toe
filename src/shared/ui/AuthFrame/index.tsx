@@ -1,8 +1,8 @@
 import { PropsWithChildren } from 'react';
-import { Logo } from '../Logo';
+import { Logo } from '../logo';
 import decor from './assets/decor.svg';
 import './styles.scss';
-import { Container } from '../Container';
+import { Container } from '../container';
 
 export const AuthFrame: React.FC<PropsWithChildren> = ({ children }) => {
 	return (

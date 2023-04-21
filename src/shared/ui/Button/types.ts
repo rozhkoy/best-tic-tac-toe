@@ -1,4 +1,4 @@
-import { IconNamesTypes } from '../Icons/types';
+import { IconNamesTypes } from '../icon/types';
 
 export interface ButtonProps {
 	onClick?: () => void;

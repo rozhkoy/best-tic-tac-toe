@@ -1,8 +1,8 @@
 import { withFormik } from 'formik';
 import { SignUpFormProps } from './types';
-import { FormWrap } from 'shared/ui/FormWrap';
-import { FormInput } from 'shared/ui/FormInput';
-import { Button } from 'shared/ui/Button';
+import { FormWrap } from 'shared/ui/formWrap';
+import { FormInput } from 'shared/ui/formInput';
+import { Button } from 'shared/ui/button';
 
 const SingUpTemplateForm = () => {
 	return (

@@ -1,4 +1,4 @@
-import { Icon } from 'shared/ui/Icons';
+import { Icon } from 'shared/ui/icon';
 import './styles.scss';
 
 export const UserPanel = () => {

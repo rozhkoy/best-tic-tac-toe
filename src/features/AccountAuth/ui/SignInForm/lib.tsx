@@ -1,8 +1,8 @@
-import { FormInput } from '../../../../shared/ui/FormInput/index';
-import { FormWrap } from 'shared/ui/FormWrap';
+import { FormInput } from '../../../../shared/ui/formInput/index';
+import { FormWrap } from 'shared/ui/formWrap';
 import { withFormik } from 'formik';
 import { SignInInputsProps } from './types';
-import { Button } from 'shared/ui/Button';
+import { Button } from 'shared/ui/button';
 
 const SignInTemplateForm = () => {
 	return (

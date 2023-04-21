@@ -1,1 +1,1 @@
-export { UserPanel } from './ui/UserInfo/index';
+export { UserPanel } from './ui/userInfo/index';

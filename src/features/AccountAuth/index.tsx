@@ -1,3 +1,3 @@
-export { SignInWith } from './ui/SignInWith';
-export { AccountManagement } from './ui/AccountManagement';
-export { SignInForm } from './ui/SignInForm/lib';
+export { SignInWith } from './ui/signInWith';
+export { AccountManagement } from './ui/accountManagement';
+export { SignInForm } from './ui/signInForm/lib';
