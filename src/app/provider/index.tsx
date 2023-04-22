@@ -3,6 +3,7 @@ import { SignIn } from 'pages/signIn';
 import { SignUp } from 'pages/signUp';
 import { Wrap } from 'pages/wrap';
 import { routes } from 'app/provider/routes';
+import { Game } from 'pages/game';
 
 export const Provider = () => {
 	const router = createBrowserRouter([
@@ -11,8 +12,8 @@ export const Provider = () => {
 			element: <Wrap />,
 			children: [
 				{
-					path: routes.HOME,
-					element: <></>,
+					path: routes.GAME,
+					element: <Game />,
 				},
 			],
 		},

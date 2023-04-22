@@ -4,7 +4,7 @@ import './styles.scss';
 export const SignInWith = () => {
 	return (
 		<div className="sign-in-with">
-			<div className="sign-in-with__title">Or sign in with</div>
+			<div className="sign-in-with__title">Or</div>
 			<div className="sign-in-with__btns-box">
 				<Button
 					onClick={() => alert('test')}

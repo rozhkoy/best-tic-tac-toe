@@ -18,13 +18,7 @@ export const AuthFrame: React.FC<PropsWithChildren> = ({ children }) => {
 				</Container>
 			</div>
 			<div className="auth-frame__decor">
-				<img
-					src={decor}
-					alt="decor"
-					width={'806'}
-					height={'900'}
-					className="auth-frame__decor-img"
-				/>
+				<img src={decor} alt="decor" width={'806'} height={'900'} className="auth-frame__decor-img" />
 			</div>
 		</div>
 	);

@@ -6,10 +6,21 @@
 	font-style: normal;
 	font-weight: 400;
 	font-size: 16px;
-	line-height: 24px;
+	line-height: 1.5;
 	letter-spacing: 0.04em;
 	color: var(--color-secondary);
-}
-.form-input::placeholder {
-	color: var(--color-light-gray);
+	transition: border-color 0.3s;
+
+	&:hover,
+	&:focus-within {
+		border-color: #fff;
+	}
+
+	&--error {
+		border-color: var(--color-red);
+	}
+
+	&::placeholder {
+		color: var(--color-light-gray);
+	}
 }

@@ -1,0 +1,62 @@
+.custom-radio {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border: 3px solid var(--color-secondary);
+	padding: 6px;
+	border-radius: 14px;
+	position: relative;
+	&.disabled {
+		border: 3px solid var(--color-disabled);
+	}
+
+	&__item {
+		width: 100%;
+		position: relative;
+	}
+
+	&__label {
+		display: block;
+		padding: 5px 0;
+		font-family: 'Poppins';
+		font-style: normal;
+		font-weight: 500;
+		font-size: 16px;
+		line-height: 24px;
+		color: var(--color-secondary);
+		width: 100%;
+		text-align: center;
+		position: relative;
+		z-index: 3;
+		&.disabled {
+			color: var(--color-disabled);
+		}
+		&::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: transparent;
+			border-radius: 4px;
+			z-index: -1;
+			transition: background var(--transition-duration);
+			&.disabled {
+				background: transparent;
+			}
+		}
+	}
+
+	&__radio {
+		position: absolute;
+		opacity: 0;
+		transition: color var(--transition-duration);
+		&:checked + .custom-radio__label {
+			color: var(--color-primary);
+		}
+		&:checked + .custom-radio__label::after {
+			background: var(--color-secondary);
+		}
+	}
+}
