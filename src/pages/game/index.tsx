@@ -1,5 +1,6 @@
 import { GameSelector } from 'features/gameSelector';
-import { BlurLayer } from 'shared/ui/blueLayer';
+import { Outlet } from 'react-router-dom';
+import { BlurLayer } from 'shared/ui/blurLayer';
 
 export const Game = () => {
 	return (

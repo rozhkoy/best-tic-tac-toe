@@ -5,4 +5,5 @@ export const routes = {
 	GAME: 'game',
 	FRIENDS: 'friends',
 	TOP_PLAYER: 'top-player',
+	SESSION: 'session',
 };

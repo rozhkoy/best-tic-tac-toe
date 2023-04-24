@@ -2,13 +2,19 @@
 	margin: 0 auto;
 	padding: 0 15px;
 	width: 100%;
-	&.large {
+	&--extra-large {
+		max-width: 1700px;
+	}
+	&--large {
 		max-width: 900px;
 	}
-	&.medium {
+	&--medium {
+		max-width: 575px;
+	}
+	&--small {
 		max-width: 430px;
 	}
-	&.small {
+	&--extra-small {
 		max-width: 390px;
 	}
 }

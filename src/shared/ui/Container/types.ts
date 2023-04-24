@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 
 export interface ContainerProps extends PropsWithChildren {
-	size: 'large' | 'medium' | 'small';
+	size: 'extra-large' | 'large' | 'medium' | 'small' | 'extra-small';
 	className?: string;
 }

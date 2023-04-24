@@ -1,0 +1,13 @@
+.field-cell {
+	width: 100%;
+	aspect-ratio: 1/1;
+	border: 2px solid var(--color-light-gray);
+	border-radius: 18px;
+	padding: 20px;
+	& svg {
+		display: block;
+		height: auto;
+		width: 100%;
+		object-fit: cover;
+	}
+}

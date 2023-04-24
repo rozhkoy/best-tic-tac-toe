@@ -1,20 +1,4 @@
-import {
-	BackArrowIcon,
-	BehanceIcon,
-	CupIcon,
-	FacebookIcon,
-	GithubIcon,
-	GoogleIcon,
-	LogoutIcon,
-	LinkInIcon,
-	LoginIcon,
-	MoonIcon,
-	MusicIcon,
-	RestartIcon,
-	SearchIcon,
-	SoundIcon,
-	SunIcon,
-} from './Static';
+import { BackArrowIcon, BehanceIcon, CupIcon, FacebookIcon, GithubIcon, GoogleIcon, LogoutIcon, LinkInIcon, LoginIcon, MoonIcon, MusicIcon, RestartIcon, SearchIcon, SoundIcon, SunIcon, CrossIcon, NoughtIcon } from './Static';
 import { IconNamesTypes, IconProps } from './types';
 import './styles.scss';
 import classNames from 'classnames';
@@ -35,6 +19,8 @@ const icons: Record<IconNamesTypes, React.ReactNode> = {
 	search: <SearchIcon />,
 	sound: <SoundIcon />,
 	sun: <SunIcon />,
+	nought: <NoughtIcon />,
+	cross: <CrossIcon />,
 };
 
 export function Icon({ name, className }: IconProps) {
