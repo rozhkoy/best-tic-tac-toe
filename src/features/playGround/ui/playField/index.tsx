@@ -4,15 +4,15 @@ import './styles.scss';
 export const PlayFiled = () => {
 	return (
 		<div className="play-field">
-			<FieldCell symbolName="cross" />
-			<FieldCell symbolName="cross" />
-			<FieldCell symbolName="cross" />
-			<FieldCell symbolName="cross" />
-			<FieldCell symbolName={'nought'} />
-			<FieldCell symbolName="cross" />
-			<FieldCell symbolName={'nought'} />
-			<FieldCell symbolName="cross" />
-			<FieldCell symbolName={'nought'} />
+			<FieldCell highlight={false} symbolName="cross" />
+			<FieldCell highlight={true} symbolName="cross" />
+			<FieldCell highlight={true} symbolName="cross" />
+			<FieldCell highlight={true} symbolName="cross" />
+			<FieldCell highlight={true} symbolName={'nought'} />
+			<FieldCell highlight={true} symbolName="cross" />
+			<FieldCell highlight={true} symbolName={'nought'} />
+			<FieldCell highlight={true} symbolName="cross" />
+			<FieldCell highlight={true} symbolName={'nought'} />
 		</div>
 	);
 };

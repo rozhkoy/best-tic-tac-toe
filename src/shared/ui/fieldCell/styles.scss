@@ -4,6 +4,13 @@
 	border: 2px solid var(--color-light-gray);
 	border-radius: 18px;
 	padding: 20px;
+	&--nought-active {
+		border: 2px solid var(--color-red);
+	}
+	&--cross-active {
+		border: 2px solid var(--color-secondary);
+	}
+
 	& svg {
 		display: block;
 		height: auto;
