@@ -25,5 +25,9 @@
 		line-height: 1;
 		color: #ffffff;
 		margin: 0 0 12px 0;
+		transition: color var(--transition-duration);
+		&--disabled {
+			color: var(--color-disabled);
+		}
 	}
 }

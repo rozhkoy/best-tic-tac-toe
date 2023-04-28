@@ -20,6 +20,10 @@ export const Provider = () => {
 					path: routes.SESSION,
 					element: <Session />,
 				},
+				{
+					path: routes.BOT_PLAYER_SESSION + '/:id',
+					element: <Session />,
+				},
 			],
 		},
 		{

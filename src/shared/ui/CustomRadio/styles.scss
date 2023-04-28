@@ -6,6 +6,7 @@
 	padding: 6px;
 	border-radius: 14px;
 	position: relative;
+	transition: border-color var(--transition-duration);
 	&.disabled {
 		border: 3px solid var(--color-disabled);
 	}
@@ -13,6 +14,17 @@
 	&__item {
 		width: 100%;
 		position: relative;
+	}
+	&__radio {
+		position: absolute;
+		opacity: 0;
+		transition: color var(--transition-duration);
+		&:checked + .custom-radio__label {
+			color: var(--color-primary);
+		}
+		&:checked + .custom-radio__label::after {
+			background: var(--color-secondary);
+		}
 	}
 
 	&__label {
@@ -42,21 +54,9 @@
 			border-radius: 4px;
 			z-index: -1;
 			transition: background var(--transition-duration);
-			&.disabled {
-				background: transparent;
-			}
 		}
-	}
-
-	&__radio {
-		position: absolute;
-		opacity: 0;
-		transition: color var(--transition-duration);
-		&:checked + .custom-radio__label {
-			color: var(--color-primary);
-		}
-		&:checked + .custom-radio__label::after {
-			background: var(--color-secondary);
+		&.disabled::after {
+			content: none;
 		}
 	}
 }
