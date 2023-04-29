@@ -4,7 +4,7 @@ import { SignUp } from 'pages/signUp';
 import { Wrap } from 'pages/wrap';
 import { routes } from 'app/provider/routes';
 import { Game } from 'pages/game';
-import { Session } from 'pages/session';
+import { Session } from 'pages/gameSession';
 
 export const Provider = () => {
 	const router = createBrowserRouter([

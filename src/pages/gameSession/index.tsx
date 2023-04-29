@@ -1,6 +1,6 @@
 import { GameInfo } from 'features/playGround/ui/gameInfo';
 import { Layout } from 'shared/ui/layout';
-import { PlayFiled } from './../../features/playGround/ui/playField/index';
+import { PlayFiled } from '../../features/playGround/ui/playField/index';
 import './styles.scss';
 import { Button } from 'shared/ui/button';
 

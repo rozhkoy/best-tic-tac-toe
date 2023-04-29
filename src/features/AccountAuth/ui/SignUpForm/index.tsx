@@ -10,19 +10,8 @@ const SingUpTemplateForm = () => {
 			<FormInput name={'name'} placeholder={'Name'} type={'text'} />
 			<FormInput name={'email'} placeholder={'Email'} type={'text'} />
 			<FormInput name={'password'} placeholder={'Password'} type={'password'} />
-			<FormInput
-				name={'confirmPassword'}
-				placeholder={'Confirm password'}
-				type={'password'}
-			/>
-			<Button
-				className={''}
-				size={'medium'}
-				variant={'primary'}
-				fullWidth={true}
-				title={'Sign up'}
-				type={'submit'}
-			/>
+			<FormInput name={'confirmPassword'} placeholder={'Confirm password'} type={'password'} />
+			<Button className={''} size={'medium'} variant={'primary'} fullWidth={true} title={'Sign up'} type={'submit'} />
 		</FormWrap>
 	);
 };
