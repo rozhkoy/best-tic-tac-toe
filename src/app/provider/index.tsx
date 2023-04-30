@@ -4,7 +4,7 @@ import { SignUp } from 'pages/signUp';
 import { Wrap } from 'pages/wrap';
 import { routes } from 'app/provider/routes';
 import { Game } from 'pages/game';
-import { Session } from 'pages/gameSession';
+import { GameSession } from 'pages/gameSession';
 
 export const Provider = () => {
 	const router = createBrowserRouter([
@@ -17,12 +17,8 @@ export const Provider = () => {
 					element: <Game />,
 				},
 				{
-					path: routes.SESSION,
-					element: <Session />,
-				},
-				{
 					path: routes.BOT_PLAYER_SESSION + '/:id',
-					element: <Session />,
+					element: <GameSession />,
 				},
 			],
 		},

@@ -1,6 +1,17 @@
 import { SymbolTypes } from 'shared/ui/fieldCell/types';
 
-export interface ICellData {
+export interface IPlayerData {
+	nickName: string;
+	score: number;
+}
+
+export interface GameInfoProps {
+	playersData: Array<IPlayerData>;
+	currentMove: ICurrentMove;
+}
+
+export interface ICurrentMove {
 	symbol: SymbolTypes;
-	highlight: boolean;
+	playerIndex: number;
+	player: string;
 }

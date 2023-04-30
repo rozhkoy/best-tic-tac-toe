@@ -5,4 +5,9 @@ export interface FieldCellProps {
 	index: number;
 }
 
+export interface ICellData {
+	symbol: SymbolTypes;
+	highlight: boolean;
+}
+
 export type SymbolTypes = 'cross' | 'nought' | 'empty';
