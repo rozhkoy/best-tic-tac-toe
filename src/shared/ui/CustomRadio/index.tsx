@@ -13,7 +13,7 @@ export const CustomRadio: React.FC<CustomRadioProps> = ({ className, fields, dis
 	}
 
 	useEffect(() => {
-		setId(useId);
+		setId(String(useId));
 	}, []);
 
 	return (

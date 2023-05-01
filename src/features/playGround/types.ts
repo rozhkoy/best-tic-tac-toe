@@ -8,6 +8,7 @@ export interface IPlayerData {
 export interface GameInfoProps {
 	playersData: Array<IPlayerData>;
 	currentMove: ICurrentMove;
+	gameStatusMessage: GameStatusMessage;
 }
 
 export interface ICurrentMove {
@@ -15,3 +16,11 @@ export interface ICurrentMove {
 	playerIndex: number;
 	player: string;
 }
+
+export interface GameStatusMessage {
+	message: string;
+	color: 'red' | 'secondary';
+	isShow: boolean;
+}
+
+export type WinnerTypes = 'cross' | 'nought' | 'draw' | 'unknown';

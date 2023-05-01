@@ -1,6 +1,33 @@
 .game-info {
-	display: flex;
-	justify-content: space-between;
+	&__plate {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	&__status {
+		font-family: 'Poppins';
+		font-style: normal;
+		font-weight: 500;
+		font-size: 32px;
+		line-height: 48px;
+		text-align: center;
+		&--secondary {
+			color: var(--color-secondary);
+		}
+		&--red {
+			color: var(--color-red);
+		}
+	}
+
+	&__symbol-icon {
+		& svg {
+			fill: var(--color-disabled);
+		}
+		&--active svg {
+			fill: var(--color-secondary);
+		}
+	}
+
 	&__player {
 		display: flex;
 		align-items: center;
