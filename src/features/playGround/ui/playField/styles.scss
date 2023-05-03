@@ -1,7 +1,0 @@
-.play-field {
-	display: grid;
-	width: 100%;
-	grid-template-columns: repeat(3, 1fr);
-	grid-template-rows: repeat((3, auto));
-	grid-gap: 16px;
-}
