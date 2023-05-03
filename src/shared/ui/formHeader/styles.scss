@@ -1,0 +1,11 @@
+.form-header {
+	padding: 0 0 61px;
+	&__header {
+		padding: 0 0 14px;
+		color: var(--color-secondary);
+	}
+
+	&__sub-heading {
+		color: #8e8e8e;
+	}
+}
