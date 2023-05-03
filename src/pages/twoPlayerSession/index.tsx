@@ -10,11 +10,12 @@ import { GameStatusMessage, ICurrentMove, IPlayerData, WinnerTypes } from 'featu
 
 export const TwoPlayerSession = () => {
 	const [currentBoardState, setCurrentBoardState] = useState<Array<ICellData>>([]);
+
 	const [playersData, setPlayersData] = useState<Array<IPlayerData>>([
 		{ nickName: 'Player 1', score: 0 },
 		{ nickName: 'Player 2', score: 0 },
 	]);
-	const [winner, setWinner] = useState<WinnerTypes>('unknown');
+
 	const [currentMove, setCurrentMove] = useState<ICurrentMove>({
 		symbol: 'cross',
 		playerIndex: 0,
