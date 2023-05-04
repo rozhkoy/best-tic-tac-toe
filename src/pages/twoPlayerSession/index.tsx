@@ -7,15 +7,35 @@ import { ICellData } from 'shared/ui/fieldCell/types';
 import { useEffect, useState } from 'react';
 import { FieldCell } from 'shared/ui/fieldCell';
 import { GameStatusMessage, ICurrentMove, IPlayerData, WinnerTypes } from 'features/playGround/types';
+import { useFindWinner } from 'features/playGround';
 
 export const TwoPlayerSession = () => {
-	const [currentBoardState, setCurrentBoardState] = useState<Array<ICellData>>([]);
-
+	const { currentBoardState, setCurrentBoardState, isWinner, checkIfWinnerFind, resetState } = useFindWinner([], () => {
+		console.log('finded winer');
+		console.log(currentMove.symbol);
+		switch (currentMove.symbol) {
+			case 'cross':
+				setGameStatusMessage(({ ...value }) => {
+					value.color = 'secondary';
+					value.isShow = true;
+					value.message = 'The crosses won!';
+					return value;
+				});
+				break;
+			case 'nought':
+				setGameStatusMessage(({ ...value }) => {
+					value.color = 'red';
+					value.isShow = true;
+					value.message = 'The noughts won!';
+					return value;
+				});
+				break;
+		}
+	});
 	const [playersData, setPlayersData] = useState<Array<IPlayerData>>([
 		{ nickName: 'Player 1', score: 0 },
 		{ nickName: 'Player 2', score: 0 },
 	]);
-
 	const [currentMove, setCurrentMove] = useState<ICurrentMove>({
 		symbol: 'cross',
 		playerIndex: 0,
@@ -35,16 +55,16 @@ export const TwoPlayerSession = () => {
 		};
 
 		let filledBoard: Array<ICellData> = [];
-
 		for (let i = 0; i < quantityCell; i++) {
 			filledBoard.push({ ...cellDataTemplate });
 		}
+		resetState(filledBoard);
+
 		setCurrentMove({
 			symbol: 'cross',
 			playerIndex: 0,
 			player: playersData[0].nickName,
 		});
-		setCurrentBoardState(filledBoard);
 		setNumberMoves(0);
 		setGameStatusMessage({
 			message: '',
@@ -54,70 +74,25 @@ export const TwoPlayerSession = () => {
 	}
 
 	function markCell(index: number) {
-		if (!gameStatusMessage.isShow) {
+		if (!isWinner) {
 			const boardState = currentBoardState.slice();
 			if (boardState[index].symbol === 'empty') {
 				boardState[index].symbol = currentMove.symbol;
 				setCurrentBoardState(boardState);
+				checkIfWinnerFind();
+				setNumberMoves((value) => ++value);
 				if (currentMove.symbol === 'cross') {
 					setCurrentMove({ symbol: 'nought', player: playersData[1].nickName, playerIndex: 0 });
 				} else {
 					setCurrentMove({ symbol: 'cross', player: playersData[0].nickName, playerIndex: 1 });
 				}
-				setNumberMoves((value) => ++value);
-				checkIfWinerFound();
 			}
-		}
-	}
-
-	function checkIfWinerFound() {
-		const winningCombinations: Array<number[]> = [
-			[0, 1, 2],
-			[3, 4, 5],
-			[6, 7, 8],
-			[0, 3, 6],
-			[1, 4, 7],
-			[2, 5, 8],
-			[0, 4, 8],
-			[6, 4, 2],
-		];
-
-		for (let i = 0; i < winningCombinations.length; i++) {
-			const [a, b, c] = winningCombinations[i];
-			if (currentBoardState[a].symbol === currentBoardState[b].symbol && currentBoardState[b].symbol === currentBoardState[c].symbol && currentBoardState[c].symbol !== 'empty' && currentBoardState[b].symbol !== 'empty' && currentBoardState[a].symbol !== 'empty') {
-				currentBoardState[a].highlight = true;
-				currentBoardState[b].highlight = true;
-				currentBoardState[c].highlight = true;
-				setPlayersData((value) => {
-					value = value.slice();
-					value[currentMove.playerIndex].score = ++value[currentMove.playerIndex].score;
-					return value;
+			if (numberMoves >= 8) {
+				setGameStatusMessage({
+					message: 'Draw!',
+					isShow: true,
+					color: 'secondary',
 				});
-
-				if (currentMove.symbol === 'cross') {
-					setGameStatusMessage((value) => {
-						value.color = 'secondary';
-						value.isShow = true;
-						value.message = 'The crosses won!';
-						return value;
-					});
-				} else {
-					setGameStatusMessage((value) => {
-						value.color = 'red';
-						value.isShow = true;
-						value.message = 'The noughts won!';
-						return value;
-					});
-				}
-			} else {
-				if (numberMoves === 8) {
-					setGameStatusMessage((value) => {
-						value.color = 'secondary';
-						value.isShow = true;
-						value.message = 'Draw!';
-						return value;
-					});
-				}
 			}
 		}
 	}
