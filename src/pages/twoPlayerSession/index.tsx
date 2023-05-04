@@ -11,7 +11,6 @@ import { useFindWinner } from 'features/playGround';
 
 export const TwoPlayerSession = () => {
 	const { currentBoardState, setCurrentBoardState, isWinner, checkIfWinnerFind, resetState } = useFindWinner([], () => {
-		console.log('finded winer');
 		console.log(currentMove.symbol);
 		switch (currentMove.symbol) {
 			case 'cross':
