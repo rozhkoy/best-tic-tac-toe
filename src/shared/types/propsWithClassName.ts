@@ -1,3 +1,3 @@
 export interface PropsWithClassName {
-	className?: 'string';
+	className?: string;
 }
