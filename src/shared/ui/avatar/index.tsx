@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { avatarProps } from './types';
 import './styles.scss';
 
@@ -9,7 +8,5 @@ const SIZES = {
 };
 
 export const Avatar: React.FC<avatarProps> = ({ size = 'medium', alt = 'avatar', src }) => {
-	const classes = classNames('avatar', `avatar--${size}`);
-
-	return <img className={classes} alt={alt} src={src} width={SIZES[size]} height={SIZES[size]} />;
+	return <img className={`avatar avatar--${size}`} alt={alt} src={src} width={SIZES[size]} height={SIZES[size]} />;
 };
