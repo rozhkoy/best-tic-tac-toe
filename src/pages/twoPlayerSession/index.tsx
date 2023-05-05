@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { FieldCell } from 'shared/ui/fieldCell';
 import { GameStatusMessage, ICurrentMove, IPlayerData, WinnerTypes } from 'features/playGround/types';
 import { useFindWinner } from 'features/playGround';
+import { GameSessionWrap } from 'features/playGround/ui/gameSessionWrap';
 
 export const TwoPlayerSession = () => {
 	const { currentBoardState, setCurrentBoardState, isWinner, checkIfWinnerFind, resetState } = useFindWinner([], () => {
@@ -102,16 +103,14 @@ export const TwoPlayerSession = () => {
 	}, []);
 
 	return (
-		<Layout className="game-session">
-			<div className="game-session__container">
-				<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
-				<PlayFiled>
-					{currentBoardState.map((item, index) => {
-						return <FieldCell key={index + item.symbol} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
-					})}
-				</PlayFiled>
-				<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={() => resetBoardState(9)} icon={'restart'} />
-			</div>
-		</Layout>
+		<GameSessionWrap>
+			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
+			<PlayFiled>
+				{currentBoardState.map((item, index) => {
+					return <FieldCell key={index + item.symbol} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+				})}
+			</PlayFiled>
+			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={() => resetBoardState(9)} icon={'restart'} />
+		</GameSessionWrap>
 	);
 };

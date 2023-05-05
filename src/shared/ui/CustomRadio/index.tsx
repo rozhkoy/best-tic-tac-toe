@@ -5,16 +5,12 @@ import { useEffect, useId, useState } from 'react';
 
 export const CustomRadio: React.FC<CustomRadioProps> = ({ className, fields, disabled, value, onChange }) => {
 	const classes = classNames('custom-radio', className, { disabled });
-	const [id, setId] = useState<string>('');
+	const [id, setId] = useState<string>(useId());
 
 	function radioHandler(event: React.ChangeEvent<HTMLInputElement>) {
 		onChange(event.target.value);
 		console.log(value);
 	}
-
-	useEffect(() => {
-		setId(String(useId));
-	}, []);
 
 	return (
 		<div className={classes}>

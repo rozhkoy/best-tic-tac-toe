@@ -4,6 +4,7 @@
 	border: 2px solid var(--color-light-gray);
 	border-radius: 18px;
 	padding: 20px;
+	cursor: pointer;
 	&--nought-active {
 		border: 2px solid var(--color-red);
 	}
