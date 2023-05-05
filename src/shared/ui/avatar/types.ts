@@ -1,6 +1,6 @@
 import { PropsWithClassName } from "shared/types/propsWithClassName";
-export interface avatarProps extends PropsWithClassName {
-  size?: "small" | "medium" | "big";
+export interface AvatarProps extends PropsWithClassName {
+  size?: "small" | "medium" | "large";
   alt?: string;
   src: string;
 }
