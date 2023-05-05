@@ -1,18 +1,17 @@
 import { GameInfo } from 'features/playGround/ui/gameInfo';
-import { Layout } from 'shared/ui/layout';
 import { PlayField } from '../../features/playGround/ui/playField/index';
 import './styles.scss';
 import { Button } from 'shared/ui/button';
 import { ICellData } from 'shared/ui/fieldCell/types';
 import { useEffect, useState } from 'react';
 import { FieldCell } from 'shared/ui/fieldCell';
-import { GameStatusMessage, ICurrentMove, IPlayerData, WinnerTypes } from 'features/playGround/types';
+import { GameStatusMessage, ICurrentMove, IPlayerData } from 'features/playGround/types';
 import { useFindWinner } from 'features/playGround';
+import { GameBoardWrap } from 'features/playGround/ui/gameBoardWrap';
+import { nanoid } from 'nanoid';
 
 export const TwoPlayerSession = () => {
 	const { currentBoardState, setCurrentBoardState, isWinner, checkIfWinnerFind, resetState } = useFindWinner([], () => {
-		console.log('finded winer');
-		console.log(currentMove.symbol);
 		switch (currentMove.symbol) {
 			case 'cross':
 				setGameStatusMessage(({ ...value }) => {
@@ -102,16 +101,14 @@ export const TwoPlayerSession = () => {
 	}, []);
 
 	return (
-		<Layout className="game-session">
-			<div className="game-session__container">
-				<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
-				<PlayField>
-					{currentBoardState.map((item, index) => {
-						return <FieldCell key={index + item.symbol} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
-					})}
-				</PlayField>
-				<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={() => resetBoardState(9)} icon={'restart'} />
-			</div>
-		</Layout>
+		<GameBoardWrap>
+			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
+			<PlayField>
+				{currentBoardState.map((item, index) => {
+					return <FieldCell key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+				})}
+			</PlayField>
+			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={() => resetBoardState(9)} icon={'restart'} />
+		</GameBoardWrap>
 	);
 };
