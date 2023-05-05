@@ -9,11 +9,10 @@ import { FieldCell } from 'shared/ui/fieldCell';
 import { GameStatusMessage, ICurrentMove, IPlayerData, WinnerTypes } from 'features/playGround/types';
 import { useFindWinner } from 'features/playGround';
 import { GameBoardWrap } from 'features/playGround/ui/gameBoardWrap';
+import { nanoid } from 'nanoid';
 
 export const TwoPlayerSession = () => {
 	const { currentBoardState, setCurrentBoardState, isWinner, checkIfWinnerFind, resetState } = useFindWinner([], () => {
-		console.log('finded winer');
-		console.log(currentMove.symbol);
 		switch (currentMove.symbol) {
 			case 'cross':
 				setGameStatusMessage(({ ...value }) => {
@@ -107,7 +106,7 @@ export const TwoPlayerSession = () => {
 			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
 			<PlayFiled>
 				{currentBoardState.map((item, index) => {
-					return <FieldCell key={index + item.symbol} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+					return <FieldCell key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
 				})}
 			</PlayFiled>
 			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={() => resetBoardState(9)} icon={'restart'} />
