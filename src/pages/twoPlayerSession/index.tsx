@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { FieldCell } from 'shared/ui/fieldCell';
 import { GameStatusMessage, ICurrentMove, IPlayerData, WinnerTypes } from 'features/playGround/types';
 import { useFindWinner } from 'features/playGround';
-import { GameSessionWrap } from 'features/playGround/ui/gameSessionWrap';
+import { GameBoardWrap } from 'features/playGround/ui/gameBoardWrap';
 
 export const TwoPlayerSession = () => {
 	const { currentBoardState, setCurrentBoardState, isWinner, checkIfWinnerFind, resetState } = useFindWinner([], () => {
@@ -103,7 +103,7 @@ export const TwoPlayerSession = () => {
 	}, []);
 
 	return (
-		<GameSessionWrap>
+		<GameBoardWrap>
 			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
 			<PlayFiled>
 				{currentBoardState.map((item, index) => {
@@ -111,6 +111,6 @@ export const TwoPlayerSession = () => {
 				})}
 			</PlayFiled>
 			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={() => resetBoardState(9)} icon={'restart'} />
-		</GameSessionWrap>
+		</GameBoardWrap>
 	);
 };
