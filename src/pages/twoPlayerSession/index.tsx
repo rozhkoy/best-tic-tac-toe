@@ -1,6 +1,6 @@
 import { GameInfo } from 'features/playGround/ui/gameInfo';
 import { Layout } from 'shared/ui/layout';
-import { PlayFiled } from '../../features/playGround/ui/playField/index';
+import { PlayField } from '../../features/playGround/ui/playField/index';
 import './styles.scss';
 import { Button } from 'shared/ui/button';
 import { ICellData } from 'shared/ui/fieldCell/types';
@@ -104,11 +104,11 @@ export const TwoPlayerSession = () => {
 	return (
 		<GameBoardWrap>
 			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
-			<PlayFiled>
+			<PlayField>
 				{currentBoardState.map((item, index) => {
-					return <FieldCell key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+					return <FieldCell key={index + item.symbol} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
 				})}
-			</PlayFiled>
+			</PlayField>
 			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={() => resetBoardState(9)} icon={'restart'} />
 		</GameBoardWrap>
 	);
