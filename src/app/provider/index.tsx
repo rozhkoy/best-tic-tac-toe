@@ -5,6 +5,7 @@ import { Wrap } from 'pages/wrap';
 import { routes } from 'app/provider/routes';
 import { Game } from 'pages/game';
 import { TwoPlayerSession } from 'pages/twoPlayerSession';
+import { WithBotSession } from 'pages/withBotSession';
 
 export const Provider = () => {
 	const router = createBrowserRouter([
@@ -19,6 +20,10 @@ export const Provider = () => {
 				{
 					path: routes.TWO_PLAYERS_SESSION,
 					element: <TwoPlayerSession />,
+				},
+				{
+					path: routes.WITH_BOT_SESSION,
+					element: <WithBotSession />,
 				},
 			],
 		},
