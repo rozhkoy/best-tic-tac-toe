@@ -13,8 +13,8 @@ export interface GameInfoProps {
 
 export interface ICurrentMove {
 	symbol: SymbolTypes;
-	playerIndex: number;
 	player: string;
+	numberOfMoves: number;
 }
 
 export interface GameStatusMessage {
