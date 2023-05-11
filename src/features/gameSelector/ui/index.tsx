@@ -16,7 +16,7 @@ export const GameSelector = () => {
 		console.log('test');
 		switch (gameMode) {
 			case '1p':
-				navigate('/' + routes.BOT_PLAYER_SESSION + '/' + hardLevel.toLowerCase());
+				navigate('/' + routes.WITH_BOT_SESSION + '/' + hardLevel.toLowerCase());
 				break;
 			case '2p':
 				navigate('/' + routes.TWO_PLAYERS_SESSION);
