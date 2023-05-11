@@ -1,5 +1,4 @@
-import { GameInfo, PlayField, useFindWinner } from 'features/playGround';
-import { GameBoardWrap } from 'features/playGround/ui/gameBoardWrap';
+import { GameBoardWrap, GameInfo, PlayField, useFindWinner } from 'features/playGround';
 import { useState } from 'react';
 import { FieldCell } from 'shared/ui/fieldCell';
 import { GameStatusMessage, IPlayerData } from 'features/playGround/types';
