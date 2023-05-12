@@ -23,4 +23,9 @@ export interface GameStatusMessage {
 	isShow: boolean;
 }
 
+export interface IMoveInfo {
+	index: number;
+	score: number;
+}
+
 export type WinnerTypes = 'cross' | 'nought' | 'draw' | 'unknown';
