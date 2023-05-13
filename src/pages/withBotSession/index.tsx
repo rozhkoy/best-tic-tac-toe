@@ -1,13 +1,16 @@
 import { GameBoardWrap, GameInfo, PlayField, useFindWinner } from 'features/playGround';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldCell } from 'shared/ui/fieldCell';
 import { GameStatusMessage, IMoveInfo, IPlayerData } from 'features/playGround/types';
 import { nanoid } from 'nanoid';
 import { Button } from 'shared/ui/button';
 import { SymbolTypes } from 'shared/ui/fieldCell/types';
 import { ICellData } from 'shared/ui/fieldCell/types';
+import { useParams } from 'react-router-dom';
+import { move } from 'formik';
 
 export const WithBotSession = () => {
+	const params = useParams();
 	const [playersData, setPlayersData] = useState<Array<IPlayerData>>([
 		{ nickName: 'Player', score: 0 },
 		{ nickName: 'Bot', score: 0 },
@@ -33,32 +36,25 @@ export const WithBotSession = () => {
 	});
 
 	function markCell(index: number) {
-		console.log(findEmptyCell());
 		if (!isWinner) {
-			const boardState = currentBoardState.slice();
+			const boardState: ICellData[] = structuredClone(currentBoardState);
 			if (boardState[index].symbol === 'empty') {
-				boardState[index].symbol = currentMove.symbol;
-				checkIfWinnerFind();
-				if (currentMove.symbol === 'cross') {
-					const result = minMax(boardState.slice(), 'nought', index);
+				boardState[index].symbol = 'cross';
+				console.log(boardState);
+				const result = minMax(boardState, 'nought', 0);
+				console.log(result);
+				if (result.index) {
 					boardState[result.index].symbol = 'nought';
-				} else {
-					setCurrentMove(({ ...value }) => {
-						value.symbol = 'cross';
-						value.player = playersData[0].nickName;
-						value.numberOfMoves = ++value.numberOfMoves;
-						return value;
-					});
 				}
 				setCurrentBoardState(boardState);
 			}
 		}
 	}
 
-	function findEmptyCell(): Array<number> {
+	function findEmptyCell(boardState: ICellData[]): Array<number> {
 		const emptyCell: Array<number> = [];
-		for (let i = 0; i < currentBoardState.length; i++) {
-			if (currentBoardState[i].symbol === 'empty') {
+		for (let i = 0; i < boardState.length; i++) {
+			if (boardState[i].symbol === 'empty') {
 				emptyCell.push(i);
 			}
 		}
@@ -87,19 +83,19 @@ export const WithBotSession = () => {
 		return false;
 	}
 
-	function minMax(boardState: ICellData[], currentMark: SymbolTypes, index: number): IMoveInfo {
-		const emptyCell: Array<number> = findEmptyCell();
-		const newBoardState = boardState.slice();
+	function minMax(boardState: ICellData[], currentMark: SymbolTypes, depth: number): IMoveInfo {
+		const newBoardState = boardState;
 
+		const emptyCell: Array<number> = findEmptyCell(newBoardState);
 		if (findWinner(newBoardState, 'nought')) {
-			return { score: 10, index };
+			return { score: 10 - depth };
 		} else if (findWinner(newBoardState, 'cross')) {
-			return { score: -10, index };
+			return { score: -10 - depth };
 		} else if (emptyCell.length === 0) {
-			return { score: 0, index };
+			return { score: 0 };
 		}
-
-		const moves: Array<IMoveInfo> = [];
+		++depth;
+		let moves: Array<IMoveInfo> = [];
 
 		for (let i = 0; i < emptyCell.length; i++) {
 			let move: IMoveInfo = {
@@ -109,36 +105,47 @@ export const WithBotSession = () => {
 			newBoardState[emptyCell[i]].symbol = currentMark;
 
 			if (currentMark === 'cross') {
-				let gameResult = minMax(newBoardState, 'nought', emptyCell[i]);
+				let gameResult = minMax(newBoardState, 'nought', depth);
 				move.score = gameResult.score;
 			} else {
-				let gameResult = minMax(newBoardState, 'cross', emptyCell[i]);
+				let gameResult = minMax(newBoardState, 'cross', depth);
 				move.score = gameResult.score;
 			}
-			// newBoardState[emptyCell[i]] = { symbol: 'empty', highlight: false };
+			newBoardState[emptyCell[i]] = { symbol: 'empty', highlight: false };
 			moves.push(move);
 		}
 
 		let bestMove: number = 0;
-		if (currentMark === 'nought') {
-			let bestScore = +Infinity;
-			for (let i = 0; i < moves.length; i++) {
-				if (moves[i].score < bestScore) {
-					bestMove = i;
-					bestScore = moves[i].score;
-				}
+		moves = moves.sort((a, b) => a.score - b.score);
+		if (currentMark === 'cross') {
+			switch (params.hardlevel) {
+				case 'easy':
+					bestMove = moves.length - 1;
+					break;
+				case 'normal':
+					bestMove = Math.floor(moves.length / 2);
+					break;
+				case 'hard':
+					bestMove = 0;
 			}
 		} else {
-			let bestScore = -Infinity;
-			for (let i = 0; i < moves.length; i++) {
-				if (moves[i].score > bestScore) {
-					bestMove = i;
-					bestScore = moves[i].score;
-				}
+			switch (params.hardlevel) {
+				case 'easy':
+					bestMove = 0;
+					break;
+				case 'normal':
+					bestMove = Math.floor(moves.length / 2);
+					break;
+				case 'hard':
+					bestMove = moves.length - 1;
 			}
 		}
 		return moves[bestMove];
 	}
+
+	useEffect(() => {
+		checkIfWinnerFind();
+	}, [currentBoardState]);
 
 	return (
 		<GameBoardWrap>

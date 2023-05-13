@@ -24,7 +24,7 @@ export interface GameStatusMessage {
 }
 
 export interface IMoveInfo {
-	index: number;
+	index?: number;
 	score: number;
 }
 

@@ -74,7 +74,6 @@ export function useFindWinner(
 		for (let i = 0; i < 9; i++) {
 			filledBoard.push({ ...cellDataTemplate });
 		}
-
 		setCurrentBoardState(filledBoard);
 	}
 
