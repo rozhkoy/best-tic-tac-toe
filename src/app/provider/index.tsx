@@ -22,7 +22,7 @@ export const Provider = () => {
 					element: <TwoPlayerSession />,
 				},
 				{
-					path: routes.WITH_BOT_SESSION + '/:hardlevel',
+					path: routes.WITH_BOT_SESSION + '/:hardLevel',
 					element: <WithBotSession />,
 				},
 			],

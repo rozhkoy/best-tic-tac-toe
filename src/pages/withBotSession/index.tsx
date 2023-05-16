@@ -1,16 +1,17 @@
 import { GameBoardWrap, GameInfo, PlayField, useFindWinner } from 'features/playGround';
 import { useEffect, useState } from 'react';
 import { FieldCell } from 'shared/ui/fieldCell';
-import { GameStatusMessage, IMoveInfo, IPlayerData } from 'features/playGround/types';
+import { GameStatusMessage, IPlayerData } from 'features/playGround/types';
 import { nanoid } from 'nanoid';
 import { Button } from 'shared/ui/button';
-import { SymbolTypes } from 'shared/ui/fieldCell/types';
 import { ICellData } from 'shared/ui/fieldCell/types';
 import { useParams } from 'react-router-dom';
-import { move } from 'formik';
+import { useMiniMax } from 'features/playGround/lib/useMinMax';
+import { HardLevelTypes } from 'features/gameSelector/types';
+import { ParamsWithBotSessionPageTypes } from './types';
 
 export const WithBotSession = () => {
-	const params = useParams();
+	const { hardLevel } = useParams<ParamsWithBotSessionPageTypes>();
 	const [playersData, setPlayersData] = useState<Array<IPlayerData>>([
 		{ nickName: 'Player', score: 0 },
 		{ nickName: 'Bot', score: 0 },
@@ -28,120 +29,55 @@ export const WithBotSession = () => {
 			console.log('reset');
 		}
 	);
-
 	const [gameStatusMessage, setGameStatusMessage] = useState<GameStatusMessage>({
 		message: '',
 		isShow: false,
 		color: 'secondary',
 	});
+	const { miniMax } = useMiniMax(hardLevel ?? 'Easy');
 
 	function markCell(index: number) {
 		if (!isWinner) {
-			const boardState: ICellData[] = structuredClone(currentBoardState);
+			const boardState = currentBoardState.slice();
 			if (boardState[index].symbol === 'empty') {
-				boardState[index].symbol = 'cross';
-				console.log(boardState);
-				const result = minMax(boardState, 'nought', 0);
-				console.log(result);
-				if (result.index) {
-					boardState[result.index].symbol = 'nought';
-				}
+				boardState[index].symbol = currentMove.symbol;
 				setCurrentBoardState(boardState);
-			}
-		}
-	}
-
-	function findEmptyCell(boardState: ICellData[]): Array<number> {
-		const emptyCell: Array<number> = [];
-		for (let i = 0; i < boardState.length; i++) {
-			if (boardState[i].symbol === 'empty') {
-				emptyCell.push(i);
-			}
-		}
-		return emptyCell;
-	}
-
-	function findWinner(boardState: Array<ICellData>, symbol: SymbolTypes): boolean {
-		const winningCombinations: Array<number[]> = [
-			[0, 1, 2],
-			[3, 4, 5],
-			[6, 7, 8],
-			[0, 3, 6],
-			[1, 4, 7],
-			[2, 5, 8],
-			[0, 4, 8],
-			[6, 4, 2],
-		];
-		if (boardState.length > 0) {
-			for (let i = 0; i < winningCombinations.length; i++) {
-				const [a, b, c] = winningCombinations[i];
-				if (boardState[a].symbol === symbol && boardState[b].symbol === symbol && boardState[c].symbol === symbol) {
-					return true;
+				checkIfWinnerFind();
+				if (currentMove.symbol === 'cross') {
+					setCurrentMove(({ ...value }) => {
+						value.symbol = 'nought';
+						value.player = playersData[1].nickName;
+						value.numberOfMoves = ++value.numberOfMoves;
+						return value;
+					});
+				} else {
+					setCurrentMove(({ ...value }) => {
+						value.symbol = 'cross';
+						value.player = playersData[0].nickName;
+						value.numberOfMoves = ++value.numberOfMoves;
+						return value;
+					});
 				}
 			}
 		}
-		return false;
 	}
 
-	function minMax(boardState: ICellData[], currentMark: SymbolTypes, depth: number): IMoveInfo {
-		const newBoardState = boardState;
+	useEffect(() => {
+		let timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {}, 500);
 
-		const emptyCell: Array<number> = findEmptyCell(newBoardState);
-		if (findWinner(newBoardState, 'nought')) {
-			return { score: 10 - depth };
-		} else if (findWinner(newBoardState, 'cross')) {
-			return { score: -10 - depth };
-		} else if (emptyCell.length === 0) {
-			return { score: 0 };
-		}
-		++depth;
-		let moves: Array<IMoveInfo> = [];
-
-		for (let i = 0; i < emptyCell.length; i++) {
-			let move: IMoveInfo = {
-				score: 0,
-				index: emptyCell[i],
-			};
-			newBoardState[emptyCell[i]].symbol = currentMark;
-
-			if (currentMark === 'cross') {
-				let gameResult = minMax(newBoardState, 'nought', depth);
-				move.score = gameResult.score;
-			} else {
-				let gameResult = minMax(newBoardState, 'cross', depth);
-				move.score = gameResult.score;
-			}
-			newBoardState[emptyCell[i]] = { symbol: 'empty', highlight: false };
-			moves.push(move);
+		if (currentMove.player === 'Bot') {
+			timeoutId = setTimeout(() => {
+				const moveResult = miniMax(currentBoardState, 'nought', 0);
+				if (moveResult.index) {
+					markCell(moveResult.index);
+				}
+			}, 500);
 		}
 
-		let bestMove: number = 0;
-		moves = moves.sort((a, b) => a.score - b.score);
-		if (currentMark === 'cross') {
-			switch (params.hardlevel) {
-				case 'easy':
-					bestMove = moves.length - 1;
-					break;
-				case 'normal':
-					bestMove = Math.floor(moves.length / 2);
-					break;
-				case 'hard':
-					bestMove = 0;
-			}
-		} else {
-			switch (params.hardlevel) {
-				case 'easy':
-					bestMove = 0;
-					break;
-				case 'normal':
-					bestMove = Math.floor(moves.length / 2);
-					break;
-				case 'hard':
-					bestMove = moves.length - 1;
-			}
-		}
-		return moves[bestMove];
-	}
+		return () => {
+			clearTimeout(timeoutId);
+		};
+	}, [currentMove]);
 
 	useEffect(() => {
 		checkIfWinnerFind();
@@ -152,7 +88,7 @@ export const WithBotSession = () => {
 			<GameInfo playersData={playersData} currentMove={currentMove} gameStatusMessage={gameStatusMessage} />
 			<PlayField>
 				{currentBoardState.map((item, index) => {
-					return <FieldCell key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+					return <FieldCell blockMove={currentMove.player !== 'Player'} key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
 				})}
 			</PlayField>
 			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={resetState} icon={'restart'} />

@@ -9,9 +9,13 @@ const symbols: Record<SymbolTypes, React.ReactNode> = {
 	empty: <></>,
 };
 
-export const FieldCell: React.FC<FieldCellProps> = ({ symbolName, highlight, markCell, index }) => {
+export const FieldCell: React.FC<FieldCellProps> = ({ symbolName, highlight, markCell, index, blockMove = false }) => {
 	return (
-		<div onClick={() => markCell(index)} className={classNames('field-cell', { 'field-cell--nought-active': highlight && symbolName === 'nought', 'field-cell--cross-active': highlight && symbolName === 'cross' })}>
+		<div
+			onClick={() => {
+				if (!blockMove) markCell(index);
+			}}
+			className={classNames('field-cell', { 'field-cell--nought-active': highlight && symbolName === 'nought', 'field-cell--cross-active': highlight && symbolName === 'cross' })}>
 			{symbols[symbolName]}
 		</div>
 	);
