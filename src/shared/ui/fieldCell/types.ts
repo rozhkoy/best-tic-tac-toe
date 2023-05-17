@@ -3,6 +3,7 @@ export interface FieldCellProps {
 	highlight: boolean;
 	markCell: (index: number) => void;
 	index: number;
+	blockMove?: boolean;
 }
 
 export interface ICellData {

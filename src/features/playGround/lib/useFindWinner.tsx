@@ -57,7 +57,7 @@ export function useFindWinner(
 					return true;
 				}
 			}
-			if (currentMove.numberOfMoves >= 8) {
+			if (currentMove.numberOfMoves > 8) {
 				eventIfDraw();
 			}
 		}
@@ -74,7 +74,6 @@ export function useFindWinner(
 		for (let i = 0; i < 9; i++) {
 			filledBoard.push({ ...cellDataTemplate });
 		}
-
 		setCurrentBoardState(filledBoard);
 	}
 
