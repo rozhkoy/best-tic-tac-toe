@@ -1,11 +1,11 @@
-import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from 'features/playGround';
+import { GameBoardWrap, GameInfo, PlayField, useFindWinner } from 'features/playGround';
 import { useEffect, useState } from 'react';
 import { FieldCell } from 'shared/ui/fieldCell';
 import { GameStatusMessage, IPlayerData } from 'features/playGround/types';
 import { nanoid } from 'nanoid';
 import { Button } from 'shared/ui/button';
 import { useParams } from 'react-router-dom';
-import { useMiniMax } from 'features/playGround/lib/useMiniMax';
+import { useMiniMax } from 'features/playGround/lib/useMinMax';
 import { ParamsWithBotSessionPageTypes } from './types';
 
 export const WithBotSession = () => {
@@ -14,11 +14,11 @@ export const WithBotSession = () => {
 		{ nickName: 'Player', score: 0 },
 		{ nickName: 'Bot', score: 0 },
 	]);
-	const { playFieldState, resetState, currentMove, markCell, isWinner } = usePlayFieldHandler(
+	const { currentBoardState, isWinner, checkIfWinnerFind, setCurrentBoardState, currentMove, resetState, setCurrentMove } = useFindWinner(
 		[],
 		playersData,
-		(symbol) => {
-			switch (symbol) {
+		() => {
+			switch (currentMove.symbol) {
 				case 'cross':
 					setGameStatusMessage(({ ...value }) => {
 						value.color = 'secondary';
@@ -28,7 +28,7 @@ export const WithBotSession = () => {
 					});
 
 					setPlayersData(({ ...value }) => {
-						value[1].score = ++value[0].score;
+						value[1].score = ++value[1].score;
 						return value;
 					});
 					break;
@@ -40,7 +40,7 @@ export const WithBotSession = () => {
 						return value;
 					});
 					setPlayersData(({ ...value }) => {
-						value[0].score = ++value[1].score;
+						value[0].score = ++value[0].score;
 						return value;
 					});
 					break;
@@ -68,12 +68,38 @@ export const WithBotSession = () => {
 	});
 	const { miniMax } = useMiniMax(hardLevel ?? 'Easy');
 
+	function markCell(index: number) {
+		if (!isWinner) {
+			const boardState = structuredClone(currentBoardState);
+			if (boardState[index].symbol === 'empty') {
+				boardState[index].symbol = currentMove.symbol;
+				setCurrentBoardState(boardState);
+				checkIfWinnerFind();
+				if (currentMove.symbol === 'cross') {
+					setCurrentMove(({ ...value }) => {
+						value.symbol = 'nought';
+						value.player = playersData[1].nickName;
+						value.numberOfMoves = ++value.numberOfMoves;
+						return value;
+					});
+				} else {
+					setCurrentMove(({ ...value }) => {
+						value.symbol = 'cross';
+						value.player = playersData[0].nickName;
+						value.numberOfMoves = ++value.numberOfMoves;
+						return value;
+					});
+				}
+			}
+		}
+	}
+
 	useEffect(() => {
 		let timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {}, 500);
 
 		if (currentMove.player === 'Bot' && !isWinner) {
 			timeoutId = setTimeout(() => {
-				const moveResult = miniMax(playFieldState, 'nought', 0);
+				const moveResult = miniMax(currentBoardState, 'nought', 0);
 				if (moveResult.index) {
 					markCell(moveResult.index);
 				}
@@ -85,11 +111,15 @@ export const WithBotSession = () => {
 		};
 	}, [currentMove]);
 
+	useEffect(() => {
+		checkIfWinnerFind();
+	}, [currentBoardState]);
+
 	return (
 		<GameBoardWrap>
 			<GameInfo playersData={playersData} currentMove={currentMove} gameStatusMessage={gameStatusMessage} />
 			<PlayField>
-				{playFieldState.map((item, index) => {
+				{currentBoardState.map((item, index) => {
 					return <FieldCell blockMove={currentMove.player !== 'Player'} key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
 				})}
 			</PlayField>
