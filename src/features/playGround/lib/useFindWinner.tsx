@@ -57,7 +57,7 @@ export function useFindWinner(
 					return true;
 				}
 			}
-			if (currentMove.numberOfMoves >= 8) {
+			if (currentMove.numberOfMoves > 8) {
 				eventIfDraw();
 			}
 		}

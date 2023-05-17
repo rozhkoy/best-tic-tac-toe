@@ -4,10 +4,8 @@ import { FieldCell } from 'shared/ui/fieldCell';
 import { GameStatusMessage, IPlayerData } from 'features/playGround/types';
 import { nanoid } from 'nanoid';
 import { Button } from 'shared/ui/button';
-import { ICellData } from 'shared/ui/fieldCell/types';
 import { useParams } from 'react-router-dom';
 import { useMiniMax } from 'features/playGround/lib/useMinMax';
-import { HardLevelTypes } from 'features/gameSelector/types';
 import { ParamsWithBotSessionPageTypes } from './types';
 
 export const WithBotSession = () => {
@@ -20,13 +18,47 @@ export const WithBotSession = () => {
 		[],
 		playersData,
 		() => {
-			console.log('won');
+			switch (currentMove.symbol) {
+				case 'cross':
+					setGameStatusMessage(({ ...value }) => {
+						value.color = 'secondary';
+						value.isShow = true;
+						value.message = 'You Won!';
+						return value;
+					});
+
+					setPlayersData(({ ...value }) => {
+						value[1].score = ++value[1].score;
+						return value;
+					});
+					break;
+				case 'nought':
+					setGameStatusMessage(({ ...value }) => {
+						value.color = 'red';
+						value.isShow = true;
+						value.message = 'You Lost!';
+						return value;
+					});
+					setPlayersData(({ ...value }) => {
+						value[0].score = ++value[0].score;
+						return value;
+					});
+					break;
+			}
 		},
 		() => {
-			console.log('draw');
+			setGameStatusMessage({
+				message: 'Draw!',
+				isShow: true,
+				color: 'secondary',
+			});
 		},
 		() => {
-			console.log('reset');
+			setGameStatusMessage({
+				message: '',
+				isShow: false,
+				color: 'secondary',
+			});
 		}
 	);
 	const [gameStatusMessage, setGameStatusMessage] = useState<GameStatusMessage>({
@@ -38,7 +70,7 @@ export const WithBotSession = () => {
 
 	function markCell(index: number) {
 		if (!isWinner) {
-			const boardState = currentBoardState.slice();
+			const boardState = structuredClone(currentBoardState);
 			if (boardState[index].symbol === 'empty') {
 				boardState[index].symbol = currentMove.symbol;
 				setCurrentBoardState(boardState);
@@ -65,7 +97,7 @@ export const WithBotSession = () => {
 	useEffect(() => {
 		let timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {}, 500);
 
-		if (currentMove.player === 'Bot') {
+		if (currentMove.player === 'Bot' && !isWinner) {
 			timeoutId = setTimeout(() => {
 				const moveResult = miniMax(currentBoardState, 'nought', 0);
 				if (moveResult.index) {
