@@ -27,7 +27,7 @@ export function usePlayFieldHandler(
 	});
 
 	function markCell(index: number) {
-		if (!isWinner) {
+		if (isWinner) {
 			return;
 		}
 		const boardState = structuredClone(playFieldState);
