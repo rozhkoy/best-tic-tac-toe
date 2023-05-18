@@ -28,26 +28,27 @@ export function usePlayFieldHandler(
 
 	function markCell(index: number) {
 		if (!isWinner) {
-			const boardState = structuredClone(playFieldState);
-			if (boardState[index].symbol === 'empty') {
-				boardState[index].symbol = currentMove.symbol;
-				setPlayFiledStateState(boardState);
-				checkIfWinnerFind(boardState, currentMove.symbol);
-				if (currentMove.symbol === 'cross') {
-					setCurrentMove(({ ...value }) => {
-						value.symbol = 'nought';
-						value.player = playersData[1].nickName;
-						value.numberOfMoves = ++value.numberOfMoves;
-						return value;
-					});
-				} else {
-					setCurrentMove(({ ...value }) => {
-						value.symbol = 'cross';
-						value.player = playersData[0].nickName;
-						value.numberOfMoves = ++value.numberOfMoves;
-						return value;
-					});
-				}
+			return;
+		}
+		const boardState = structuredClone(playFieldState);
+		if (boardState[index].symbol === 'empty') {
+			boardState[index].symbol = currentMove.symbol;
+			setPlayFiledStateState(boardState);
+			checkIfWinnerFind(boardState, currentMove.symbol);
+			if (currentMove.symbol === 'cross') {
+				setCurrentMove(({ ...value }) => {
+					value.symbol = 'nought';
+					value.player = playersData[1].nickName;
+					value.numberOfMoves = ++value.numberOfMoves;
+					return value;
+				});
+			} else {
+				setCurrentMove(({ ...value }) => {
+					value.symbol = 'cross';
+					value.player = playersData[0].nickName;
+					value.numberOfMoves = ++value.numberOfMoves;
+					return value;
+				});
 			}
 		}
 	}
