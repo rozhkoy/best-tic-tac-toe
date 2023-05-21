@@ -51,8 +51,7 @@ export function useFirebaseAuth(eventAfterAuth: () => void): { googleAuth: () =>
 		createUserWithEmailAndPassword(auth, email, password)
 			.then((userCredential) => {})
 			.catch((error) => {
-				const errorCode = error.code;
-				const errorMessage = error.message;
+				console.log(error.message);
 			});
 	}
 
