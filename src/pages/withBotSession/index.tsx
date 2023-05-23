@@ -1,11 +1,11 @@
-import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from 'features/playGround';
+import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
 import { useEffect, useState } from 'react';
-import { FieldCell } from 'shared/ui/fieldCell';
-import { GameStatusMessage, IPlayerData } from 'features/playGround/types';
+import { FieldCell } from '@/shared/ui/fieldCell';
+import { GameStatusMessage, IPlayerData } from '@/features/playGround/types';
 import { nanoid } from 'nanoid';
-import { Button } from 'shared/ui/button';
+import { Button } from '@/shared/ui/button';
 import { useParams } from 'react-router-dom';
-import { useMiniMax } from 'features/playGround/lib/useMiniMax';
+import { useMiniMax } from '@/features/playGround/lib/useMiniMax';
 import { ParamsWithBotSessionPageTypes } from './types';
 
 export const WithBotSession = () => {
