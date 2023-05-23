@@ -1,4 +1,4 @@
-import { PropsWithClassName } from "shared/types/propsWithClassName";
+import { PropsWithClassName } from "@/shared/types/propsWithClassName";
 export interface HistoryItemProps extends PropsWithClassName {
   nickname: string;
   date: string;

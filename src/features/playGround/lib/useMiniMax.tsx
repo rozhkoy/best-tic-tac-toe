@@ -1,6 +1,6 @@
-import { ICellData, SymbolTypes } from 'shared/ui/fieldCell/types';
+import { ICellData, SymbolTypes } from '@/shared/ui/fieldCell/types';
 import { IMoveInfo } from '../types';
-import { HardLevelTypes } from 'features/gameSelector/types';
+import { HardLevelTypes } from '@/features/gameSelector/types';
 
 export function useMiniMax(hardLevel: HardLevelTypes): { miniMax: (playFieldState: ICellData[], currentSymbol: SymbolTypes, depth: number) => IMoveInfo } {
 	function findemptyCellsIndexes(playFieldState: ICellData[]): Array<number> {

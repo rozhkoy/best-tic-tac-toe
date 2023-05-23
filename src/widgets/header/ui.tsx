@@ -1,7 +1,7 @@
-import { UserPanel } from 'entities/user';
+import { UserPanel } from '@/entities/user';
 import './styles.scss';
-import { Logo } from 'shared/ui/logo';
-import { Navbar } from 'features/navigation';
+import { Logo } from '@/shared/ui/logo';
+import { Navbar } from '@/features/navigation';
 
 export const Header = () => {
 	return (

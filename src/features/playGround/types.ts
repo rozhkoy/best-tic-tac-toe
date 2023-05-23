@@ -1,4 +1,4 @@
-import { SymbolTypes } from 'shared/ui/fieldCell/types';
+import { SymbolTypes } from '@/shared/ui/fieldCell/types';
 
 export interface IPlayerData {
 	nickName: string;

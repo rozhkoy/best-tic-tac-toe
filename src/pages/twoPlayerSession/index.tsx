@@ -1,9 +1,9 @@
 import './styles.scss';
-import { Button } from 'shared/ui/button';
+import { Button } from '@/shared/ui/button';
 import { useState } from 'react';
-import { FieldCell } from 'shared/ui/fieldCell';
-import { GameStatusMessage, IPlayerData } from 'features/playGround/types';
-import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from 'features/playGround';
+import { FieldCell } from '@/shared/ui/fieldCell';
+import { GameStatusMessage, IPlayerData } from '@/features/playGround/types';
+import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
 import { nanoid } from 'nanoid';
 
 export const TwoPlayerSession = () => {
