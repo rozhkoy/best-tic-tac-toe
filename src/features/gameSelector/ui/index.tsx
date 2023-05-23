@@ -1,11 +1,11 @@
 import './styles.scss';
-import { Devider } from 'shared/ui/devider';
-import { Button } from 'shared/ui/button';
+import { Devider } from '@/shared/ui/devider';
+import { Button } from '@/shared/ui/button';
 import { useState } from 'react';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
-import { routes } from 'app/provider/routes';
-import { CustomRadio } from 'shared/ui/CustomRadio';
+import { routes } from '@/app/provider/routes';
+import { CustomRadio } from '@/shared/ui/CustomRadio';
 
 export const GameSelector = () => {
 	const [gameMode, setGameMode] = useState<string>('1p');

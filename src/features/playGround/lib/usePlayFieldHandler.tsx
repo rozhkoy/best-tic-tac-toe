@@ -1,5 +1,5 @@
 import { useState, Dispatch, SetStateAction, useEffect } from 'react';
-import { ICellData, SymbolTypes } from 'shared/ui/fieldCell/types';
+import { ICellData, SymbolTypes } from '@/shared/ui/fieldCell/types';
 import { ICurrentMove, IPlayerData } from '../types';
 
 export function usePlayFieldHandler(
