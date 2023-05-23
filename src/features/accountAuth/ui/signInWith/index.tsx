@@ -1,6 +1,6 @@
 import { Button } from '@/shared/ui/button';
 import './styles.scss';
-import { useFirebaseAuth } from 'features/accountAuth/lib/useFirebaseAuth';
+import { useFirebaseAuth } from '@/features/accountAuth/lib/useFirebaseAuth';
 import { redirect, useNavigate } from 'react-router-dom';
 
 export const SignInWith = () => {

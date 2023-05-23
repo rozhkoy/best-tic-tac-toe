@@ -1,8 +1,8 @@
 import { SignUpFormProps } from './types';
-import { FormWrap } from 'shared/ui/formWrap';
-import { FormInput } from 'shared/ui/formInput';
-import { Button } from 'shared/ui/button';
-import { useFirebaseAuth } from 'features/accountAuth/lib/useFirebaseAuth';
+import { FormWrap } from '@/shared/ui/formWrap';
+import { FormInput } from '@/shared/ui/formInput';
+import { Button } from '@/shared/ui/button';
+import { useFirebaseAuth } from '@/features/accountAuth/lib/useFirebaseAuth';
 import { ObjectSchema, object, string } from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
