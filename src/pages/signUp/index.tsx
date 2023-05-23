@@ -9,7 +9,7 @@ export const SignUp = () => {
 		<AuthFrame>
 			<Container size={'medium'}>
 				<FormHeader heading={'Create accaunt'} subHeading={'to get started now!'} />
-				<SignUpForm name={''} email={''} password={''} confirmPassword={''} />
+				<SignUpForm />
 				<SignInWith />
 			</Container>
 		</AuthFrame>

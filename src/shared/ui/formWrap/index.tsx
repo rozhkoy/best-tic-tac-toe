@@ -1,7 +1,10 @@
-import { Form } from 'formik';
-import { PropsWithChildren } from 'react';
 import './styles.scss';
+import { FormWrapProps } from './types';
 
-export const FormWrap: React.FC<PropsWithChildren> = ({ children }) => {
-	return <Form className="form-wrap">{children}</Form>;
+export const FormWrap: React.FC<FormWrapProps> = ({ children, onSubmit }) => {
+	return (
+		<form className="form-wrap" onSubmit={onSubmit}>
+			{children}
+		</form>
+	);
 };
