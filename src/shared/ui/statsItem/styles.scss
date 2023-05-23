@@ -1,0 +1,19 @@
+.stats-item {
+	border-radius: 10px;
+	padding: 20px;
+	background-color: var(--color-primary);
+	color: var(--color-secondary);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	line-height: 1.5;
+
+	&__number {
+		font-size: 48px;
+	}
+	&__text {
+		font-weight: 400;
+		font-size: 20px;
+	}
+}
