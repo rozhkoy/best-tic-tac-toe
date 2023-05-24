@@ -28,20 +28,6 @@
 		background-color: var(--color-red);
 	}
 
-	&::after {
-		--offset: -8px;
-		content: '';
-		position: absolute;
-		top: var(--offset);
-		left: var(--offset);
-		right: var(--offset);
-		bottom: var(--offset);
-		border: 2px dashed var(--color-secondary);
-		border-radius: 200px;
-		pointer-events: none;
-		opacity: 0;
-	}
-
 	&--active {
 		--x: 10px;
 		--o: 1;
