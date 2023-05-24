@@ -1,0 +1,66 @@
+.toggle-btn {
+	--x: -10px;
+	--o: 0.6;
+
+	position: relative;
+	display: block;
+	width: 55px;
+	height: 32px;
+	border: 2px solid var(--color-secondary);
+	background-color: var(--color-primary);
+	border-radius: 200px;
+	cursor: pointer;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(calc(-50% + var(--x)), -50%);
+		transition-property: transform, opacity, background-color;
+		transition-duration: var(--transition-duration);
+		transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+		display: block;
+		width: 19px;
+		height: 19px;
+		border-radius: 50%;
+		opacity: var(--o);
+		background-color: var(--color-red);
+	}
+
+	&::after {
+		--offset: -8px;
+		content: '';
+		position: absolute;
+		top: var(--offset);
+		left: var(--offset);
+		right: var(--offset);
+		bottom: var(--offset);
+		border: 2px dashed var(--color-secondary);
+		border-radius: 200px;
+		pointer-events: none;
+		opacity: 0;
+	}
+
+	&--active {
+		--x: 10px;
+		--o: 1;
+
+		&::before {
+			background-color: var(--color-secondary);
+		}
+	}
+
+	&--disabled {
+		border-color: var(--color-disabled);
+		&::before {
+			background-color: var(--color-disabled);
+		}
+	}
+
+	&__input {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+}
