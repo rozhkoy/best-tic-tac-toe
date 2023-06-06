@@ -7,7 +7,7 @@ import { Game } from '@/pages/game';
 import { TwoPlayerSession } from '@/pages/twoPlayerSession';
 import { WithBotSession } from '@/pages/withBotSession';
 
-export const Provider = () => {
+export const AppProvider = () => {
 	const router = createBrowserRouter([
 		{
 			path: routes.HOME,

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.0",
+    "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
     "classnames": "^2.3.2",
     "firebase": "^9.22.0",
@@ -19,6 +20,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.9",
     "react-query": "^3.39.3",
+    "react-redux": "^8.0.7",
     "react-router-dom": "^6.11.2",
     "sass": "^1.62.1",
     "yup": "^1.1.1"

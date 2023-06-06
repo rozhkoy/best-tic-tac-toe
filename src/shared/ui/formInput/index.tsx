@@ -2,17 +2,16 @@ import { FormInputProps } from './types';
 import './styles.scss';
 import { Icon } from './../icon/index';
 import classNames from 'classnames';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef, useRef, ForwardedRef } from 'react';
 
-export const FormInput: React.FC<FormInputProps> = ({ className, type, placeholder, touched, error, onBlur, onChange, value, name, ref }) => {
-	const [isError, setIsError] = useState(false);
+export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({ placeholder, type, className, error, onChange, onBlur, name, touched }, ref) => {
+	const [isError, setIsError] = useState(true);
 	const [highlightInput, setHighlightInput] = useState(false);
 	const [isTransition, setIsTransition] = useState(false);
 
 	useEffect(() => {
-		console.log(error, touched);
-		let isErrorTimeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {}, 1000);
-		let isTransitionTimeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {}, 300);
+		let isErrorTimeoutId: ReturnType<typeof setTimeout>;
+		let isTransitionTimeoutId: ReturnType<typeof setTimeout>;
 		if (error?.message && touched) {
 			setIsError(true);
 			setHighlightInput(true);
@@ -21,7 +20,7 @@ export const FormInput: React.FC<FormInputProps> = ({ className, type, placehold
 				isErrorTimeoutId = setTimeout(() => {
 					setIsError(false);
 					setIsTransition(false);
-				}, 400);
+				}, 500);
 			}, 700);
 		} else {
 			setIsError(false);
@@ -36,14 +35,21 @@ export const FormInput: React.FC<FormInputProps> = ({ className, type, placehold
 
 	return (
 		<div className="form-input">
-			{/* <input onBlur={onBlur} onChange={onChange} value={value} name={name}  className={classNames('form-input__input', className, { 'form-input__input--error': highlightInput })} placeholder={placeholder} type={type} />
-
+			<input
+				onChange={onChange}
+				onBlur={onBlur}
+				name={name}
+				ref={ref}
+				className={classNames('form-input__input', className, { 'form-input__input--error': highlightInput })}
+				placeholder={placeholder}
+				type={type}
+			/>
 			{isError && touched ? (
 				<div className={classNames('form-input__error', { 'form-input__error--transtion': isTransition })}>
 					<Icon name="info" className="form-input__error-icon" />
-					<span className="form-input__error-text">{error ?.message}</span>
+					<span className="form-input__error-text">{error?.message}</span>
 				</div>
-			) : null} */}
+			) : null}
 		</div>
 	);
-};
+});

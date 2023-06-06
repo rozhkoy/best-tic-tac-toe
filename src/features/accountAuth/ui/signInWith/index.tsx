@@ -1,13 +1,17 @@
 import { Button } from '@/shared/ui/button';
 import './styles.scss';
-import { useFirebaseAuth } from '@/features/accountAuth/lib/useFirebaseAuth';
-import { redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const SignInWith = () => {
 	const navigate = useNavigate();
-	const { googleAuth, facebookAuth } = useFirebaseAuth(() => {
-		console.log('auth');
-	});
+
+	function facebookAuth(): void {
+		throw new Error('Function not implemented.');
+	}
+
+	function googleAuth(): void {
+		throw new Error('Function not implemented.');
+	}
 
 	return (
 		<div className="sign-in-with">

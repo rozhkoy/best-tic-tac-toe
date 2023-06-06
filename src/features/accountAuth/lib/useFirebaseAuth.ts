@@ -49,7 +49,9 @@ export function useFirebaseAuth(eventAfterAuth: () => void): { googleAuth: () =>
 
 	function createAccount(email: string, password: string, name: string) {
 		createUserWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {})
+			.then((userCredential) => {
+				console.log(userCredential);
+			})
 			.catch((error) => {
 				console.log(error.message);
 			});

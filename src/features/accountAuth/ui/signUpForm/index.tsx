@@ -1,21 +1,22 @@
 import { SignUpFormProps } from './types';
 import { FormWrap } from '@/shared/ui/formWrap';
-import { FormInput } from '@/shared/ui/formInput';
 import { Button } from '@/shared/ui/button';
 import { useFirebaseAuth } from '@/features/accountAuth/lib/useFirebaseAuth';
 import { ObjectSchema, object, string } from 'yup';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useEffect } from 'react';
-import { error } from 'console';
+import { FormInput } from '@/shared/ui/formInput';
+import { ref } from 'yup';
 
 export const SignUpForm = () => {
-	const signUpSchema: ObjectSchema<SignUpFormProps> = object({
+	const signUpSchema: ObjectSchema<SignUpFormProps> = object().shape({
 		name: string().required('Required').min(2, 'Too short!').max(20, 'Too long!'),
-		email: string().required('Required').email('Invalid email'),
-		password: string().required('Required').min(2, 'Too short!').max(50, 'Too long!'),
-		confirmPassword: string().required('Required').min(2, 'Too short!').max(50, 'Too long!'),
+		email: string().email('Invalid email').required('Required'),
+		password: string().min(2, 'Too short!').max(50, 'Too long!').required('Required'),
+		confirmPassword: string()
+			.required('Required')
+			.oneOf([ref('password')], 'The fields must be the same'),
 	});
 
 	type FormDataTypes = yup.InferType<typeof signUpSchema>;
@@ -23,31 +24,25 @@ export const SignUpForm = () => {
 	const {
 		register,
 		handleSubmit,
-		control,
 		formState: { errors, touchedFields },
+		trigger,
 	} = useForm<FormDataTypes>({
 		mode: 'onBlur',
 		resolver: yupResolver(signUpSchema),
 	});
+
 	const { createAccount } = useFirebaseAuth(() => {
 		console.log('test');
 	});
 
 	const formHanler = (data: FormDataTypes) => console.log(data);
-
 	return (
 		<FormWrap onSubmit={handleSubmit(formHanler)}>
-			<Controller
-				name="name"
-				render={({ field }) => {
-					return <FormInput {...field} placeholder={'Name'} type={'text'} error={errors.name} touched={touchedFields.name} />;
-				}}
-				control={control}
-			/>
-			{/* <FormInput register={{ ...register('email') }} placeholder={'Email'} type={'text'} error={errors.email} touched={touchedFields.email} />
-			<FormInput register={{ ...register('password') }} placeholder={'Password'} type={'password'} error={errors.password} touched={touchedFields.password} />
-			<FormInput register={{ ...register('confirmPassword') }} placeholder={'Confirm password'} type={'password'} error={errors.confirmPassword} touched={touchedFields.confirmPassword} /> */}
-			<Button className={''} size={'medium'} variant={'primary'} fullWidth={true} title={'Sign up'} type={'submit'} />{' '}
+			<FormInput {...register('name')} placeholder={'Name'} error={errors.name} type={'text'} touched={touchedFields.name} />
+			<FormInput {...register('email')} placeholder={'Email'} error={errors.email} type={'text'} touched={touchedFields.email} />
+			<FormInput {...register('password')} placeholder={'Password'} error={errors.password} type={'password'} touched={touchedFields.password} />
+			<FormInput {...register('confirmPassword')} placeholder={'Confirm password'} error={errors.confirmPassword} type={'password'} touched={touchedFields.confirmPassword} />
+			<Button className={''} size={'medium'} variant={'primary'} fullWidth={true} title={'Sign Up'} type={'submit'} />
 		</FormWrap>
 	);
 };
