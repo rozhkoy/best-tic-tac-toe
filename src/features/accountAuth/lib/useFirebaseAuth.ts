@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { FacebookAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, signInWithPopup } from 'firebase/auth';
+import { GithubAuthProvider, GoogleAuthProvider, UserInfo, createUserWithEmailAndPassword, getAuth, signInWithPopup } from 'firebase/auth';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDsgttm4Wu9CKUujREsyrYP6TXIZh4MU7I',
@@ -11,7 +11,11 @@ const firebaseConfig = {
 	measurementId: 'G-1JX1YKRJJT',
 };
 
-export function useFirebaseAuth(eventAfterAuth: () => void): { googleAuth: () => void; facebookAuth: () => void; createAccount: (email: string, password: string, name: string) => void } {
+export function useFirebaseAuth(eventAfterAuth: (userInfo: UserInfo) => void): {
+	googleAuth: () => void;
+	githubAuth: () => void;
+	createAccount: (email: string, password: string, name: string) => void;
+} {
 	const firebaseApplication = initializeApp(firebaseConfig);
 	const auth = getAuth(firebaseApplication);
 
@@ -20,30 +24,20 @@ export function useFirebaseAuth(eventAfterAuth: () => void): { googleAuth: () =>
 		signInWithPopup(auth, provider)
 			.then((result) => {
 				const credential = GoogleAuthProvider.credentialFromResult(result);
-				console.log(credential, result.user);
-				eventAfterAuth();
+				eventAfterAuth(result.user);
 			})
 			.catch((error) => {
-				const errorCode = error.code;
-				const errorMessage = error.message;
-				const email = error.customData.email;
-				const credential = GoogleAuthProvider.credentialFromError(error);
+				console.log(error);
 			});
 	}
-
-	function facebookAuth() {
-		const provider = new FacebookAuthProvider();
+	function githubAuth() {
+		const provider = new GithubAuthProvider();
 		signInWithPopup(auth, provider)
 			.then((result) => {
-				const credential = FacebookAuthProvider.credentialFromResult(result);
-				console.log(credential, result.user);
-				eventAfterAuth();
+				const credential = GithubAuthProvider.credentialFromResult(result);
 			})
 			.catch((error) => {
-				const errorCode = error.code;
-				const errorMessage = error.message;
-				const email = error.customData.email;
-				const credential = FacebookAuthProvider.credentialFromError(error);
+				console.log(error);
 			});
 	}
 
@@ -57,5 +51,5 @@ export function useFirebaseAuth(eventAfterAuth: () => void): { googleAuth: () =>
 			});
 	}
 
-	return { googleAuth, facebookAuth, createAccount };
+	return { googleAuth, githubAuth, createAccount };
 }
