@@ -1,16 +1,16 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-interface userState {
-	nickName: string;
-	email: string;
+interface IUserState {
+	nickname: string;
+	rating: number;
 	isAuth: boolean;
 	userId: string;
 }
 
-const initialState: userState = {
-	nickName: '',
+const initialState: IUserState = {
+	nickname: '',
 	userId: '',
-	email: '',
+	rating: 0,
 	isAuth: false,
 };
 
@@ -18,10 +18,11 @@ export const userSlice = createSlice({
 	name: 'userSlice',
 	initialState: initialState,
 	reducers: {
-		updateUserInfo: (state, action: PayloadAction<{ email: string }>) => {
-			state.nickName = 'test';
-			state.email = action.payload.email;
-			state.isAuth = true;
+		updateUserInfo: (state, { payload }: PayloadAction<IUserState>) => {
+			state.nickname = payload.nickname;
+			state.rating = payload.rating;
+			state.isAuth = payload.isAuth;
+			state.userId = payload.userId;
 		},
 	},
 });

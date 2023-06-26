@@ -6,9 +6,6 @@ import { useFirebaseAuth } from '../..';
 import { updateUserInfo } from '@/entities/user';
 
 export const SignInWith = () => {
-	// const navigate = useNavigate();
-	// const dispatch = useAppDispatch();
-
 	const { googleAuth, githubAuth, signOutAccount } = useFirebaseAuth();
 
 	return (

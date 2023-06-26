@@ -1,6 +1,6 @@
-import { ICreateFormData } from './types';
+import { IFormDataObject } from './types';
 
-export function createFormData(obj: Array<ICreateFormData>) {
+export function createFormData(obj: Array<IFormDataObject>) {
 	const formData = new FormData();
 	obj.map((item) => {
 		formData.append(item.key, item.value);

@@ -13,7 +13,7 @@ export const Header = () => {
 				<Logo className="header__logo" />
 				<Navbar />
 			</div>
-			{userState.isAuth ? <UserPanel /> : <AuthBtnsHeader />}
+			{userState.isAuth ? <UserPanel nickname={userState.nickname} rating={userState.rating} /> : <AuthBtnsHeader />}
 		</div>
 	);
 };
