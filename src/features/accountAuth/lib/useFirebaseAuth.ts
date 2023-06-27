@@ -1,6 +1,5 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { initializeApp } from 'firebase/app';
-import { GithubAuthProvider, GoogleAuthProvider, UserInfo, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { useMutation } from '@tanstack/react-query';
+import { GithubAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { getUserInfoByUid, registrationNewUser } from '../api';
 import { IGetUserInfoByUid } from '../types';
 import { useState, Dispatch } from 'react';
@@ -8,23 +7,11 @@ import { createFormData } from '@/shared/lib/CreateFormData';
 import { nanoid } from 'nanoid';
 import { IFormDataObject } from '@/shared/lib/CreateFormData/types';
 import { RegistrationInfoFieldsTypes } from './../types';
-import { useDispatch } from 'react-redux';
+
 import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 import { updateUserInfo } from '@/entities/user';
 import { useNavigate } from 'react-router-dom';
-
-const firebaseConfig = {
-	apiKey: 'AIzaSyDsgttm4Wu9CKUujREsyrYP6TXIZh4MU7I',
-	authDomain: 'photogallery-823c6.firebaseapp.com',
-	projectId: 'photogallery-823c6',
-	storageBucket: 'photogallery-823c6.appspot.com',
-	messagingSenderId: '551103906843',
-	appId: '1:551103906843:web:5de0ae290c6bd0f54a24be',
-	measurementId: 'G-1JX1YKRJJT',
-};
-
-const firebaseApplication = initializeApp(firebaseConfig);
-export const auth = getAuth(firebaseApplication);
+import { auth } from '@/shared/lib/firebase';
 
 export function useFirebaseAuth(): {
 	googleAuth: () => void;
@@ -34,12 +21,14 @@ export function useFirebaseAuth(): {
 } {
 	const dispatch = useAppDispatch();
 	const navigation = useNavigate();
+
 	const [registrationUserInfo, setRegistrationUserInfo] = useState<Record<RegistrationInfoFieldsTypes, string>>({ uid: '', nickname: '', settingsCode: '' });
+
 	const registrationNewUserMutation = useMutation({
 		mutationFn: (formData: FormData) => registrationNewUser(formData),
 		onSuccess: ({ userResponse: { nickname, userId, rating } }) => {
 			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true }));
-			navigation('/');
+			// navigation('/');
 		},
 		onError: (res) => console.log(res),
 	});
@@ -67,9 +56,9 @@ export function useFirebaseAuth(): {
 	function googleAuth() {
 		const provider = new GoogleAuthProvider();
 		signInWithPopup(auth, provider)
-			.then((result) => {
-				const credential = GoogleAuthProvider.credentialFromResult(result);
-				userInfoByUidMutation.mutate({ uid: result.user.uid });
+			.then(({ user }) => {
+				setRegistrationUserInfo({ uid: user.uid, nickname: user.displayName ?? 'user' + nanoid(), settingsCode: nanoid() });
+				userInfoByUidMutation.mutate({ uid: user.uid });
 			})
 			.catch((error) => {
 				console.log(error);
