@@ -1,1 +1,4 @@
-export { UserPanel } from './ui/userInfo/index';
+import { userSlice } from '@/entities/user/store';
+export { UserPanel } from './ui/userInfo';
+export { userSlice } from '@/entities/user/store';
+export const { updateUserInfo } = userSlice.actions;
