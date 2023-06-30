@@ -1,24 +1,9 @@
 import axios from 'axios';
-import { Console, error } from 'console';
-import { config } from 'process';
-import { auth } from '../lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { resolve } from 'path';
-import { rejects } from 'assert';
+import { getUserIdToken } from '../lib/getUserIdToken';
 
 export const server = axios.create({
 	withCredentials: true,
 	baseURL: 'http://localhost:5000',
-});
-
-const userIdToken = new Promise((resolve, rejects) => {
-	onAuthStateChanged(auth, async (user) => {
-		if (user) {
-			resolve(await user.getIdToken());
-		} else {
-			rejects();
-		}
-	});
 });
 
 server.interceptors.response.use(
@@ -31,7 +16,7 @@ server.interceptors.response.use(
 );
 
 server.interceptors.request.use(async (config) => {
-	const idToken = await userIdToken;
+	const idToken = await getUserIdToken;
 	if (config.headers && idToken) {
 		config.headers.Authorization = String(idToken);
 	}

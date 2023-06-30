@@ -6,6 +6,8 @@ import { routes } from '@/app/provider/routes';
 import { Game } from '@/pages/game';
 import { TwoPlayerSession } from '@/pages/twoPlayerSession';
 import { WithBotSession } from '@/pages/withBotSession';
+import { useEffect } from 'react';
+import { useFirebaseAuth } from '@/features/accountAuth';
 
 export const AppProvider = () => {
 	const router = createBrowserRouter([
@@ -39,3 +41,6 @@ export const AppProvider = () => {
 
 	return <RouterProvider router={router} />;
 };
+function getAuthState() {
+	throw new Error('Function not implemented.');
+}

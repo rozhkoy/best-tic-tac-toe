@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { GithubAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
+import { GithubAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { getUserInfoByUid, registrationNewUser } from '../api';
 import { IGetUserInfoByUid } from '../types';
 import { useState, Dispatch } from 'react';
@@ -7,7 +7,6 @@ import { createFormData } from '@/shared/lib/CreateFormData';
 import { nanoid } from 'nanoid';
 import { IFormDataObject } from '@/shared/lib/CreateFormData/types';
 import { RegistrationInfoFieldsTypes } from './../types';
-
 import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 import { updateUserInfo } from '@/entities/user';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +17,7 @@ export function useFirebaseAuth(): {
 	githubAuth: () => void;
 	createAccount: (email: string, password: string, name: string) => void;
 	signOutAccount: () => void;
+	getAuthState: () => void;
 } {
 	const dispatch = useAppDispatch();
 	const navigation = useNavigate();
@@ -28,12 +28,12 @@ export function useFirebaseAuth(): {
 		mutationFn: (formData: FormData) => registrationNewUser(formData),
 		onSuccess: ({ userResponse: { nickname, userId, rating } }) => {
 			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true }));
-			// navigation('/');
+			navigation('/');
 		},
 		onError: (res) => console.log(res),
 	});
 
-	const userInfoByUidMutation = useMutation({
+	const signInMutation = useMutation({
 		mutationFn: (params: IGetUserInfoByUid) => getUserInfoByUid(params),
 		onSuccess: ({ nickname, userId, rating }) => {
 			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true }));
@@ -53,12 +53,19 @@ export function useFirebaseAuth(): {
 		},
 	});
 
+	const userInfoByUidMutation = useMutation({
+		mutationFn: (params: IGetUserInfoByUid) => getUserInfoByUid(params),
+		onSuccess: ({ nickname, userId, rating }) => {
+			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true }));
+		},
+	});
+
 	function googleAuth() {
 		const provider = new GoogleAuthProvider();
 		signInWithPopup(auth, provider)
 			.then(({ user }) => {
 				setRegistrationUserInfo({ uid: user.uid, nickname: user.displayName ?? 'user' + nanoid(), settingsCode: nanoid() });
-				userInfoByUidMutation.mutate({ uid: user.uid });
+				signInMutation.mutate({ uid: user.uid });
 			})
 			.catch((error) => {
 				console.log(error);
@@ -97,5 +104,13 @@ export function useFirebaseAuth(): {
 			});
 	}
 
-	return { googleAuth, githubAuth, createAccount, signOutAccount };
+	function getAuthState() {
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				userInfoByUidMutation.mutate({ uid: user.uid });
+			}
+		});
+	}
+
+	return { googleAuth, githubAuth, createAccount, signOutAccount, getAuthState };
 }
