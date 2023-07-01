@@ -77,7 +77,7 @@ export function useFirebaseAuth(): {
 		signInWithPopup(auth, provider)
 			.then(({ user }) => {
 				setRegistrationUserInfo({ uid: user.uid, nickname: user.displayName ?? 'user' + nanoid(), settingsCode: nanoid() });
-				userInfoByUidMutation.mutate({ uid: user.uid });
+				signInMutation.mutate({ uid: user.uid });
 			})
 			.catch((error) => {
 				console.log(error);
@@ -105,11 +105,13 @@ export function useFirebaseAuth(): {
 	}
 
 	function getAuthState() {
-		onAuthStateChanged(auth, async (user) => {
+		onAuthStateChanged(auth, (user) => {
 			if (user) {
 				userInfoByUidMutation.mutate({ uid: user.uid });
 			}
 		});
+
+		return false;
 	}
 
 	return { googleAuth, githubAuth, createAccount, signOutAccount, getAuthState };
