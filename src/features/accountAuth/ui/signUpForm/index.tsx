@@ -1,7 +1,6 @@
 import { SignUpFormProps } from './types';
 import { FormWrap } from '@/shared/ui/formWrap';
 import { Button } from '@/shared/ui/button';
-import { useFirebaseAuth } from '@/features/accountAuth/lib/useFirebaseAuth';
 import { ObjectSchema, object, string } from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -31,9 +30,7 @@ export const SignUpForm = () => {
 		resolver: yupResolver(signUpSchema),
 	});
 
-	const { createAccount } = useFirebaseAuth(() => {
-		console.log('test');
-	});
+
 
 	const formHanler = (data: FormDataTypes) => console.log(data);
 	return (
