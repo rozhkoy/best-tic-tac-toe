@@ -10,6 +10,10 @@
 		line-height: 24px;
 		letter-spacing: 0.04em;
 		text-decoration-line: underline;
-		color: var(--color-secondary);
+		color: var(--color-red);
+		transition: color var(--transition-duration);
+		&:hover {
+			color: var(--color-secondary)
+		}
 	}
 }
