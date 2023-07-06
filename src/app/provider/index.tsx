@@ -3,11 +3,10 @@ import { SignIn } from '@/pages/signIn';
 import { SignUp } from '@/pages/signUp';
 import { Wrap } from '@/pages/wrap';
 import { routes } from '@/app/provider/routes';
-import { Game } from '@/pages/game';
 import { TwoPlayerSession } from '@/pages/twoPlayerSession';
 import { WithBotSession } from '@/pages/withBotSession';
-import { useEffect } from 'react';
-import { useFirebaseAuth } from '@/features/accountAuth';
+import { Home } from '@/pages/home';
+
 
 export const AppProvider = () => {
 	const router = createBrowserRouter([
@@ -16,8 +15,8 @@ export const AppProvider = () => {
 			element: <Wrap />,
 			children: [
 				{
-					path: routes.GAME,
-					element: <Game />,
+					path: routes.HOME,
+					element: <Home />,
 				},
 				{
 					path: routes.TWO_PLAYERS_SESSION,
@@ -41,6 +40,4 @@ export const AppProvider = () => {
 
 	return <RouterProvider router={router} />;
 };
-function getAuthState() {
-	throw new Error('Function not implemented.');
-}
+

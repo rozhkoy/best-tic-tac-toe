@@ -1,0 +1,36 @@
+
+.search-bar {
+    background: var(--color-primary);
+        &--primary {
+            border: 2px solid  var(--color-primary)
+        }
+
+        &--secondary {
+            border: 2px solid  var(--color-light-gray)
+        }
+
+        border-radius: 10px;
+        padding: 20px 30px;
+        display: flex;
+        position: relative;
+        color: var(--color-secondary);
+        line-height: 1.5;
+
+		&__input {
+            width: 100%;
+            color: var(--color-secondary);
+            font-family: Poppins;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 1.5;
+            &::placeholder {
+                color: var(--color-light-gray);
+            }
+		}
+
+		&__icon {
+            position: absolute;
+            right: 30px;
+		}
+}
