@@ -3,11 +3,11 @@ import { FriendItemProps } from './types';
 import './styles.scss';
 import classNames from 'classnames';
 
-export const FriendItem: React.FC<FriendItemProps> = ({ children, size, alt, nickname, status, src, variant }) => {
+export const FriendItem: React.FC<FriendItemProps> = ({ children, nickname, status, src, variant }) => {
 	return (
-		<div className={classNames('friend-item', `friend-item--${variant}`)}>
-			<UserProfile className="friend-item__user-profile" nickname={'nick name'} status={'online'} src={'./assets/avatar.png'} />
-			{children}
-		</div>
+		<li className={classNames('friend-item', `friend-item--${variant}`)}>
+			<UserProfile size="small" className="friend-item__user-profile" nickname={nickname} status={status} src={src} />
+			<div className="friend-item__btns">{children}</div>
+		</li>
 	);
 };

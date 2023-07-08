@@ -1,10 +1,12 @@
+import { UserStatusTypes } from "../userStatus/types";
 
-
-import { UserProfileProps } from "../userProfile/types";
-
-export interface FriendItemProps extends UserProfileProps {
+export interface FriendItemProps  {
     children: React.ReactNode ;
     variant: FrienditemVariantTypes;
+    src: string;
+    status: UserStatusTypes;
+    nickname: string;
+
 }
 
 export type FrienditemVariantTypes = 'primary' | 'secondary'

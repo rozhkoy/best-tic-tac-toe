@@ -1,12 +1,16 @@
 import { Section } from '@/shared/ui/section';
 import './style.scss';
 import { StatsItem } from '@/shared/ui/statsItem';
-import { SetStateAction, useState } from 'react';
 import { HistoryItem } from '@/shared/ui/historyItem';
 import { GameSelector } from '@/features/gameSelector';
-import { FriendItem } from '@/shared/ui/friendItem';
 import { HistoryItemProps } from '@/shared/ui/historyItem/types';
-import { SearchBar } from '@/shared/ui/Searchbar';
+import { useState } from 'react';
+import { SearchBar } from '@/shared/ui/searchBar';
+import { FriendItem } from '@/shared/ui/friendItem';
+import { Button } from '@/shared/ui/button';
+import { ListWrap } from '@/shared/ui/listWrap';
+import { UserStatusTypes } from '@/shared/ui/userStatus/types';
+import { PlayerSearchTimer } from '@/shared/ui/playerSearchTimer';
 
 export const Home = () => {
 	const [history] = useState<Array<HistoryItemProps>>([
@@ -24,6 +28,15 @@ export const Home = () => {
 	]);
 
 	const [state, setState] = useState<string>('');
+	const [friends] = useState<Array<{ nickname: string; status: UserStatusTypes }>>([
+		{ nickname: 'nickname', status: 'online' },
+		{ nickname: 'nickname', status: 'online' },
+		{ nickname: 'nickname', status: 'offline' },
+		{ nickname: 'nickname', status: 'online' },
+		{ nickname: 'nickname', status: 'playing' },
+		{ nickname: 'nickname', status: 'online' },
+		{ nickname: 'nickname', status: 'offline' },
+	]);
 
 	return (
 		<div className="home">
@@ -36,23 +49,31 @@ export const Home = () => {
 							<StatsItem className="tatictics__item" number={100} text={'wins'} />
 						</ul>
 					</Section>
-
 					<Section className="history" title="history">
-						<ul className="history__list">
+						<ListWrap className="history__list">
 							{history.map((item) => (
 								<HistoryItem nickname={item.nickname} date={item.date} dateTime={item.date} status={item.status} statusColor={item.statusColor} />
 							))}
-						</ul>
+						</ListWrap>
 					</Section>
 				</div>
 				<div className="home__column">
 					<Section title="Game settings" className="game-settings">
 						<GameSelector />
 					</Section>
+
+					<PlayerSearchTimer cancelhandler={() => console.log('cancel')} timer={'1:23'} />
 				</div>
 				<div className="home__column">
-					<Section title="Your Friend (6)">
-						<SearchBar value={state} onChange={setState} variant={'primary'} />
+					<Section className="your-friends" title="Your Friend (6)">
+						<SearchBar value={state} onChange={setState} />
+						<ListWrap className="your-friends__list">
+							{friends.map(({ nickname, status }) => (
+								<FriendItem variant={'primary'} nickname={nickname} status={status} src={''}>
+									<Button size={'tiny'} variant={'primary'} fullWidth={false} title={'Invite'} type={'button'} />
+								</FriendItem>
+							))}
+						</ListWrap>
 					</Section>
 				</div>
 			</div>
