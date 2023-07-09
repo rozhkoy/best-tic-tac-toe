@@ -6,11 +6,6 @@ export const Navbar = () => {
 	return (
 		<ul className="nav-bar">
 			<li className="nav-bar__item">
-				<NavLink to={routes.GAME} className={({ isActive }) => (isActive ? 'nav-bar__item-link nav-bar__item-link--active' : 'nav-bar__item-link')}>
-					game
-				</NavLink>
-			</li>
-			<li className="nav-bar__item">
 				<NavLink to={routes.HOME} className={({ isActive }) => (isActive ? 'nav-bar__item-link nav-bar__item-link--active' : 'nav-bar__item-link')} end>
 					home
 				</NavLink>

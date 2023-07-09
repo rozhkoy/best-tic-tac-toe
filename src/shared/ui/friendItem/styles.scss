@@ -1,0 +1,23 @@
+.friend-item {
+	width: 100%;
+	border-radius: 10px;
+	padding: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	color: var(--color-secondary);
+	line-height: 1.5;
+	&--primary {
+		background: var(--color-primary);
+	}
+
+	&--secondary {
+		background: var(--color-light-gray);
+	}
+
+	&__btns {
+		display: flex;
+		justify-content: flex-end;
+		grid-gap: 24px;
+	}
+}
