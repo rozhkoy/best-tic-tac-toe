@@ -11,6 +11,7 @@ import { Button } from '@/shared/ui/button';
 import { ListWrap } from '@/shared/ui/listWrap';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 import { PlayerSearchTimer } from '@/shared/ui/playerSearchTimer';
+import { PlayerWaiting } from '@/shared/ui/playerWaiting';
 
 export const Home = () => {
 	const [history] = useState<Array<HistoryItemProps>>([
@@ -63,6 +64,7 @@ export const Home = () => {
 					</Section>
 
 					<PlayerSearchTimer cancelhandler={() => console.log('cancel')} timer={'1:23'} />
+					<PlayerWaiting cancelHandler={() => console.log('cancel')} nickname={'nickanme'} avatarSrc={'/'} />
 				</div>
 				<div className="home__column">
 					<Section className="your-friends" title="Your Friend (6)">

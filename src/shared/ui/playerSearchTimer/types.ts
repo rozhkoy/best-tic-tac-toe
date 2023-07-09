@@ -1,4 +1,4 @@
 export interface PlayerSearchTimerProps {
-    onClickCancel: () => void
+    cancelhandler: () => void
     timer: string;
 }
