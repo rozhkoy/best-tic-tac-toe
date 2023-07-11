@@ -5,13 +5,13 @@ import { HistoryItem } from '@/shared/ui/historyItem';
 import { GameSelector } from '@/features/gameSelector';
 import { HistoryItemProps } from '@/shared/ui/historyItem/types';
 import { useState } from 'react';
-import { SearchBar } from '@/shared/ui/searchBar';
 import { FriendItem } from '@/shared/ui/friendItem';
 import { Button } from '@/shared/ui/button';
 import { ListWrap } from '@/shared/ui/listWrap';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 import { PlayerSearchTimer } from '@/shared/ui/playerSearchTimer';
 import { PlayerWaiting } from '@/shared/ui/playerWaiting';
+import { SearchBar } from '@/shared/ui/Searchbar';
 
 export const Home = () => {
 	const [history] = useState<Array<HistoryItemProps>>([

@@ -7,7 +7,8 @@ export function usePlayFieldHandler(
 	playersData: IPlayerData[],
 	eventIfFindedWinner: (symbol: SymbolTypes) => void,
 	eventIfDraw: () => void,
-	resetEvent: () => void
+	resetEvent: () => void,
+	moveHander?: (boardState: Array<ICellData>) => void
 ): {
 	playFieldState: Array<ICellData>;
 	setPlayFiledStateState: Dispatch<SetStateAction<Array<ICellData>>>;
@@ -35,6 +36,9 @@ export function usePlayFieldHandler(
 			boardState[index].symbol = currentMove.symbol;
 			setPlayFiledStateState(boardState);
 			checkIfWinnerFind(boardState, currentMove.symbol);
+			if (moveHander) {
+				moveHander(boardState);
+			}
 			if (currentMove.symbol === 'cross') {
 				setCurrentMove(({ ...value }) => {
 					value.symbol = 'nought';
@@ -91,7 +95,7 @@ export function usePlayFieldHandler(
 			highlight: false,
 		};
 
-		let filledBoard: Array<ICellData> = [];
+		const filledBoard: Array<ICellData> = [];
 		for (let i = 0; i < 9; i++) {
 			filledBoard.push({ ...cellDataTemplate });
 		}

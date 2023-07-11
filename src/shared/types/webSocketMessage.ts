@@ -1,4 +1,5 @@
-export interface WebSocketMessage<T> {
-	message: string;
+export interface IWebSocketMessage<T> {
+	event: string;
+	userId: string
 	data: T;
 }

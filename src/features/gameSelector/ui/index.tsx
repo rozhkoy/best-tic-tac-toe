@@ -21,7 +21,7 @@ export const GameSelector = () => {
 			case '2p':
 				navigate('/' + routes.TWO_PLAYERS_SESSION);
 				break;
-			case 'online':
+			case 'Online':
 				navigate('/' + routes.ONLINE_SSESSION);
 				break;
 		}

@@ -8,7 +8,12 @@ import { useAppSelector } from '@/shared/hooks/reduxHooks';
 
 export const Wrap: React.FC<PropsWithChildren> = ({ children }) => {
 	const { getAuthState } = useFirebaseAuth();
-	const { webSocketConnect } = useWebSocketConnection();
+
+	const { webSocketConnect } = useWebSocketConnection({
+		getGameState: (data) => {
+			console.log(data);
+		},
+	});
 	const userData = useAppSelector((state) => state.user);
 
 	useEffect(() => {

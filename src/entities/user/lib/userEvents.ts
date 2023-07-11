@@ -1,11 +1,12 @@
-import { WebSocketMessage } from '@/shared/types/webSocketMessage';
+import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { IUpdateUserStatusData, IUserEvents } from '../types';
 import { userEventNames } from './userEventNames';
 
 export class UserEvents implements IUserEvents {
-	updateUserStatus(status: string, userId: string): WebSocketMessage<IUpdateUserStatusData> {
+	updateUserStatus(status: string, userId: string): IWebSocketMessage<IUpdateUserStatusData> {
 		return {
-			message: userEventNames.UPDATE_USER_STATUS,
+			event: userEventNames.UPDATE_USER_STATUS,
+			userId,
 			data: {
 				userId,
 				status,
