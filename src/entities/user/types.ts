@@ -6,7 +6,6 @@ export interface UserInfoProps {
 }
 
 export interface IUpdateUserStatusData {
-	userId: string;
 	status: string;
 }
 

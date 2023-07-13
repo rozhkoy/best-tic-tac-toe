@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Header } from '@/widgets';
 import './style.scss';
@@ -6,25 +6,21 @@ import { useFirebaseAuth } from '@/features/accountAuth';
 import { useWebSocketConnection } from '@/features/webSocketConnection';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
 
-export const Wrap: React.FC<PropsWithChildren> = ({ children }) => {
-	const { getAuthState } = useFirebaseAuth();
+export const Wrap = () => {
+	const userInfo = useAppSelector((state) => state.user);
 
-	const { webSocketConnect } = useWebSocketConnection({
-		getGameState: (data) => {
-			console.log(data);
-		},
-	});
-	const userData = useAppSelector((state) => state.user);
+	const { getAuthState } = useFirebaseAuth();
+	const { udpateUserStatus } = useWebSocketConnection({});
 
 	useEffect(() => {
 		getAuthState();
 	}, []);
 
 	useEffect(() => {
-		if (userData.isAuth) {
-			webSocketConnect();
+		if (userInfo.isAuth) {
+			udpateUserStatus('online');
 		}
-	}, [userData.isAuth]);
+	}, [userInfo.isAuth]);
 
 	return (
 		<div className="wrap">

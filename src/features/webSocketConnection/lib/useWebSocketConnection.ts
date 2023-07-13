@@ -1,58 +1,58 @@
-import { useRef } from 'react';
-
-import { IUpdateUserStatusData, IUserEvents } from '@/entities/user/types';
-import { useAppSelector } from '@/shared/hooks/reduxHooks';
-import { UserEvents } from '@/entities/user';
+import { UserStatusTypes } from '@/shared/ui/userStatus/types';
+import webSocketConnection from './webSocketConnection';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
+import { websocketEventNames } from './websocketEventNames';
+import { useAppSelector } from '@/shared/hooks/reduxHooks';
+import { IUpdateUserStatusData } from '@/entities/user/types';
 import { ICellData } from '@/shared/ui/fieldCell/types';
-import { userEventNames } from '@/entities/user/lib/userEventNames';
-import { IUpateGameStateData } from '../types';
-import { socket } from './webSocketConnection';
+import { IUpateGameStateData, IUseWebsocketConectionReturn, UseWebsocketConnecctionProps } from '../types';
 
-export function useWebSocketConnection({ getGameState }: { getGameState: (data: IUpateGameStateData) => void }): {
-	webSocketConnect: () => void;
-	sendGameState: (playFiledState: Array<ICellData>) => void;
-} {
-	const userWebSocketEvents = useRef<IUserEvents>(new UserEvents());
-	const userData = useAppSelector((state) => state.user);
+export function useWebSocketConnection({ updateGameState }: UseWebsocketConnecctionProps): IUseWebsocketConectionReturn {
+	const websocketInstance: WebSocket = webSocketConnection.getConnectionInstance();
+	const userInfo = useAppSelector((state) => state.user);
+	websocketInstance.addEventListener('open', () => {
+		webSocketConnection.setReadyState(1);
+	});
 
-	function webSocketConnect() {
-		socket.onopen = (event) => {
-			if (socket) {
-				socket.send(JSON.stringify(userWebSocketEvents.current.updateUserStatus('online', userData.userId)));
-			}
-		};
-		socket.onmessage = (event) => {
-			const message: IWebSocketMessage<IUpateGameStateData> = JSON.parse(event.data);
-			console.log(message);
-			console.log('check getGameState', getGameState);
-			// if (getGameState) {
-			getGameState(message.data);
-			// }
+	websocketInstance.addEventListener('error', () => {
+		alert('Something is wrong');
+	});
 
-			// switch (message.event) {
-			// 	case 'UPDATE_GAME_STATE':
-			// 		getGameState(message.data);
-			// 		break;
-			// }
-		};
-		console.log(socket.readyState);
-	}
+	websocketInstance.addEventListener('message', (event) => {
+		console.log(event.data);
+		const message = JSON.parse(event.data);
 
-	function sendGameState(playFiledState: Array<ICellData>) {
-		if (socket) {
-			console.log('send');
-			const message: IWebSocketMessage<IUpateGameStateData> = {
-				event: userEventNames.UPDATE_GAME_STATE,
-				userId: userData.userId,
-				data: {
-					playFiledState: playFiledState,
-				},
-			};
-
-			socket.send(JSON.stringify(message));
+		switch (message.event) {
+			case websocketEventNames.UPDATE_GAME_STATE:
+				if (updateGameState) {
+					updateGameState(message.data.playFiledState);
+				}
+				break;
 		}
+	});
+
+	function udpateUserStatus(status: UserStatusTypes) {
+		const message: IWebSocketMessage<IUpdateUserStatusData> = {
+			event: websocketEventNames.UPDATE_USER_STATUS,
+			userId: userInfo.userId,
+			data: {
+				status,
+			},
+		};
+		websocketInstance.send(JSON.stringify(message));
 	}
 
-	return { webSocketConnect, sendGameState };
+	function sendGameState(gameState: Array<ICellData>) {
+		const message: IWebSocketMessage<IUpateGameStateData> = {
+			event: websocketEventNames.UPDATE_GAME_STATE,
+			userId: userInfo.userId,
+			data: {
+				playFiledState: gameState,
+			},
+		};
+
+		websocketInstance.send(JSON.stringify(message));
+	}
+
+	return { udpateUserStatus, sendGameState };
 }

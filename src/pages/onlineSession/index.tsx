@@ -1,11 +1,10 @@
 import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
 import { GameStatusMessage, IPlayerData } from '@/features/playGround/types';
 import { useWebSocketConnection } from '@/features/webSocketConnection';
-import { useAppSelector } from '@/shared/hooks/reduxHooks';
 import { Button } from '@/shared/ui/button';
 import { FieldCell } from '@/shared/ui/fieldCell';
 import { nanoid } from 'nanoid';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export const OnlineSession = () => {
 	const [playersData] = useState<Array<IPlayerData>>([
@@ -61,9 +60,8 @@ export const OnlineSession = () => {
 	});
 
 	const { sendGameState } = useWebSocketConnection({
-		getGameState: (data) => {
-			console.log('=============', data);
-			setPlayFiledStateState(data.playFiledState);
+		updateGameState: (data) => {
+			setPlayFiledStateState(data);
 		},
 	});
 
