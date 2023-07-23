@@ -7,6 +7,7 @@ import { TwoPlayerSession } from '@/pages/twoPlayerSession';
 import { WithBotSession } from '@/pages/withBotSession';
 import { Home } from '@/pages/home';
 import { OnlineSession } from '@/pages/onlineSession';
+import { Friends } from '@/pages/friends';
 
 export const AppProvider = () => {
 	const router = createBrowserRouter([
@@ -29,6 +30,10 @@ export const AppProvider = () => {
 				{
 					path: routes.ONLINE_SSESSION,
 					element: <OnlineSession />,
+				},
+				{
+					path: routes.FRIENDS,
+					element: <Friends />,
 				},
 			],
 		},

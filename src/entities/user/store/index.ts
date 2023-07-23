@@ -4,12 +4,12 @@ interface IUserState {
 	nickname: string;
 	rating: number;
 	isAuth: boolean;
-	userId: string;
+	userId: number;
 }
 
 const initialState: IUserState = {
 	nickname: '',
-	userId: '',
+	userId: 0,
 	rating: 0,
 	isAuth: false,
 };

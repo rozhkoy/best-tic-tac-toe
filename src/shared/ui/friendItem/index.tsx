@@ -2,12 +2,13 @@ import { UserProfile } from '../userProfile';
 import { FriendItemProps } from './types';
 import './styles.scss';
 import classNames from 'classnames';
+import { forwardRef } from 'react';
 
-export const FriendItem: React.FC<FriendItemProps> = ({ children, nickname, status, src, variant }) => {
+export const FriendItem = forwardRef<HTMLLIElement, FriendItemProps>(({ children, nickname, status, src, variant }, ref) => {
 	return (
-		<li className={classNames('friend-item', `friend-item--${variant}`)}>
+		<li ref={ref} className={classNames('friend-item', `friend-item--${variant}`)}>
 			<UserProfile size="small" className="friend-item__user-profile" nickname={nickname} status={status} src={src} />
 			<div className="friend-item__btns">{children}</div>
 		</li>
 	);
-};
+});
