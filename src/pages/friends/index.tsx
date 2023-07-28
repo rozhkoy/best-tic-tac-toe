@@ -9,10 +9,19 @@ import { CustomRadio } from '@/shared/ui/CustomRadio';
 import { SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
 import { SearchBar } from '@/shared/ui/Searchbar';
 import { usePlayerSearch } from '@/features/friendSearch';
+import { useWebSocketConnection } from '@/features/webSocketConnection';
 
 export const Friends = () => {
 	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Your friends');
-	const { searchBarState, changeHendler, result, searchResultCount, ref } = usePlayerSearch(currentTab);
+	const { searchBarState, changeHendler, result, searchResultCount, ref, acceptFriendshipInvite } = usePlayerSearch(currentTab);
+	const { sendInviteToFriendShip, sendInviteToGame } = useWebSocketConnection({
+		showInviteToFriendship: () => {
+			alert('invite');
+		},
+		handleGameInvitationSent: () => {
+			alert('has been sent');
+		},
+	});
 
 	return (
 		<div className="friends">
@@ -24,17 +33,37 @@ export const Friends = () => {
 				{currentTab === 'Your friends' && (
 					<Section title={`Your Friend (${searchResultCount})`}>
 						<ListWrap>
-							{result.map(({ nickname }, i) => {
+							{result.map(({ nickname, userId }, i) => {
 								if (result.length === i + 1 && ref) {
 									return (
 										<FriendItem ref={ref} key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button size={'tiny'} variant={'secondary'} fullWidth={false} title={'Invite'} type={'button'} />
+											<Button
+												size={'tiny'}
+												variant={'secondary'}
+												fullWidth={false}
+												title={'Invite to Game'}
+												type={'button'}
+												onClick={() => {
+													console.log('test');
+													sendInviteToGame(userId);
+												}}
+											/>
 										</FriendItem>
 									);
 								} else {
 									return (
 										<FriendItem key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button size={'tiny'} variant={'secondary'} fullWidth={false} title={'Invite'} type={'button'} />
+											<Button
+												size={'tiny'}
+												variant={'secondary'}
+												fullWidth={false}
+												title={'Invite to Game'}
+												type={'button'}
+												onClick={() => {
+													console.log('test');
+													sendInviteToGame(userId);
+												}}
+											/>
 										</FriendItem>
 									);
 								}
@@ -46,17 +75,33 @@ export const Friends = () => {
 				{currentTab === 'Friends requests' && (
 					<Section title={`Request (${searchResultCount})`}>
 						<ListWrap>
-							{result.map(({ nickname }, i) => {
+							{result.map(({ nickname, userFriend }, i) => {
 								if (result.length === i + 1 && ref) {
 									return (
 										<FriendItem ref={ref} key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button size={'tiny'} variant={'secondary'} fullWidth={false} title={'Invite'} type={'button'} />
+											<Button
+												size={'tiny'}
+												variant={'secondary'}
+												fullWidth={false}
+												title={'Accept'}
+												type={'button'}
+												onClick={() => acceptFriendshipInvite(userFriend.friendId)}
+											/>
+											<Button size={'tiny'} variant={'warning'} fullWidth={false} title={'Decline'} type={'button'} />
 										</FriendItem>
 									);
 								} else {
 									return (
 										<FriendItem key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button size={'tiny'} variant={'secondary'} fullWidth={false} title={'Invite'} type={'button'} />
+											<Button
+												size={'tiny'}
+												variant={'secondary'}
+												fullWidth={false}
+												title={'Accept'}
+												type={'button'}
+												onClick={() => acceptFriendshipInvite(userFriend.friendId)}
+											/>
+											<Button size={'tiny'} variant={'warning'} fullWidth={false} title={'Decline'} type={'button'} />
 										</FriendItem>
 									);
 								}
@@ -66,19 +111,39 @@ export const Friends = () => {
 				)}
 
 				{currentTab === 'Global Search' && (
-					<Section title={`Fiend (${searchResultCount})`}>
+					<Section title={`Find (${searchResultCount})`}>
 						<ListWrap>
-							{result.map(({ nickname }, i) => {
+							{result.map(({ nickname, userId }, i) => {
 								if (result.length === i + 1 && ref) {
 									return (
 										<FriendItem ref={ref} key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button size={'tiny'} variant={'secondary'} fullWidth={false} title={'Invite'} type={'button'} />
+											<Button
+												size={'tiny'}
+												variant={'secondary'}
+												fullWidth={false}
+												title={'Invite'}
+												type={'button'}
+												onClick={() => {
+													console.log('test');
+													sendInviteToFriendShip(userId);
+												}}
+											/>
 										</FriendItem>
 									);
 								} else {
 									return (
 										<FriendItem key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button size={'tiny'} variant={'secondary'} fullWidth={false} title={'Invite'} type={'button'} />
+											<Button
+												size={'tiny'}
+												variant={'secondary'}
+												fullWidth={false}
+												title={'Invite'}
+												type={'button'}
+												onClick={() => {
+													console.log('test');
+													sendInviteToFriendShip(userId);
+												}}
+											/>
 										</FriendItem>
 									);
 								}

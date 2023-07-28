@@ -1,5 +1,5 @@
 export interface IWebSocketMessage<T> {
 	event: string;
-	userId: string
+	userId: number;
 	data: T;
 }

@@ -1,23 +1,25 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ISearchUsersByNickname, SearchModeTypes } from '../types';
-import { searchUsersByNickname } from '../api';
+import { IFriendResponse, ISearchUsersByNickname, SearchModeTypes } from '../types';
+import { getAllFriends, getAllRequestsForFriendship, searchUsersByNickname, sendConsentFriendship } from '../api';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
 import debounce from 'lodash/debounce';
 import { IFindAndCount } from '@/shared/types/findAndCount';
-import { IUserResponse } from '@/features/accountAuth/types';
 import { useInView } from 'react-intersection-observer';
+import { useMutation } from '@tanstack/react-query';
+import { createFormData } from '@/shared/lib/CreateFormData';
 
 export function usePlayerSearch(searchMode: SearchModeTypes): {
 	searchBarState: string;
 	changeHendler: (value: string) => void;
-	result: Array<IUserResponse>;
+	result: Array<IFriendResponse>;
 	searchResultCount: number;
 	ref: (node: HTMLLIElement) => void;
+	acceptFriendshipInvite: (inviteId: string) => void;
 } {
 	const LIMIT = 10;
 	const PER_PAGE = 10;
 
-	const [result, setResult] = useState<Array<IUserResponse>>([]);
+	const [result, setResult] = useState<Array<IFriendResponse>>([]);
 	const [searchResultCount, setSearchesultCount] = useState<number>(0);
 	const [searchBarState, setSearchBarState] = useState<string>('');
 	const userData = useAppSelector((state) => state.user);
@@ -25,9 +27,15 @@ export function usePlayerSearch(searchMode: SearchModeTypes): {
 	const [hasNextPage, setHasNextPage] = useState<boolean>(false);
 	const { ref, inView } = useInView();
 
+	const sendAcceptFriendshipInvite = useMutation({
+		mutationFn: (formdata: FormData) => {
+			return sendConsentFriendship(formdata);
+		},
+	});
+
 	const searchBarDebounce = useCallback(
 		debounce(({ query, userId, page, perPage, limit }) => sendQuerySearch({ query, userId, page, perPage, limit }), 300),
-		[]
+		[searchMode]
 	);
 
 	useEffect(() => {
@@ -37,24 +45,27 @@ export function usePlayerSearch(searchMode: SearchModeTypes): {
 	}, [userData.isAuth]);
 
 	useEffect(() => {
-		setSearchBarState('');
-		changeHendler('');
-	}, [searchMode]);
-
-	useEffect(() => {
 		if (inView && hasNextPage) {
 			sendQuerySearch({ query: searchBarState, userId: userData.userId, page: currentPage, perPage: PER_PAGE, limit: LIMIT });
 		}
 	}, [inView, hasNextPage]);
 
+	useEffect(() => {
+		setSearchBarState('');
+		setCurrentPage(1);
+		setResult([]);
+		searchBarDebounce({ query: '', userId: userData.userId, page: 1, perPage: PER_PAGE, limit: LIMIT });
+	}, [searchMode]);
+
 	async function sendQuerySearch({ query, userId, page, perPage, limit }: ISearchUsersByNickname) {
-		let response: IFindAndCount<Array<IUserResponse>>;
+		let response: IFindAndCount<Array<IFriendResponse>>;
+
 		switch (searchMode) {
 			case 'Your friends':
-				response = await searchUsersByNickname({ query, userId, page, perPage, limit });
+				response = await getAllFriends({ query, userId, page, perPage, limit });
 				break;
 			case 'Friends requests':
-				response = await searchUsersByNickname({ query, userId, page, perPage, limit });
+				response = await getAllRequestsForFriendship({ userId, page, perPage, limit });
 				break;
 			case 'Global Search':
 				response = await searchUsersByNickname({ query, userId, page, perPage, limit });
@@ -62,7 +73,7 @@ export function usePlayerSearch(searchMode: SearchModeTypes): {
 		}
 
 		if (response) {
-			console.log('response');
+			console.log(response);
 			setResult((prev) => [...prev, ...response.rows]);
 			setSearchesultCount(response.count);
 			setHasNextPage(response.count / PER_PAGE > currentPage);
@@ -76,8 +87,14 @@ export function usePlayerSearch(searchMode: SearchModeTypes): {
 		setResult([]);
 		setCurrentPage(1);
 		setSearchBarState(value);
-		searchBarDebounce({ query: value, userId: userData.userId, page: currentPage, perPage: PER_PAGE, limit: LIMIT });
+		searchBarDebounce({ query: value, userId: userData.userId, page: 1, perPage: PER_PAGE, limit: LIMIT });
 	}
 
-	return { searchBarState, changeHendler, result, searchResultCount, ref };
+	function acceptFriendshipInvite(inviteId: string) {
+		const formData: FormData = createFormData([{ key: 'inviteId', value: inviteId }]);
+		console.log(formData.get('inviteId'));
+		sendAcceptFriendshipInvite.mutate(formData);
+	}
+
+	return { searchBarState, changeHendler, result, searchResultCount, ref, acceptFriendshipInvite };
 }

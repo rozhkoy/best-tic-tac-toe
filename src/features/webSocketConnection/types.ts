@@ -8,8 +8,20 @@ export interface IUpateGameStateData {
 export interface IUseWebsocketConectionReturn {
 	udpateUserStatus: (status: UserStatusTypes) => void;
 	sendGameState: (gameState: Array<ICellData>) => void;
+	sendInviteToFriendShip: (invitationUserId: string) => void;
+	sendInviteToGame: (friendId: string) => void;
 }
 
 export interface UseWebsocketConnecctionProps {
 	updateGameState?: (gameState: Array<ICellData>) => void;
+	showInviteToFriendship?: () => void;
+	handleGameInvitationSent?: () => void;
+}
+
+export interface ISendInviteToFriendship {
+	invitationUserId: string;
+}
+
+export interface ISendInviteToGame {
+	friendId: string;
 }

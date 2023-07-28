@@ -5,9 +5,9 @@ import { websocketEventNames } from './websocketEventNames';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
 import { IUpdateUserStatusData } from '@/entities/user/types';
 import { ICellData } from '@/shared/ui/fieldCell/types';
-import { IUpateGameStateData, IUseWebsocketConectionReturn, UseWebsocketConnecctionProps } from '../types';
+import { ISendInviteToFriendship, ISendInviteToGame, IUpateGameStateData, IUseWebsocketConectionReturn, UseWebsocketConnecctionProps } from '../types';
 
-export function useWebSocketConnection({ updateGameState }: UseWebsocketConnecctionProps): IUseWebsocketConectionReturn {
+export function useWebSocketConnection({ updateGameState, showInviteToFriendship, handleGameInvitationSent }: UseWebsocketConnecctionProps): IUseWebsocketConectionReturn {
 	const websocketInstance: WebSocket = webSocketConnection.getConnectionInstance();
 	const userInfo = useAppSelector((state) => state.user);
 	websocketInstance.addEventListener('open', () => {
@@ -19,7 +19,6 @@ export function useWebSocketConnection({ updateGameState }: UseWebsocketConnecct
 	});
 
 	websocketInstance.addEventListener('message', (event) => {
-		console.log(event.data);
 		const message = JSON.parse(event.data);
 
 		switch (message.event) {
@@ -28,6 +27,15 @@ export function useWebSocketConnection({ updateGameState }: UseWebsocketConnecct
 					updateGameState(message.data.playFiledState);
 				}
 				break;
+			case websocketEventNames.SEND_INVITE_TO_FRIENDSHIP:
+				if (showInviteToFriendship) {
+					showInviteToFriendship();
+				}
+				break;
+			case websocketEventNames.INVITE_TO_GAME:
+				if (handleGameInvitationSent) {
+					handleGameInvitationSent();
+				}
 		}
 	});
 
@@ -54,5 +62,29 @@ export function useWebSocketConnection({ updateGameState }: UseWebsocketConnecct
 		websocketInstance.send(JSON.stringify(message));
 	}
 
-	return { udpateUserStatus, sendGameState };
+	function sendInviteToFriendShip(invitationUserId: string) {
+		const message: IWebSocketMessage<ISendInviteToFriendship> = {
+			event: websocketEventNames.SEND_INVITE_TO_FRIENDSHIP,
+			userId: userInfo.userId,
+			data: {
+				invitationUserId,
+			},
+		};
+
+		websocketInstance.send(JSON.stringify(message));
+	}
+
+	function sendInviteToGame(friendId: string) {
+		const message: IWebSocketMessage<ISendInviteToGame> = {
+			event: websocketEventNames.INVITE_TO_GAME,
+			userId: userInfo.userId,
+			data: {
+				friendId,
+			},
+		};
+
+		websocketInstance.send(JSON.stringify(message));
+	}
+
+	return { udpateUserStatus, sendGameState, sendInviteToFriendShip, sendInviteToGame };
 }
