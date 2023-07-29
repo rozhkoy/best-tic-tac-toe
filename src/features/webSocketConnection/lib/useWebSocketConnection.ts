@@ -5,11 +5,17 @@ import { websocketEventNames } from './websocketEventNames';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
 import { IUpdateUserStatusData } from '@/entities/user/types';
 import { ICellData } from '@/shared/ui/fieldCell/types';
-import { ISendInviteToFriendship, ISendInviteToGame, IUpateGameStateData, IUseWebsocketConectionReturn, UseWebsocketConnecctionProps } from '../types';
+import { IAcceptInviteToGame, ISendInviteToFriendship, ISendInviteToGame, IUpateGameStateData, IUseWebsocketConectionReturn, UseWebsocketConnecctionProps } from '../types';
 
-export function useWebSocketConnection({ updateGameState, showInviteToFriendship, handleGameInvitationSent }: UseWebsocketConnecctionProps): IUseWebsocketConectionReturn {
+export function useWebSocketConnection({
+	updateGameState,
+	showInviteToFriendship,
+	handleGameInvitationSent,
+	handleInviteToGameIsAccepted,
+}: UseWebsocketConnecctionProps): IUseWebsocketConectionReturn {
 	const websocketInstance: WebSocket = webSocketConnection.getConnectionInstance();
 	const userInfo = useAppSelector((state) => state.user);
+
 	websocketInstance.addEventListener('open', () => {
 		webSocketConnection.setReadyState(1);
 	});
@@ -18,7 +24,7 @@ export function useWebSocketConnection({ updateGameState, showInviteToFriendship
 		alert('Something is wrong');
 	});
 
-	websocketInstance.addEventListener('message', (event) => {
+	websocketInstance.onmessage = (event) => {
 		const message = JSON.parse(event.data);
 
 		switch (message.event) {
@@ -34,10 +40,16 @@ export function useWebSocketConnection({ updateGameState, showInviteToFriendship
 				break;
 			case websocketEventNames.INVITE_TO_GAME:
 				if (handleGameInvitationSent) {
-					handleGameInvitationSent();
+					handleGameInvitationSent(message.userId);
 				}
+				break;
+			case websocketEventNames.INVITE_TO_GAME_IS_ACCEPTED:
+				if (handleInviteToGameIsAccepted) {
+					handleInviteToGameIsAccepted(message.data.sessionId);
+				}
+				break;
 		}
-	});
+	};
 
 	function udpateUserStatus(status: UserStatusTypes) {
 		const message: IWebSocketMessage<IUpdateUserStatusData> = {
@@ -86,5 +98,18 @@ export function useWebSocketConnection({ updateGameState, showInviteToFriendship
 		websocketInstance.send(JSON.stringify(message));
 	}
 
-	return { udpateUserStatus, sendGameState, sendInviteToFriendShip, sendInviteToGame };
+	function acceptInviteToGame(friendId: string) {
+		console.log(friendId);
+		const message: IWebSocketMessage<IAcceptInviteToGame> = {
+			event: websocketEventNames.INVITE_TO_GAME_IS_ACCEPTED,
+			userId: userInfo.userId,
+			data: {
+				friendId,
+			},
+		};
+
+		websocketInstance.send(JSON.stringify(message));
+	}
+
+	return { udpateUserStatus, sendGameState, sendInviteToFriendShip, sendInviteToGame, acceptInviteToGame };
 }

@@ -10,12 +10,14 @@ export interface IUseWebsocketConectionReturn {
 	sendGameState: (gameState: Array<ICellData>) => void;
 	sendInviteToFriendShip: (invitationUserId: string) => void;
 	sendInviteToGame: (friendId: string) => void;
+	acceptInviteToGame: (friendId: string) => void;
 }
 
 export interface UseWebsocketConnecctionProps {
 	updateGameState?: (gameState: Array<ICellData>) => void;
 	showInviteToFriendship?: () => void;
-	handleGameInvitationSent?: () => void;
+	handleGameInvitationSent?: (friendId: string) => void;
+	handleInviteToGameIsAccepted?: (sessionId: string) => void;
 }
 
 export interface ISendInviteToFriendship {
@@ -23,5 +25,9 @@ export interface ISendInviteToFriendship {
 }
 
 export interface ISendInviteToGame {
+	friendId: string;
+}
+
+export interface IAcceptInviteToGame {
 	friendId: string;
 }

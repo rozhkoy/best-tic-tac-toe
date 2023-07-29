@@ -10,16 +10,26 @@ import { SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
 import { SearchBar } from '@/shared/ui/Searchbar';
 import { usePlayerSearch } from '@/features/friendSearch';
 import { useWebSocketConnection } from '@/features/webSocketConnection';
+import { useNavigate } from 'react-router-dom';
 
 export const Friends = () => {
+	const navigation = useNavigate();
 	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Your friends');
 	const { searchBarState, changeHendler, result, searchResultCount, ref, acceptFriendshipInvite } = usePlayerSearch(currentTab);
-	const { sendInviteToFriendShip, sendInviteToGame } = useWebSocketConnection({
+	const { sendInviteToFriendShip, sendInviteToGame, acceptInviteToGame } = useWebSocketConnection({
 		showInviteToFriendship: () => {
-			alert('invite');
+			console.log('invite');
 		},
-		handleGameInvitationSent: () => {
-			alert('has been sent');
+		handleGameInvitationSent: (friendId) => {
+			const result = confirm('Are you accept invite?');
+			if (result) {
+				console.log('ok');
+				acceptInviteToGame(friendId);
+			}
+		},
+		handleInviteToGameIsAccepted: (sessionId) => {
+			console.log(sessionId);
+			navigation('/online-session');
 		},
 	});
 
