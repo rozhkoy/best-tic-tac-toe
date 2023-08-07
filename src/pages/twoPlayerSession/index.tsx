@@ -2,15 +2,23 @@ import './styles.scss';
 import { Button } from '@/shared/ui/button';
 import { useState } from 'react';
 import { FieldCell } from '@/shared/ui/fieldCell';
-import { GameStatusMessage, IPlayerData } from '@/features/playGround/types';
+import { GameStatusMessage, IPlayers } from '@/features/playGround/types';
 import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
 import { nanoid } from 'nanoid';
 
 export const TwoPlayerSession = () => {
-	const [playersData] = useState<Array<IPlayerData>>([
-		{ nickName: 'Player 1', score: 0 },
-		{ nickName: 'Player 2', score: 0 },
-	]);
+	const [playersData] = useState<IPlayers>({
+		nought: {
+			nickName: 'Player 1',
+			score: 0,
+			userId: 0,
+		},
+		cross: {
+			nickName: 'Player 1',
+			score: 0,
+			userId: 0,
+		},
+	});
 	const { playFieldState, resetState, currentMove, markCell } = usePlayFieldHandler(
 		[],
 		playersData,

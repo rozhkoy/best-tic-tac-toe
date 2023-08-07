@@ -3,35 +3,47 @@ import { Container } from '@/shared/ui/container';
 import { FriendItem } from '@/shared/ui/friendItem';
 import { ListWrap } from '@/shared/ui/listWrap';
 import { Section } from '@/shared/ui/section';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import './styles.scss';
 import { CustomRadio } from '@/shared/ui/CustomRadio';
 import { SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
 import { SearchBar } from '@/shared/ui/Searchbar';
 import { usePlayerSearch } from '@/features/friendSearch';
-import { useWebSocketConnection } from '@/features/webSocketConnection';
-import { useNavigate } from 'react-router-dom';
+import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
+import { ISendInviteToFriendship, ISendInviteToGame } from '@/features/webSocketConnection/types';
+import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
+import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
+import { useAppSelector } from '@/shared/hooks/reduxHooks';
 
 export const Friends = () => {
-	const navigation = useNavigate();
 	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Your friends');
+	const userInfo = useAppSelector((state) => state.user);
+	const webSocket = useContext(WebSocketContext);
 	const { searchBarState, changeHendler, result, searchResultCount, ref, acceptFriendshipInvite } = usePlayerSearch(currentTab);
-	const { sendInviteToFriendShip, sendInviteToGame, acceptInviteToGame } = useWebSocketConnection({
-		showInviteToFriendship: () => {
-			console.log('invite');
-		},
-		handleGameInvitationSent: (friendId) => {
-			const result = confirm('Are you accept invite?');
-			if (result) {
-				console.log('ok');
-				acceptInviteToGame(friendId);
-			}
-		},
-		handleInviteToGameIsAccepted: (sessionId) => {
-			console.log(sessionId);
-			navigation('/online-session');
-		},
-	});
+
+	function sendInviteToFriendShip(invitationUserId: string) {
+		const message: IWebSocketMessage<ISendInviteToFriendship> = {
+			event: websocketEventNames.SEND_INVITE_TO_FRIENDSHIP,
+			userId: userInfo.userId,
+			data: {
+				invitationUserId,
+			},
+		};
+
+		webSocket?.instance.send(JSON.stringify(message));
+	}
+
+	function sendInviteToGame(friendId: string) {
+		const message: IWebSocketMessage<ISendInviteToGame> = {
+			event: websocketEventNames.INVITE_TO_GAME,
+			userId: userInfo.userId,
+			data: {
+				friendId,
+			},
+		};
+
+		webSocket?.instance.send(JSON.stringify(message));
+	}
 
 	return (
 		<div className="friends">

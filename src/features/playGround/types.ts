@@ -1,19 +1,25 @@
 import { SymbolTypes } from '@/shared/ui/fieldCell/types';
 
 export interface IPlayerData {
-	nickName: string;
+	nickname: string;
 	score: number;
+	userId?: number;
+}
+
+export interface IPlayers {
+	nought: IPlayerData;
+	cross: IPlayerData;
 }
 
 export interface GameInfoProps {
-	playersData: Array<IPlayerData>;
+	playersData: IPlayers;
 	currentMove: ICurrentMove;
 	gameStatusMessage: GameStatusMessage;
 }
 
 export interface ICurrentMove {
 	symbol: SymbolTypes;
-	player: string;
+	player?: string;
 	numberOfMoves: number;
 }
 
