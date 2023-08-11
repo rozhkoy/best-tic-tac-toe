@@ -1,6 +1,6 @@
 import { ICellData } from '@/shared/ui/fieldCell/types';
 
-import { ICurrentMove, IPlayers } from '../playGround/types';
+import { GameStatusMessage, ICurrentMove, IPlayers } from '../playGround/types';
 
 export interface ISendInviteToFriendship {
 	invitationUserId: string;
@@ -31,4 +31,14 @@ export interface ISyncGameboardState {
 	friendId: number;
 	currentMove: ICurrentMove;
 	playFieldState: Array<ICellData>;
+}
+
+export interface IIfWinnerFind {
+	friendId: number;
+	players: IPlayers;
+	gameStatusMessage: GameStatusMessage;
+}
+
+export interface IMessageWithFriendId {
+	friendId: number;
 }

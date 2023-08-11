@@ -11,6 +11,8 @@ export interface IPlayers {
 	cross: IPlayerData;
 }
 
+export type PlayerSymbolsType = 'cross' | 'nought';
+
 export interface GameInfoProps {
 	playersData: IPlayers;
 	currentMove: ICurrentMove;

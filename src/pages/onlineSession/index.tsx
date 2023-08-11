@@ -1,11 +1,10 @@
 import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
-import { GameStatusMessage, ICurrentMove, IPlayers } from '@/features/playGround/types';
+import { GameStatusMessage, ICurrentMove, IPlayers, PlayerSymbolsType } from '@/features/playGround/types';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
-import { IGetDataAboutOpponent, IReadyStateToGame, ISyncGameboardState } from '@/features/webSocketConnection/types';
+import { IGetDataAboutOpponent, IIfWinnerFind, IMessageWithFriendId, IReadyStateToGame, ISyncGameboardState } from '@/features/webSocketConnection/types';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
-import { Button } from '@/shared/ui/button';
 import { FieldCell } from '@/shared/ui/fieldCell';
 import { ICellData } from '@/shared/ui/fieldCell/types';
 import { nanoid } from 'nanoid';
@@ -18,7 +17,7 @@ export const OnlineSession = () => {
 	const [isBlockMove, setIsBlockMove] = useState<boolean>(true);
 	const userInfo = useAppSelector((state) => state.user);
 	const [friendId, setFriendId] = useState<number>(0);
-	const [isFindWinner, setIsFindWinner] = useState<boolean>(true);
+	const [isWinnerFound, setIsWinnerFound] = useState<boolean>(false);
 	const [playersData, setPlayerData] = useState<IPlayers>({
 		cross: {
 			nickname: '',
@@ -35,24 +34,29 @@ export const OnlineSession = () => {
 		[],
 		playersData,
 		(symbol) => {
+			console.log('test test');
+			const message: GameStatusMessage = {
+				color: 'secondary',
+				isShow: true,
+				message: 'The crosses won!',
+			};
+			const players: IPlayers = playersData;
 			switch (symbol) {
 				case 'cross':
-					setGameStatusMessage(({ ...value }) => {
-						value.color = 'secondary';
-						value.isShow = true;
-						value.message = 'The crosses won!';
-						return value;
-					});
+					message.color = 'secondary';
+					message.message = 'The crosses won!';
+					players.cross.score = ++playersData.cross.score;
 					break;
 				case 'nought':
-					setGameStatusMessage(({ ...value }) => {
-						value.color = 'red';
-						value.isShow = true;
-						value.message = 'The noughts won!';
-						return value;
-					});
+					message.color = 'red';
+					message.message = 'The noughts won!';
+					players.nought.score = ++playersData.nought.score;
 					break;
 			}
+			setPlayerData(players);
+			sendMessageifWinnerFind({ gameStatusMessage: message, players, friendId });
+			setGameStatusMessage(message);
+			setIsWinnerFound(true);
 		},
 		() => {
 			setGameStatusMessage({
@@ -102,23 +106,8 @@ export const OnlineSession = () => {
 		getDataAboutOpponent(sessionId as string);
 
 		if (webSocket) {
-			webSocket.subscribeToOnUpdate(websocketEventNames.DATA_ABOUT_OPONENT, ({ data }: IWebSocketMessage<IDataAboutOpponent>) => {
-				setPlayerData((prev) => {
-					console.log(data);
-					const objectKeys = Object.keys(data);
-					for (const key of objectKeys) {
-						const player = data[key as IPlayerData];
-
-						if (player.userId === userInfo.userId) {
-							console.log(player, userInfo);
-							setFriendId(player.friendId);
-						}
-						prev[player.role].nickname = player.nickname;
-						prev[player.role].userId = player.userId;
-					}
-
-					return { ...prev };
-				});
+			webSocket.subscribeToOnUpdate(websocketEventNames.DATA_ABOUT_OPONENT, (message: IWebSocketMessage<IDataAboutOpponent>) => {
+				updatePlayersData(message);
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.START_GAME, () => {
@@ -131,7 +120,23 @@ export const OnlineSession = () => {
 				setPlayFieldState(data.playFieldState);
 				setCurrentMove(data.currentMove);
 			});
+
+			webSocket.subscribeToOnUpdate(websocketEventNames.WINNER_FIND, ({ data: { gameStatusMessage, players } }: IWebSocketMessage<IIfWinnerFind>) => {
+				setGameStatusMessage(gameStatusMessage);
+				setPlayerData(players);
+			});
+
+			webSocket.subscribeToOnUpdate(websocketEventNames.RESET_GAME_STATE, () => {
+				resetState();
+			});
 		}
+
+		return () => {
+			webSocket?.unSubscribeToOnUpdate(websocketEventNames.DATA_ABOUT_OPONENT);
+			webSocket?.unSubscribeToOnUpdate(websocketEventNames.START_GAME);
+			webSocket?.unSubscribeToOnUpdate(websocketEventNames.SYNC_PLAYGROUND);
+			webSocket?.unSubscribeToOnUpdate(websocketEventNames.WINNER_FIND);
+		};
 	}, []);
 
 	useEffect(() => {
@@ -142,17 +147,24 @@ export const OnlineSession = () => {
 
 	useEffect(() => {
 		let restartTimer: ReturnType<typeof setTimeout>;
-		if (!isFindWinner) {
-			setIsFindWinner(false);
+		if (isWinnerFound) {
 			restartTimer = setTimeout(() => {
-				console.log();
-				updateGameboard(friendId, playFieldState, currentMove);
-			});
+				resetGameState({ friendId });
+				resetState();
+				setIsWinnerFound(false);
+				const objectKeys = Object.keys(playersData);
+				for (const key of objectKeys) {
+					const player = playersData[key as PlayerSymbolsType];
+					if (player.userId === userInfo.userId) {
+						setIsBlockMove(false);
+					}
+				}
+			}, 2000);
 		}
 		return () => {
 			clearTimeout(restartTimer);
 		};
-	}, [isFindWinner]);
+	}, [isWinnerFound]);
 
 	function getDataAboutOpponent(sessionId: string) {
 		const message: IWebSocketMessage<IGetDataAboutOpponent> = {
@@ -189,6 +201,50 @@ export const OnlineSession = () => {
 		webSocket?.instance.send(JSON.stringify(message));
 	}
 
+	function updatePlayersData({ data }: IWebSocketMessage<IDataAboutOpponent>) {
+		setPlayerData((prev) => {
+			console.log(data);
+			const objectKeys = Object.keys(data);
+			for (const key of objectKeys) {
+				const player = data[key as IPlayerData];
+
+				if (player.userId === userInfo.userId) {
+					console.log(player, userInfo);
+					setFriendId(player.friendId);
+				}
+
+				prev[player.role].nickname = player.nickname;
+				prev[player.role].userId = player.userId;
+			}
+
+			return { ...prev };
+		});
+	}
+
+	function sendMessageifWinnerFind({ gameStatusMessage, players, friendId }: IIfWinnerFind) {
+		const message: IWebSocketMessage<IIfWinnerFind> = {
+			event: websocketEventNames.WINNER_FIND,
+			userId: userInfo.userId,
+			data: {
+				friendId,
+				gameStatusMessage,
+				players,
+			},
+		};
+		webSocket?.instance.send(JSON.stringify(message));
+	}
+
+	function resetGameState({ friendId }: IMessageWithFriendId) {
+		const message: IWebSocketMessage<IMessageWithFriendId> = {
+			event: websocketEventNames.RESET_GAME_STATE,
+			userId: userInfo.userId,
+			data: {
+				friendId,
+			},
+		};
+		webSocket?.instance.send(JSON.stringify(message));
+	}
+
 	return (
 		<GameBoardWrap>
 			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
@@ -197,7 +253,6 @@ export const OnlineSession = () => {
 					return <FieldCell blockMove={isBlockMove} key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
 				})}
 			</PlayField>
-			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={resetState} icon={'restart'} />
 		</GameBoardWrap>
 	);
 };
