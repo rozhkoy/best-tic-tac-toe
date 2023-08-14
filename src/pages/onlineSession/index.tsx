@@ -1,7 +1,7 @@
 import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
 import { GameStatusMessage, ICurrentMove, IPlayers, PlayerSymbolsType } from '@/features/playGround/types';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
-import { IGetDataAboutOpponent, IIfWinnerFind, IMessageWithFriendId, IReadyStateToGame, ISyncGameboardState } from '@/features/webSocketConnection/types';
+import { IGetDataAboutOpponent, IIfWinnerFind, IMessageOnGameOver, IMessageWithFriendId, IOnGameOver, IReadyStateToGame, ISyncGameboardState } from '@/features/webSocketConnection/types';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
@@ -9,7 +9,7 @@ import { FieldCell } from '@/shared/ui/fieldCell';
 import { ICellData } from '@/shared/ui/fieldCell/types';
 import { nanoid } from 'nanoid';
 import { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export const OnlineSession = () => {
 	const { sessionId } = useParams();
@@ -18,6 +18,8 @@ export const OnlineSession = () => {
 	const userInfo = useAppSelector((state) => state.user);
 	const [friendId, setFriendId] = useState<number>(0);
 	const [isWinnerFound, setIsWinnerFound] = useState<boolean>(false);
+	const [countGames, setCountGames] = useState<number>(0);
+	const navigation = useNavigate();
 	const [playersData, setPlayerData] = useState<IPlayers>({
 		cross: {
 			nickname: '',
@@ -54,7 +56,8 @@ export const OnlineSession = () => {
 					break;
 			}
 			setPlayerData(players);
-			sendMessageifWinnerFind({ gameStatusMessage: message, players, friendId });
+			setCountGames((prev) => ++prev);
+			sendMessageifWinnerFind({ gameStatusMessage: message, players, friendId, countGames: countGames + 1 });
 			setGameStatusMessage(message);
 			setIsWinnerFound(true);
 		},
@@ -121,13 +124,19 @@ export const OnlineSession = () => {
 				setCurrentMove(data.currentMove);
 			});
 
-			webSocket.subscribeToOnUpdate(websocketEventNames.WINNER_FIND, ({ data: { gameStatusMessage, players } }: IWebSocketMessage<IIfWinnerFind>) => {
+			webSocket.subscribeToOnUpdate(websocketEventNames.WINNER_FIND, ({ data: { gameStatusMessage, players, countGames } }: IWebSocketMessage<IIfWinnerFind>) => {
 				setGameStatusMessage(gameStatusMessage);
 				setPlayerData(players);
+				setCountGames(countGames);
+				setIsBlockMove(false);
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.RESET_GAME_STATE, () => {
 				resetState();
+			});
+
+			webSocket.subscribeToOnUpdate(websocketEventNames.GAME_OVER, () => {
+				navigation('/');
 			});
 		}
 
@@ -149,15 +158,19 @@ export const OnlineSession = () => {
 		let restartTimer: ReturnType<typeof setTimeout>;
 		if (isWinnerFound) {
 			restartTimer = setTimeout(() => {
-				resetGameState({ friendId });
-				resetState();
-				setIsWinnerFound(false);
-				const objectKeys = Object.keys(playersData);
-				for (const key of objectKeys) {
-					const player = playersData[key as PlayerSymbolsType];
-					if (player.userId === userInfo.userId) {
-						setIsBlockMove(false);
+				if (countGames <= 4) {
+					resetGameState({ friendId });
+					resetState();
+					setIsWinnerFound(false);
+					const objectKeys = Object.keys(playersData);
+					for (const key of objectKeys) {
+						const player = playersData[key as PlayerSymbolsType];
+						if (player.userId === userInfo.userId) {
+							setIsBlockMove(false);
+						}
 					}
+				} else {
+					onGameOver({ friendId });
 				}
 			}, 2000);
 		}
@@ -221,7 +234,7 @@ export const OnlineSession = () => {
 		});
 	}
 
-	function sendMessageifWinnerFind({ gameStatusMessage, players, friendId }: IIfWinnerFind) {
+	function sendMessageifWinnerFind({ gameStatusMessage, players, friendId, countGames }: IIfWinnerFind) {
 		const message: IWebSocketMessage<IIfWinnerFind> = {
 			event: websocketEventNames.WINNER_FIND,
 			userId: userInfo.userId,
@@ -229,6 +242,7 @@ export const OnlineSession = () => {
 				friendId,
 				gameStatusMessage,
 				players,
+				countGames,
 			},
 		};
 		webSocket?.instance.send(JSON.stringify(message));
@@ -240,6 +254,33 @@ export const OnlineSession = () => {
 			userId: userInfo.userId,
 			data: {
 				friendId,
+			},
+		};
+		webSocket?.instance.send(JSON.stringify(message));
+	}
+
+	function onGameOver({ friendId }: IOnGameOver) {
+		const firstPlayerId: number = playersData.cross.userId ?? 0;
+		const secondPlayerId: number = playersData.nought.userId ?? 0;
+		let winnerPlayerId = 0;
+		let score = 0;
+		const objectKeys = Object.keys(playersData);
+		for (const key of objectKeys) {
+			const player = playersData[key as PlayerSymbolsType];
+			if (player.score >= score && player.userId) {
+				score = player.score;
+				winnerPlayerId = player.userId;
+			}
+		}
+
+		const message: IWebSocketMessage<IMessageOnGameOver> = {
+			event: websocketEventNames.GAME_OVER,
+			userId: userInfo.userId,
+			data: {
+				friendId,
+				winnerPlayerId,
+				firstPlayerId,
+				secondPlayerId,
 			},
 		};
 		webSocket?.instance.send(JSON.stringify(message));
