@@ -1,28 +1,29 @@
 import { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { ICellData, SymbolTypes } from '@/shared/ui/fieldCell/types';
-import { ICurrentMove, IPlayerData } from '../types';
+import { ICurrentMove, IPlayers } from '../types';
+import { IGameboardState } from '@/features/webSocketConnection/types';
 
 export function usePlayFieldHandler(
 	initialState: Array<ICellData>,
-	playersData: IPlayerData[],
+	playersData: IPlayers,
 	eventIfFindedWinner: (symbol: SymbolTypes) => void,
 	eventIfDraw: () => void,
-	resetEvent: () => void
+	resetEvent: () => void,
+	handleMove?: (gameState: IGameboardState) => void
 ): {
 	playFieldState: Array<ICellData>;
-	setPlayFiledStateState: Dispatch<SetStateAction<Array<ICellData>>>;
+	setPlayFieldState: Dispatch<SetStateAction<Array<ICellData>>>;
 	isWinner: boolean;
 	currentMove: ICurrentMove;
 	setCurrentMove: Dispatch<SetStateAction<ICurrentMove>>;
-	checkIfWinnerFind: (playFiledState: ICellData[], symbol: SymbolTypes) => void;
 	resetState: () => void;
 	markCell: (index: number) => void;
 } {
-	const [playFieldState, setPlayFiledStateState] = useState<Array<ICellData>>(initialState);
+	const [playFieldState, setPlayFieldState] = useState<Array<ICellData>>(initialState);
 	const [isWinner, setIsWinner] = useState<boolean>(false);
 	const [currentMove, setCurrentMove] = useState<ICurrentMove>({
 		symbol: 'cross',
-		player: playersData[0].nickName,
+		player: playersData.cross.nickname,
 		numberOfMoves: 0,
 	});
 
@@ -33,22 +34,21 @@ export function usePlayFieldHandler(
 		const boardState = structuredClone(playFieldState);
 		if (boardState[index].symbol === 'empty') {
 			boardState[index].symbol = currentMove.symbol;
-			setPlayFiledStateState(boardState);
+			setPlayFieldState(boardState);
 			checkIfWinnerFind(boardState, currentMove.symbol);
-			if (currentMove.symbol === 'cross') {
-				setCurrentMove(({ ...value }) => {
-					value.symbol = 'nought';
-					value.player = playersData[1].nickName;
-					value.numberOfMoves = ++value.numberOfMoves;
-					return value;
-				});
-			} else {
-				setCurrentMove(({ ...value }) => {
-					value.symbol = 'cross';
-					value.player = playersData[0].nickName;
-					value.numberOfMoves = ++value.numberOfMoves;
-					return value;
-				});
+			const currentMoveTemplate: ICurrentMove = {
+				symbol: currentMove.symbol === 'cross' ? 'nought' : 'cross',
+				numberOfMoves: ++currentMove.numberOfMoves,
+			};
+			setCurrentMove(currentMoveTemplate);
+
+			const gameState: IGameboardState = {
+				playFieldState: boardState,
+				currentMove: currentMoveTemplate,
+			};
+
+			if (handleMove) {
+				handleMove(gameState);
 			}
 		}
 	}
@@ -72,7 +72,7 @@ export function usePlayFieldHandler(
 					playFiledState[a].highlight = true;
 					playFiledState[b].highlight = true;
 					playFiledState[c].highlight = true;
-					setPlayFiledStateState(playFiledState);
+					setPlayFieldState(playFiledState);
 					eventIfFindedWinner(symbol);
 					setIsWinner(true);
 					return true;
@@ -91,11 +91,11 @@ export function usePlayFieldHandler(
 			highlight: false,
 		};
 
-		let filledBoard: Array<ICellData> = [];
+		const filledBoard: Array<ICellData> = [];
 		for (let i = 0; i < 9; i++) {
 			filledBoard.push({ ...cellDataTemplate });
 		}
-		setPlayFiledStateState(filledBoard);
+		setPlayFieldState(filledBoard);
 	}
 
 	function resetState() {
@@ -103,7 +103,7 @@ export function usePlayFieldHandler(
 		setIsWinner(false);
 		setCurrentMove({
 			symbol: 'cross',
-			player: playersData[0].nickName,
+			player: playersData.cross.nickname,
 			numberOfMoves: 0,
 		});
 		resetEvent();
@@ -113,5 +113,5 @@ export function usePlayFieldHandler(
 		autoFill();
 	}, []);
 
-	return { playFieldState, setPlayFiledStateState, isWinner, checkIfWinnerFind, resetState, currentMove, setCurrentMove, markCell };
+	return { playFieldState, setPlayFieldState, isWinner, resetState, currentMove, setCurrentMove, markCell };
 }

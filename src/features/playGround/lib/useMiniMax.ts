@@ -4,7 +4,7 @@ import { HardLevelTypes } from '@/features/gameSelector/types';
 
 export function useMiniMax(hardLevel: HardLevelTypes): { miniMax: (playFieldState: ICellData[], currentSymbol: SymbolTypes, depth: number) => IMoveInfo } {
 	function findemptyCellsIndexes(playFieldState: ICellData[]): Array<number> {
-		let emptyCellsIndexes: Array<number> = [];
+		const emptyCellsIndexes: Array<number> = [];
 		for (let i = 0; i < playFieldState.length; i++) {
 			if (playFieldState[i].symbol === 'empty') {
 				emptyCellsIndexes.push(i);
@@ -48,10 +48,10 @@ export function useMiniMax(hardLevel: HardLevelTypes): { miniMax: (playFieldStat
 		}
 
 		++depth;
-		let moves: Array<IMoveInfo> = [];
+		const moves: Array<IMoveInfo> = [];
 
 		for (let i = 0; i < emptyCellsIndexes.length; i++) {
-			let move: IMoveInfo = {
+			const move: IMoveInfo = {
 				score: 0,
 				index: emptyCellsIndexes[i],
 			};
@@ -69,7 +69,7 @@ export function useMiniMax(hardLevel: HardLevelTypes): { miniMax: (playFieldStat
 			moves.push(move);
 		}
 
-		let bestMoveIndex: number = 0;
+		let bestMoveIndex = 0;
 		moves.sort((a, b) => a.score - b.score);
 		if (currentSymbol === 'cross') {
 			switch (hardLevel) {

@@ -1,9 +1,6 @@
-
-import { PropsWithClassName } from "@/shared/types/propsWithClassName";
-import { Dispatch, SetStateAction } from "react";
+import { PropsWithClassName } from '@/shared/types/propsWithClassName';
 
 export interface SearchBarProps extends PropsWithClassName {
-    value: string,
-    onChange: Dispatch<SetStateAction<string>>
-}   
-
+	value: string;
+	onChange: (value: string) => void;
+}

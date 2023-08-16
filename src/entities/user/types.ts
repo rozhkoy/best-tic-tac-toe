@@ -1,4 +1,4 @@
-import { WebSocketMessage } from '@/shared/types/webSocketMessage';
+import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 
 export interface UserInfoProps {
 	nickname: string;
@@ -6,10 +6,9 @@ export interface UserInfoProps {
 }
 
 export interface IUpdateUserStatusData {
-	userId: string;
 	status: string;
 }
 
 export interface IUserEvents {
-	updateUserStatus(status: string, userId: string): WebSocketMessage<IUpdateUserStatusData>;
+	updateUserStatus(status: string, userId: string): IWebSocketMessage<IUpdateUserStatusData>;
 }
