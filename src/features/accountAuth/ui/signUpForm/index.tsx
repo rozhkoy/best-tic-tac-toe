@@ -24,13 +24,10 @@ export const SignUpForm = () => {
 		register,
 		handleSubmit,
 		formState: { errors, touchedFields },
-		trigger,
 	} = useForm<FormDataTypes>({
 		mode: 'onBlur',
 		resolver: yupResolver(signUpSchema),
 	});
-
-
 
 	const formHanler = (data: FormDataTypes) => console.log(data);
 	return (

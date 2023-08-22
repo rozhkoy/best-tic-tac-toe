@@ -1,13 +1,8 @@
+import { UserStatusTypes } from '@/shared/ui/userStatus/types';
+
 export interface IGetUserInfoByUid {
 	uid: string;
 }
-
-// export interface IRegistrationUserInfo {
-// 	[key: string]: string;
-// 	uid: string;
-// 	nickname: string;
-// 	settingsCode: string;
-// }
 
 export type RegistrationInfoFieldsTypes = 'uid' | 'nickname' | 'settingsCode';
 
@@ -19,6 +14,7 @@ export interface IUserResponse {
 	settingCode: string;
 	role: string;
 	isActive: boolean;
+	status: UserStatusTypes;
 }
 
 export interface IUserSettingsResponse {

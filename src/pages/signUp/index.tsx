@@ -7,7 +7,7 @@ import { FormHeader } from '@/shared/ui/formHeader';
 export const SignUp = () => {
 	return (
 		<AuthFrame>
-			<Container size={'medium'}>
+			<Container size="small">
 				<FormHeader heading={'Create accaunt'} subHeading={'to get started now!'} />
 				<SignUpForm />
 				<SignInWith />
