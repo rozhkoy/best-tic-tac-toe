@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { FormInput } from '@/shared/ui/formInput';
 import { ref } from 'yup';
+import { useFirebaseAuth } from '../..';
 
 export const SignUpForm = () => {
 	const signUpSchema: ObjectSchema<SignUpFormProps> = object().shape({
@@ -18,21 +19,23 @@ export const SignUpForm = () => {
 			.oneOf([ref('password')], 'The fields must be the same'),
 	});
 
+	const { createAccount } = useFirebaseAuth();
+
 	type FormDataTypes = yup.InferType<typeof signUpSchema>;
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, touchedFields },
-		trigger,
 	} = useForm<FormDataTypes>({
 		mode: 'onBlur',
 		resolver: yupResolver(signUpSchema),
 	});
 
+	const formHanler = ({ email, password, name }: FormDataTypes) => {
+		createAccount(email, password, name);
+	};
 
-
-	const formHanler = (data: FormDataTypes) => console.log(data);
 	return (
 		<FormWrap onSubmit={handleSubmit(formHanler)}>
 			<FormInput {...register('name')} placeholder={'Name'} error={errors.name} type={'text'} touched={touchedFields.name} />
