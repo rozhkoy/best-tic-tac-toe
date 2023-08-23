@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { GithubAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { GithubAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { getUserInfoByUid, registrationNewUser } from '../api';
 import { IGetUserInfoByUid } from '../types';
 import { useState, Dispatch } from 'react';
@@ -16,6 +16,7 @@ export function useFirebaseAuth(): {
 	googleAuth: () => void;
 	githubAuth: () => void;
 	createAccount: (email: string, password: string, name: string) => void;
+	authByEmailAndPassword: (email: string, password: string) => void;
 	signOutAccount: () => void;
 	getAuthState: () => void;
 } {
@@ -68,7 +69,7 @@ export function useFirebaseAuth(): {
 				signInMutation.mutate({ uid: user.uid });
 			})
 			.catch((error) => {
-				console.log(error);
+				alert(error.message);
 			});
 	}
 
@@ -80,17 +81,44 @@ export function useFirebaseAuth(): {
 				signInMutation.mutate({ uid: user.uid });
 			})
 			.catch((error) => {
-				console.log(error);
+				alert(error.message);
 			});
 	}
 
-	function createAccount(email: string, password: string, name: string) {
+	function createAccount(email: string, password: string, nickname: string) {
 		createUserWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				console.log(userCredential);
+			.then(({ user }) => {
+				const registrationInfo: Array<IFormDataObject> = [
+					{
+						key: 'uid',
+						value: user.uid,
+					},
+					{
+						key: 'nickname',
+						value: nickname,
+					},
+					{
+						key: 'settingsCode',
+						value: nanoid(),
+					},
+				];
+
+				const formData = createFormData(registrationInfo);
+				registrationNewUserMutation.mutate(formData);
 			})
 			.catch((error) => {
-				console.log(error.message);
+				alert(error.message);
+			});
+	}
+
+	function authByEmailAndPassword(email: string, password: string) {
+		signInWithEmailAndPassword(auth, email, password)
+			.then(({ user }) => {
+				setRegistrationUserInfo({ uid: user.uid, nickname: user.displayName ?? 'user' + nanoid(), settingsCode: nanoid() });
+				signInMutation.mutate({ uid: user.uid });
+			})
+			.catch((error) => {
+				alert(error.message);
 			});
 	}
 
@@ -100,7 +128,7 @@ export function useFirebaseAuth(): {
 				console.log('sign out');
 			})
 			.catch((error) => {
-				console.log('upsss');
+				alert('upsss');
 			});
 	}
 
@@ -114,5 +142,5 @@ export function useFirebaseAuth(): {
 		return false;
 	}
 
-	return { googleAuth, githubAuth, createAccount, signOutAccount, getAuthState };
+	return { googleAuth, githubAuth, createAccount, signOutAccount, getAuthState, authByEmailAndPassword };
 }

@@ -16,7 +16,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({ placeho
 				type={type}
 			/>
 
-			{error?.message && <div className="form-input__error">{error?.message}</div>}
+			<div className="form-input__error">{error?.message}</div>
 		</div>
 	);
 });
