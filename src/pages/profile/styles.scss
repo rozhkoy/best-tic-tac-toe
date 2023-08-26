@@ -1,0 +1,29 @@
+.profile {
+	background: rgba(69, 69, 69, 0.7);
+	backdrop-filter: blur(25px);
+	padding: 42px 0;
+	&__container {
+		display: flex;
+		flex-direction: column;
+		grid-gap: 42px;
+	}
+
+	&__user-info {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-radius: 10px;
+		background: var(--black, #000);
+		padding: 20px 20px;
+		width: 100%;
+	}
+
+	&__btns {
+	}
+
+	&__stats-wrap {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		grid-gap: 24px;
+	}
+}
