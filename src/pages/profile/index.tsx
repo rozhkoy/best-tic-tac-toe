@@ -11,14 +11,13 @@ import { HistoryItem } from '@/shared/ui/historyItem';
 import { Nothing } from '@/shared/ui/nothing';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { getGameHistoryByUserId } from './api';
+import { getGameHistoryByUserId, getProfileInfoByUserId } from './api';
 import { useInView } from 'react-intersection-observer';
-import { IGameHistoryItemResponse } from '@/shared/types/findAndCount';
-import { divide } from 'lodash';
+import { useAppSelector } from '@/shared/hooks/reduxHooks';
 
 export const Profile = () => {
 	const PER_PAGE = 10;
-
+	const userInfo = useAppSelector((state) => state.user);
 	const { userId } = useParams();
 	const [isFriend, setIsFriend] = useState(false);
 
@@ -26,16 +25,11 @@ export const Profile = () => {
 
 	const [ref, inView] = useInView();
 
-	useEffect(() => {
-		if (!userId) {
-			navigation('/');
-		}
-	}, []);
-
-	// const userInfoByUserId = useQuery({
-	// 	queryKey: ['userInfoByUserId', userId],
-	// 	queryFn: () => getUserInfoByUserId({ userId: Number(userId) ?? 0 }),
-	// });
+	const profileInfoByUserId = useQuery({
+		queryKey: ['userInfoByUserId', userId],
+		queryFn: () => getProfileInfoByUserId({ userId: Number(userId) ?? 0, currentUserId: userInfo.userId }),
+		enabled: !!userInfo.userId,
+	});
 
 	const history = useInfiniteQuery({
 		queryKey: ['gameHistory'],
@@ -46,31 +40,32 @@ export const Profile = () => {
 	});
 
 	useEffect(() => {
-		console.log('viso', history.hasNextPage);
 		if (inView && history.hasNextPage) {
 			history.fetchNextPage();
 		}
 	}, [inView, history.hasNextPage]);
 
-	useEffect(() => {
-		console.log(history.data?.pages);
-	});
+	// useEffect(() => {
+	// 	if (profileInfoByUserId.isError || !userId) {
+	// 		navigation('/');
+	// 	}
+	// }, [profileInfoByUserId.isError, userId]);
 
 	return (
 		<div className="profile">
 			<Container size="large" className="profile__container">
-				{/* {userInfoByUserId.isSuccess ? (
+				{profileInfoByUserId.isSuccess ? (
 					<div className="profile__user-info">
-						<UserProfile nickname={'test'} status={'online'} src={''} size="large"></UserProfile>
+						<UserProfile nickname={profileInfoByUserId.data.userInfo.nickname} status={profileInfoByUserId.data.userInfo.status} src={''} size="large"></UserProfile>
 						<div className="profile__btns">
-							{isFriend ? (
+							{profileInfoByUserId.data.friendshiptResponse ? (
 								<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Invite to game'} type={'button'} disabled={false} />
 							) : (
 								<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Invite to friends'} type={'button'} disabled={false} />
 							)}
 						</div>
 					</div>
-				) : null} */}
+				) : null}
 				<Section title="Statistics" className="profile__stats">
 					<div className="profile__stats-wrap">
 						<StatsItem number={1500} text={'Wins'} />

@@ -1,10 +1,9 @@
 import { server } from '@/shared/api/axios';
-import { IGetGameHistoryByUserId, IGetUserInfoByUserId } from './types';
-import { IUserResponse } from '@/features/accountAuth/types';
+import { IGetGameHistoryByUserId, IGetProfileInfoByUserId, IProfileInfoByUserIdResponse } from './types';
 import { IGameHistoryItemResponse, IPaginationResponse } from '@/shared/types/findAndCount';
 
-export async function getUserInfoByUserId(params: IGetUserInfoByUserId) {
-	const { data } = await server.get<IUserResponse>('/v1/api/user/getUserInfoByUserId', { params });
+export async function getProfileInfoByUserId(params: IGetProfileInfoByUserId) {
+	const { data } = await server.get<IProfileInfoByUserIdResponse>('/v1/api/user/getProfileInfoByUserId', { params });
 	return data;
 }
 
