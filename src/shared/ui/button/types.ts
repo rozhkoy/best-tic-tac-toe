@@ -9,4 +9,5 @@ export interface ButtonProps {
 	icon?: IconNamesTypes;
 	title: string;
 	type: 'button' | 'submit';
+	disabled: boolean;
 }
