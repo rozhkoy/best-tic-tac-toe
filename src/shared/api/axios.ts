@@ -16,9 +16,13 @@ server.interceptors.response.use(
 );
 
 server.interceptors.request.use(async (config) => {
-	const idToken = await getUserIdToken;
-	if (config.headers && idToken) {
-		config.headers.Authorization = String(idToken);
+	try {
+		const idToken = await getUserIdToken();
+		if (config.headers && idToken) {
+			config.headers.Authorization = String(idToken);
+		}
+	} catch (e) {
+		console.log(e);
 	}
 	return config;
 });

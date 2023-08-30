@@ -3,7 +3,7 @@ import './styles.scss';
 import classNames from 'classnames';
 import { forwardRef } from 'react';
 
-export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({ placeholder, type, className, error, onChange, onBlur, name }, ref) => {
+export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({ placeholder, type, className, error, onChange, onBlur, name, autocomplete }, ref) => {
 	return (
 		<div className="form-input">
 			<input
@@ -14,6 +14,7 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({ placeho
 				className={classNames('form-input__input', className, { 'form-input__input--error': !!error?.message })}
 				placeholder={placeholder}
 				type={type}
+				autoComplete={autocomplete}
 			/>
 
 			<div className="form-input__error">{error?.message}</div>

@@ -33,9 +33,9 @@ export const SignInForm = () => {
 
 	return (
 		<FormWrap onSubmit={handleSubmit(formHanler)}>
-			<FormInput {...register('email')} placeholder={'Email'} error={errors.email} type={'email'} touched={touchedFields.email} />
-			<FormInput {...register('password')} placeholder={'Password'} error={errors.password} type={'password'} touched={touchedFields.password} />
-			<Button className={''} size={'medium'} variant={'primary'} fullWidth={true} title={'Sign In'} type={'submit'} />
+			<FormInput autocomplete={'current-email'} {...register('email')} placeholder={'Email'} error={errors.email} type={'email'} touched={touchedFields.email} />
+			<FormInput autocomplete={'current-password'} {...register('password')} placeholder={'Password'} error={errors.password} type={'password'} touched={touchedFields.password} />
+			<Button size={'medium'} variant={'primary'} fullWidth={true} title={'Sign In'} type={'submit'} />
 		</FormWrap>
 	);
 };

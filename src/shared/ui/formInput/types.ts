@@ -9,4 +9,5 @@ export interface FormInputProps {
 	error?: FieldError | undefined;
 	touched: boolean | undefined;
 	type: 'text' | 'password' | 'email';
+	autocomplete: string;
 }

@@ -38,11 +38,18 @@ export const SignUpForm = () => {
 
 	return (
 		<FormWrap onSubmit={handleSubmit(formHanler)}>
-			<FormInput {...register('name')} placeholder={'Name'} error={errors.name} type={'text'} touched={touchedFields.name} />
-			<FormInput {...register('email')} placeholder={'Email'} error={errors.email} type={'text'} touched={touchedFields.email} />
-			<FormInput {...register('password')} placeholder={'Password'} error={errors.password} type={'password'} touched={touchedFields.password} />
-			<FormInput {...register('confirmPassword')} placeholder={'Confirm password'} error={errors.confirmPassword} type={'password'} touched={touchedFields.confirmPassword} />
-			<Button className={''} size={'medium'} variant={'primary'} fullWidth={true} title={'Sign Up'} type={'submit'} />
+			<FormInput autocomplete={'current-name'} {...register('name')} placeholder={'Name'} error={errors.name} type={'text'} touched={touchedFields.name} />
+			<FormInput autocomplete={'current-email'} {...register('email')} placeholder={'Email'} error={errors.email} type={'text'} touched={touchedFields.email} />
+			<FormInput autocomplete={'current-password'} {...register('password')} placeholder={'Password'} error={errors.password} type={'password'} touched={touchedFields.password} />
+			<FormInput
+				autocomplete={'current-password'}
+				{...register('confirmPassword')}
+				placeholder={'Confirm password'}
+				error={errors.confirmPassword}
+				type={'password'}
+				touched={touchedFields.confirmPassword}
+			/>
+			<Button disabled={false} className={''} size={'medium'} variant={'primary'} fullWidth={true} title={'Sign Up'} type={'submit'} />
 		</FormWrap>
 	);
 };

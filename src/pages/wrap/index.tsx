@@ -20,7 +20,9 @@ export const Wrap = () => {
 	const { getAuthState } = useFirebaseAuth();
 
 	useEffect(() => {
-		getAuthState();
+		if (!userInfo.isAuth) {
+			getAuthState();
+		}
 
 		if (webSocket) {
 			webSocket.subscribeToOnUpdate(websocketEventNames.SEND_INVITE_TO_FRIENDSHIP, () => {
@@ -30,8 +32,6 @@ export const Wrap = () => {
 			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME, (message) => {
 				const result = confirm('Are you accpet invite?');
 				if (result) {
-					console.log('ok', userInfo);
-
 					acceptInviteToGame(message.userId, message.data.friendId);
 				}
 			});
@@ -50,7 +50,6 @@ export const Wrap = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log('update', userInfo);
 		if (userInfo.isAuth) {
 			udpateUserStatus('online');
 		}
