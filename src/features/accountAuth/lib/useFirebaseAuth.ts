@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { GithubAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { getUserInfoByUid, registrationNewUser } from '../api';
 import { IGetUserInfoByUid } from '../types';
-import { useState, Dispatch } from 'react';
+import { useState } from 'react';
 import { createFormData } from '@/shared/lib/CreateFormData';
 import { nanoid } from 'nanoid';
 import { IFormDataObject } from '@/shared/lib/CreateFormData/types';
@@ -32,6 +32,7 @@ export function useFirebaseAuth(): {
 			navigation('/');
 		},
 		onError: (res) => console.log(res),
+		retry: false,
 	});
 
 	const signInMutation = useMutation({
@@ -52,6 +53,7 @@ export function useFirebaseAuth(): {
 			const formData = createFormData(registrationInfo);
 			registrationNewUserMutation.mutate(formData);
 		},
+		retry: false,
 	});
 
 	const userInfoByUidMutation = useMutation({
@@ -128,6 +130,7 @@ export function useFirebaseAuth(): {
 				console.log('sign out');
 			})
 			.catch((error) => {
+				console.log(error);
 				alert('upsss');
 			});
 	}

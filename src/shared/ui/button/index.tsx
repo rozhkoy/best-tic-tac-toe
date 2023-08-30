@@ -9,7 +9,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
 		'with-icon': !!props.icon,
 	});
 	return (
-		<button disabled={props.disabled} type={props.type} className={className} onClick={props.onClick}>
+		<button disabled={props.disabled ?? false} type={props.type} className={className} onClick={props.onClick}>
 			{props.icon && <Icon name={props.icon} />}
 			<span className="button__label">{props.title}</span>
 		</button>
