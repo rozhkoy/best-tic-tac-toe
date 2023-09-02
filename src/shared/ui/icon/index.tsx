@@ -17,6 +17,8 @@ import {
 	CrossIcon,
 	NoughtIcon,
 	Info,
+	Mark,
+	Reject,
 } from './Static';
 import { IconNamesTypes, IconProps } from './types';
 import './styles.scss';
@@ -41,6 +43,8 @@ const icons: Record<IconNamesTypes, React.ReactNode> = {
 	nought: <NoughtIcon />,
 	cross: <CrossIcon />,
 	info: <Info />,
+	mark: <Mark />,
+	reject: <Reject />,
 };
 
 export function Icon({ name, className }: IconProps) {

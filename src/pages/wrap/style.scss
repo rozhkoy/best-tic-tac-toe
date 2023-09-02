@@ -9,5 +9,7 @@
 		display: grid;
 		width: 100%;
 		padding: 105px 0 0 0;
+		position: relative;
+		z-index: 100;
 	}
 }

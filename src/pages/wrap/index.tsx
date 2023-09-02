@@ -11,6 +11,7 @@ import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { IUpdateUserStatusData } from '@/entities/user/types';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 import { IAcceptInviteToGame } from '@/features/webSocketConnection/types';
+import { NotificationsProvider } from '@/features/notifications';
 
 export const Wrap = () => {
 	const userInfo = useAppSelector((state) => state.user);
@@ -85,6 +86,7 @@ export const Wrap = () => {
 			<div className="wrap__container">
 				<Outlet />
 			</div>
+			<NotificationsProvider />
 		</div>
 	);
 };
