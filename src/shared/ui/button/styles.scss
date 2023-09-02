@@ -9,6 +9,9 @@
 	&.full-width {
 		width: 100%;
 	}
+	&.default {
+		padding: 0;
+	}
 	&.primary {
 		background: var(--color-primary);
 		border: 2px solid var(--color-secondary);
@@ -39,7 +42,7 @@
 		border: 2px solid var(--color-white);
 		border-radius: 14px;
 	}
-	&.with-icon {
+	&.with-gap {
 		display: grid;
 		grid-template-columns: repeat(2, fit-content(100%));
 		justify-content: center;

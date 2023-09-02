@@ -175,3 +175,22 @@ export const Info = () => {
 		</svg>
 	);
 };
+
+export const Mark = () => {
+	return (
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+			<path d="M9.99972 15.17L19.1927 5.979L20.6067 7.393L10.0007 17.999L3.63672 11.635L5.05072 10.221L10.0007 15.171L9.99972 15.17Z" fill="white" />
+		</svg>
+	);
+};
+
+export const Reject = () => {
+	return (
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+			<path
+				d="M11.9997 10.586L16.9497 5.63599L18.3647 7.05099L13.4147 12.001L18.3647 16.951L16.9497 18.365L11.9997 13.415L7.04972 18.365L5.63672 16.95L10.5867 12L5.63672 7.04999L7.04972 5.63799L11.9997 10.588V10.586Z"
+				fill="#EB5757"
+			/>
+		</svg>
+	);
+};

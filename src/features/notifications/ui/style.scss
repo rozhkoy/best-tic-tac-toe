@@ -1,0 +1,29 @@
+.notifs-provider {
+	width: 100%;
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+	z-index: 999;
+	&__box {
+		height: calc(100vh - 150px);
+		position: absolute;
+		right: 20px;
+		bottom: 20px;
+		width: 360px;
+		pointer-events: auto;
+	}
+	&__scroll-box {
+		overflow-y: auto;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+
+		gap: 24px;
+		&::-webkit-scrollbar {
+			width: 0;
+		}
+	}
+}

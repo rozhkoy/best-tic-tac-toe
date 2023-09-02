@@ -39,4 +39,6 @@ export type IconNamesTypes =
 	| 'sun'
 	| 'nought'
 	| 'cross'
-	| 'info';
+	| 'info'
+	| 'mark'
+	| 'reject';
