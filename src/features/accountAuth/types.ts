@@ -17,6 +17,12 @@ export interface IUserResponse {
 	status: UserStatusTypes;
 }
 
+export interface IPartialUserInfo {
+	userId: number;
+	nickname: string;
+	status: UserStatusTypes;
+}
+
 export interface IUserSettingsResponse {
 	userSettingId: string;
 	userId: string;
