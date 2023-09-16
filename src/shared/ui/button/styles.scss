@@ -13,7 +13,7 @@
 		padding: 0;
 	}
 	&.primary {
-		background: var(--color-primary);
+		background: transparent;
 		border: 2px solid var(--color-secondary);
 		border-radius: 14px;
 		&:hover {
@@ -38,9 +38,18 @@
 		border-radius: 14px;
 	}
 	&.secondary {
-		background: transparent;
-		border: 2px solid var(--color-white);
+		background: var(--color-secondary);
+		border: 2px solid var(--color-secondary);
+		color: var(--color-primary);
 		border-radius: 14px;
+		&:hover {
+			background: var(--color-primary);
+			border: 2px solid var(--color-primary);
+			color: var(--color-secondary);
+		}
+		&:hover svg {
+			fill: var(--color-primary);
+		}
 	}
 	&.with-gap {
 		display: grid;

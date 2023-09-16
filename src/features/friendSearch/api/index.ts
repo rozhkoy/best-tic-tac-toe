@@ -1,5 +1,5 @@
 import { server } from '@/shared/api/axios';
-import { IGetAllRequestsForFriendshipResponse, ISearchUsersByNickname, IPartialUserInfoWithFriendshipStatus } from '../types';
+import { ISearchUsersByNickname, IPartialUserInfoWithFriendshipStatus } from '../types';
 import { IPaginationResponse } from '@/shared/types/findAndCount';
 
 export async function searchUsersByNickname(params: ISearchUsersByNickname): Promise<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>> {
@@ -7,8 +7,8 @@ export async function searchUsersByNickname(params: ISearchUsersByNickname): Pro
 	return response.data;
 }
 
-export async function getAllRequestsForFriendship(params: ISearchUsersByNickname): Promise<IPaginationResponse<Array<IGetAllRequestsForFriendshipResponse>>> {
-	const response = await server.get<IPaginationResponse<Array<IGetAllRequestsForFriendshipResponse>>>('v1/api/user/getAllRequestsForFriendship', { params });
+export async function getAllRequestsForFriendship(params: ISearchUsersByNickname): Promise<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>> {
+	const response = await server.get<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>>('v1/api/user/getAllRequestsForFriendship', { params });
 	return response.data;
 }
 
@@ -17,8 +17,13 @@ export async function sendInviteToFriendship(formData: FormData): Promise<IParti
 	return response.data;
 }
 
-export async function acceptFriendshipInvite(formData: FormData): Promise<boolean> {
+export async function sendAcceptFriendshipInvite(formData: FormData): Promise<boolean> {
 	const response = await server.post<boolean>('v1/api/user/acceptFriendshipInvite', formData);
+	return response.data;
+}
+
+export async function sendRejectFriendshipInvite(formData: FormData): Promise<boolean> {
+	const response = await server.post<boolean>('v1/api/user/rejectFriendshipInvite', formData);
 	return response.data;
 }
 
