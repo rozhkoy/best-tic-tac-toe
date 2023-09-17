@@ -1,6 +1,6 @@
 import { Button } from '@/shared/ui/button';
 import { Container } from '@/shared/ui/container';
-import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import './styles.scss';
 import { CustomRadio } from '@/shared/ui/CustomRadio';
 import { FrienshipStatusTypes, IButtonsIds, IPaginationInfo, IPartialUserInfoWithFriendshipStatus, SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
@@ -25,8 +25,8 @@ export const Friends = () => {
 	const { userId } = useAppSelector((state) => state.user);
 	const webSocket = useContext(WebSocketContext);
 	const PER_PAGE = 10;
-	const [globalSearchResult, setGlobalSearchResult] = useState<Array<IPaginationResponse<Array<IGetAllRequestsForFriendshipResponse>>>>([]);
-	const [friendsRequestResponse, setFriendsRequestResponse] = useState<Array<IPaginationResponse<Array<IGetAllRequestsForFriendshipResponse>>>>([]);
+	const [globalSearchResult, setGlobalSearchResult] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>>>([]);
+	const [friendsRequestResponse, setFriendsRequestResponse] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>>>([]);
 	const [yourFriendsResponse, setYourFriendsResponse] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>>>([]);
 	const { ref, inView } = useInView();
 
@@ -42,31 +42,43 @@ export const Friends = () => {
 		webSocket?.instance.send(JSON.stringify(message));
 	}
 
-	function searchBarHandler(value: string) {
+	const searchBarDebounce = useMemo(() => {
+		return debounce((pageParam) => {
+			// switch (currentTab) {
+			// 	case 'Global Search':
+			// 		globalSearch.remove();
+			// 		break;
+			// 	case 'Friends requests':
+			// 		friendsRequest.remove();
+			// 		break;
+			// 	case 'Your friends':
+			// 		yourFriends.remove();
+			// }
+		}, 300);
+	}, [debounce, currentTab]);
+
+	const searchBarHandler = useCallback((value: string) => {
 		setSearchBarState(value);
-		searchBarDebounce(value, 0);
-		console.log(currentTab);
 		switch (currentTab) {
 			case 'Global Search':
 				globalSearch.remove();
+
 				break;
 			case 'Friends requests':
-				setFriendsRequestResponse([]);
+				friendsRequest.remove();
+
 				break;
 			case 'Your friends':
-				setYourFriendsResponse([]);
+				yourFriends.remove();
 		}
-	}
+
+		searchBarDebounce(0);
+	}, []);
 
 	function customRadioHandler(value: SearchModeTypes) {
 		setCurrentTab(value);
 		setSearchBarState('');
 	}
-
-	const searchBarDebounce = useCallback(
-		debounce((query, perPage) => sendQuerySearch(query, perPage), 10),
-		[]
-	);
 
 	const globalSearch = useInfiniteQuery({
 		queryKey: ['globalSearach'],
@@ -105,20 +117,6 @@ export const Friends = () => {
 		enabled: currentTab === 'Your friends' && !!userId,
 	});
 
-	function sendQuerySearch(query: string, pageParam: number) {
-		console.log(searchBarState, '===', query);
-		switch (currentTab) {
-			case 'Global Search':
-				globalSearch.fetchNextPage({ pageParam });
-				break;
-			case 'Friends requests':
-				friendsRequest.fetchNextPage({ pageParam });
-				break;
-			case 'Your friends':
-				yourFriends.fetchNextPage({ pageParam });
-		}
-	}
-
 	function buttons(status: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo) {
 		switch (status) {
 			case null:
@@ -133,7 +131,7 @@ export const Friends = () => {
 			case 'friend':
 				return <Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Invite to game'} />;
 			case 'pending':
-				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Pending'} />;
+				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? 0, paginationInfo)} title={'Pending'} />;
 			case 'loading':
 				return <div>loading...</div>;
 			case 'error':
@@ -161,7 +159,11 @@ export const Friends = () => {
 		]);
 		const response = await sendInviteToFriendShipMutation.mutateAsync(formData);
 		if (response) {
-			replaceFriendshiptStatus(setGlobalSearchResult, paginationInfo, 'pending');
+			setGlobalSearchResult((state) => {
+				state[paginationInfo.page].rows[paginationInfo.item].friendshipStatus = 'pending';
+				state[paginationInfo.page].rows[paginationInfo.item].invitationId = response.invitationId;
+				return [...state];
+			});
 		} else {
 			replaceFriendshiptStatus(setGlobalSearchResult, paginationInfo, 'error');
 		}
@@ -289,13 +291,13 @@ export const Friends = () => {
 									if (pageIndex === pages.length - 1 && itemIndex === page.length - 1) {
 										return (
 											<FriendItem ref={ref} key={userId} variant={'secondary'} src={''} status={status} nickname={nickname}>
-												{buttons(friendshipStatus, { userId, invitationId: +invitationId }, { page: pageIndex, item: itemIndex })}
+												{buttons(friendshipStatus, { userId, invitationId: invitationId }, { page: pageIndex, item: itemIndex })}
 											</FriendItem>
 										);
 									} else {
 										return (
 											<FriendItem key={userId} variant='secondary' src={''} status={status} nickname={nickname}>
-												{buttons(friendshipStatus, { userId, invitationId: +invitationId }, { page: pageIndex, item: itemIndex })}
+												{buttons(friendshipStatus, { userId, invitationId: invitationId }, { page: pageIndex, item: itemIndex })}
 											</FriendItem>
 										);
 									}
@@ -313,14 +315,14 @@ export const Friends = () => {
 										return (
 											<FriendItem ref={ref} key={userId + itemIndex} variant={'secondary'} src={''} status={status} nickname={nickname}>
 												{userId}
-												{buttons(friendshipStatus, { userId, invitationId: +invitationId }, { page: pageIndex, item: itemIndex })}
+												{buttons(friendshipStatus, { userId, invitationId: invitationId }, { page: pageIndex, item: itemIndex })}
 											</FriendItem>
 										);
 									} else {
 										return (
 											<FriendItem key={userId + itemIndex} variant={'secondary'} src={''} status={status} nickname={nickname}>
 												{userId}
-												{buttons(friendshipStatus, { userId, invitationId: +invitationId }, { page: pageIndex, item: itemIndex })}
+												{buttons(friendshipStatus, { userId, invitationId: invitationId }, { page: pageIndex, item: itemIndex })}
 											</FriendItem>
 										);
 									}

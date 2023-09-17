@@ -24,12 +24,12 @@ export type SearchModeProp = Array<SearchModeTypes>;
 
 export interface IPartialUserInfoWithFriendshipStatus extends IPartialUserInfo {
 	friendshipStatus: FrienshipStatusTypes;
-	invitationId?: string | null;
+	invitationId: number | null;
 }
 
-export interface IGetAllRequestsForFriendshipResponse extends IPartialUserInfoWithFriendshipStatus {
-	invitationId: string;
-}
+// export interface IGetAllRequestsForFriendshipResponse extends IPartialUserInfoWithFriendshipStatus {
+// 	invitationId: string;
+// }
 
 export type FrienshipStatusTypes = null | 'friend' | 'invitation' | 'pending' | 'loading' | 'error';
 
@@ -40,5 +40,5 @@ export interface IPaginationInfo {
 
 export interface IButtonsIds {
 	userId: number;
-	invitationId?: number;
+	invitationId?: number | null;
 }
