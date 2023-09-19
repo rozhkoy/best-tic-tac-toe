@@ -3,7 +3,7 @@ import { Container } from '@/shared/ui/container';
 import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import './styles.scss';
 import { CustomRadio } from '@/shared/ui/CustomRadio';
-import { FrienshipStatusTypes, IButtonsIds, IPaginationInfo, IPartialUserInfoWithFriendshipStatus, SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
+import { FriendItemBtnsStatusTypes, IButtonsIds, IPaginationInfo, IPartialUserInfoWithFriendshipStatus, SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
 import { SearchBar } from '@/shared/ui/Searchbar';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { ISendInviteToGame } from '@/features/webSocketConnection/types';
@@ -20,7 +20,7 @@ import debounce from 'lodash/debounce';
 import { createFormData } from '@/shared/lib/CreateFormData';
 
 export const Friends = () => {
-	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Global Search');
+	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Your friends');
 	const [searchBarState, setSearchBarState] = useState('');
 	const { userId } = useAppSelector((state) => state.user);
 	const webSocket = useContext(WebSocketContext);
@@ -30,30 +30,50 @@ export const Friends = () => {
 	const [yourFriendsResponse, setYourFriendsResponse] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>>>([]);
 	const { ref, inView } = useInView();
 
-	function sendInviteToGame(friendId: string) {
+	function sendInviteToGame(friendId: number, paginationInfo: IPaginationInfo) {
 		const message: IWebSocketMessage<ISendInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME,
 			userId,
 			data: {
 				friendId,
+				paginationInfo,
 			},
 		};
 
 		webSocket?.instance.send(JSON.stringify(message));
+
+		replaceFriendshiptStatus(setYourFriendsResponse, paginationInfo, 'loading');
 	}
+
+	useEffect(() => {
+		if (webSocket) {
+			webSocket.subscribeToOnUpdate(websocketEventNames.INVITATION_TO_GAME_HAS_BEEN_SENT, (message) => {
+				replaceFriendshiptStatus(setYourFriendsResponse, message.data.paginationInfo, 'invitedToGame');
+			});
+			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_REJECTED, (message) => {
+				for (let page = 0; page < yourFriendsResponse.length; page++) {
+					for (let item = 0; item < yourFriendsResponse[page].rows.length; item++) {
+						if (yourFriendsResponse[page].rows[item].userId === message.userId) {
+							replaceFriendshiptStatus(setYourFriendsResponse, { page, item }, 'friend');
+						}
+					}
+				}
+			});
+		}
+	});
 
 	const searchBarDebounce = useMemo(() => {
 		return debounce((pageParam) => {
-			// switch (currentTab) {
-			// 	case 'Global Search':
-			// 		globalSearch.remove();
-			// 		break;
-			// 	case 'Friends requests':
-			// 		friendsRequest.remove();
-			// 		break;
-			// 	case 'Your friends':
-			// 		yourFriends.remove();
-			// }
+			switch (currentTab) {
+				case 'Global Search':
+					globalSearch.remove();
+					break;
+				case 'Friends requests':
+					friendsRequest.remove();
+					break;
+				case 'Your friends':
+					yourFriends.remove();
+			}
 		}, 300);
 	}, [debounce, currentTab]);
 
@@ -72,7 +92,7 @@ export const Friends = () => {
 				yourFriends.remove();
 		}
 
-		searchBarDebounce(0);
+		// searchBarDebounce(0);
 	}, []);
 
 	function customRadioHandler(value: SearchModeTypes) {
@@ -115,6 +135,7 @@ export const Friends = () => {
 		},
 		getNextPageParam: (lastPage) => lastPage.nextPage,
 		enabled: currentTab === 'Your friends' && !!userId,
+		refetchOnWindowFocus: false,
 	});
 
 	function buttons(status: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo) {
@@ -129,7 +150,9 @@ export const Friends = () => {
 					</>
 				);
 			case 'friend':
-				return <Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Invite to game'} />;
+				return <Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} onClick={() => sendInviteToGame(ids.userId, paginationInfo)} title={'Invite to game'} />;
+			case 'invitedToGame':
+				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Invited to game'} />;
 			case 'pending':
 				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? 0, paginationInfo)} title={'Pending'} />;
 			case 'loading':
@@ -230,7 +253,7 @@ export const Friends = () => {
 	function replaceFriendshiptStatus(
 		setState: Dispatch<SetStateAction<Array<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>>>>,
 		{ page, item }: IPaginationInfo,
-		friendshipStatus: FrienshipStatusTypes
+		friendshipStatus: FriendItemBtnsStatusTypes
 	) {
 		setState((state) => {
 			state[page].rows[item].friendshipStatus = friendshipStatus;
@@ -264,17 +287,19 @@ export const Friends = () => {
 					yourFriendsResponse.map((page, pageIndex, pages) => {
 						return (
 							<React.Fragment key={pageIndex}>
-								{page.rows.map(({ status, nickname, userId }, itemIndex, page) => {
+								{page.rows.map(({ status, nickname, userId, friendshipStatus }, itemIndex, page) => {
 									if (pageIndex === pages.length - 1 && itemIndex === page.length - 1) {
 										return (
 											<FriendItem ref={ref} key={userId} variant={'secondary'} src={''} status={status} nickname={nickname}>
-												{/* {buttons(friendshipStatus, userId)} */}
+												{userId}
+												{buttons(friendshipStatus, { userId }, { page: pageIndex, item: itemIndex })}
 											</FriendItem>
 										);
 									} else {
 										return (
 											<FriendItem key={userId} variant={'secondary'} src={''} status={status} nickname={nickname}>
-												{/* {buttons(friendshipStatus, userId)} */}
+												{userId}
+												{buttons(friendshipStatus, { userId }, { page: pageIndex, item: itemIndex })}
 											</FriendItem>
 										);
 									}

@@ -5,10 +5,15 @@ import './styles.scss';
 import { InviteToGameNotifsProps } from './types';
 import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 import { removeNotif, toggleVisible } from '@/features/notifications/store';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
+import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
+import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
+import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
+import { IAcceptInviteToGame } from '@/features/webSocketConnection/types';
 
 export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, friendId, userId, nickname, isVisible, id }) => {
 	const dispatch = useAppDispatch();
+	const webSocket = useContext(WebSocketContext);
 
 	function onEnter() {
 		dispatch(toggleVisible({ id, isVisible: true }));
@@ -25,21 +30,47 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 		return () => {
 			clearInterval(timer);
 		};
-	}, []);
+	}, [dispatch, id]);
+
+	function acceptInviteToGame(friendId: number, userId: number) {
+		const message: IWebSocketMessage<IAcceptInviteToGame> = {
+			event: websocketEventNames.INVITE_TO_GAME_IS_ACCEPTED,
+			userId: userId,
+			data: {
+				friendId,
+			},
+		};
+
+		webSocket?.instance.send(JSON.stringify(message));
+		dispatch(toggleVisible({ id, isVisible: false }));
+	}
+
+	function rejectInviteToGame(friendId: number, userId: number) {
+		const message: IWebSocketMessage<IAcceptInviteToGame> = {
+			event: websocketEventNames.INVITE_TO_GAME_IS_REJECTED,
+			userId: userId,
+			data: {
+				friendId,
+			},
+		};
+
+		webSocket?.instance.send(JSON.stringify(message));
+		dispatch(toggleVisible({ id, isVisible: false }));
+	}
 
 	return (
-		<CSSTransition onEnter={onEnter} in={isVisible} timeout={1000} classNames="fade" onExited={onExited} unmountOnExit>
-			<div className="invite-to-game-notif">
-				<div className="user-info">
-					<Avatar size="small" className="user-info__logo" src={src} />
-					<div className="user-info__info">
-						<div className="user-info__nickname">{nickname}</div>
-						<div className="user-info__action">Invite to game</div>
+		<CSSTransition onEnter={onEnter} in={isVisible} timeout={1000} classNames='fade' onExited={onExited} unmountOnExit>
+			<div className='invite-to-game-notif'>
+				<div className='user-info'>
+					<Avatar size='small' className='user-info__logo' src={src} />
+					<div className='user-info__info'>
+						<div className='user-info__nickname'>{nickname}</div>
+						<div className='user-info__action'>Invite to game</div>
 					</div>
 				</div>
-				<div className="invite-to-game-notif__btns">
-					<Button onClick={() => dispatch(toggleVisible({ id, isVisible: false }))} size={'default'} variant={'default'} fullWidth={false} icon={'mark'} type={'button'} />
-					<Button size={'default'} variant={'default'} fullWidth={false} icon={'reject'} type={'button'} />
+				<div className='invite-to-game-notif__btns'>
+					<Button size={'default'} variant={'default'} fullWidth={false} icon={'mark'} onClick={() => acceptInviteToGame(friendId, userId)} type={'button'} />
+					<Button size={'default'} variant={'default'} fullWidth={false} icon={'reject'} onClick={() => rejectInviteToGame(friendId, userId)} type={'button'} />
 				</div>
 			</div>
 		</CSSTransition>

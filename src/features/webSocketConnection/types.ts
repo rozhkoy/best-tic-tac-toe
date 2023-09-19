@@ -1,13 +1,15 @@
 import { ICellData } from '@/shared/ui/fieldCell/types';
 
 import { GameStatusMessage, ICurrentMove, IPlayers } from '../playGround/types';
+import { IPaginationInfo } from '../friendSearch/types';
 
 export interface ISendInviteToFriendship {
 	invitationUserId: string;
 }
 
 export interface ISendInviteToGame {
-	friendId: string;
+	friendId: number;
+	paginationInfo: IPaginationInfo;
 }
 
 export interface IGetDataAboutOpponent {
@@ -19,7 +21,7 @@ export interface IReadyStateToGame {
 }
 
 export interface IAcceptInviteToGame {
-	friendId: string;
+	friendId: number;
 }
 
 export interface IGameboardState {
