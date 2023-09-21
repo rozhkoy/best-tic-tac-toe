@@ -1,14 +1,14 @@
 import { server } from '@/shared/api/axios';
-import { ISearchUsersByNickname, IPartialUserInfoWithFriendshipStatus } from '../types';
+import { ISearchUsersByNickname, ListOfUserResponse } from '../types';
 import { IPaginationResponse } from '@/shared/types/findAndCount';
 
-export async function searchUsersByNickname(params: ISearchUsersByNickname): Promise<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>> {
-	const response = await server.get<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>>('v1/api/user/searchUsersByNickname', { params });
+export async function searchUsersByNickname(params: ISearchUsersByNickname): Promise<IPaginationResponse<Array<ListOfUserResponse>>> {
+	const response = await server.get<IPaginationResponse<Array<ListOfUserResponse>>>('v1/api/user/searchUsersByNickname', { params });
 	return response.data;
 }
 
-export async function getAllRequestsForFriendship(params: ISearchUsersByNickname): Promise<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>> {
-	const response = await server.get<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>>('v1/api/user/getAllRequestsForFriendship', { params });
+export async function getAllRequestsForFriendship(params: ISearchUsersByNickname): Promise<IPaginationResponse<Array<ListOfUserResponse>>> {
+	const response = await server.get<IPaginationResponse<Array<ListOfUserResponse>>>('v1/api/user/getAllRequestsForFriendship', { params });
 	return response.data;
 }
 
@@ -27,7 +27,7 @@ export async function sendRejectFriendshipInvite(formData: FormData): Promise<bo
 	return response.data;
 }
 
-export async function getAllFriends(params: ISearchUsersByNickname): Promise<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>> {
-	const response = await server.get<IPaginationResponse<Array<IPartialUserInfoWithFriendshipStatus>>>('v1/api/user/getAllFriends', { params });
+export async function getAllFriends(params: ISearchUsersByNickname): Promise<IPaginationResponse<Array<ListOfUserResponse>>> {
+	const response = await server.get<IPaginationResponse<Array<ListOfUserResponse>>>('v1/api/user/getAllFriends', { params });
 	return response.data;
 }
