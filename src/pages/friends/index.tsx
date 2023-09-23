@@ -1,177 +1,292 @@
 import { Button } from '@/shared/ui/button';
 import { Container } from '@/shared/ui/container';
-import { FriendItem } from '@/shared/ui/friendItem';
-import { ListWrap } from '@/shared/ui/listWrap';
-import { Section } from '@/shared/ui/section';
-import { useContext, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import './styles.scss';
 import { CustomRadio } from '@/shared/ui/CustomRadio';
-import { SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
+import { FriendItemBtnsStatusTypes, IButtonsIds, IPaginationInfo, IPartialUserInfoWithBtnsStatus, SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
 import { SearchBar } from '@/shared/ui/Searchbar';
-import { usePlayerSearch } from '@/features/friendSearch';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
-import { ISendInviteToFriendship, ISendInviteToGame } from '@/features/webSocketConnection/types';
-import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { getAllFriends, getAllRequestsForFriendship, searchUsersByNickname } from '@/features/friendSearch/api';
+import { IPaginationResponse } from '@/shared/types/findAndCount';
+import { useInView } from 'react-intersection-observer';
+import debounce from 'lodash/debounce';
+import { ListOfUsers } from '@/features/friendSearch';
+import { createFormData } from '@/shared/lib/CreateFormData';
+import { useFriendsActions } from '@/features/friendSearch/api/lib/useFriendsActions';
 
 export const Friends = () => {
 	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Your friends');
-	const userInfo = useAppSelector((state) => state.user);
+	const [searchBarState, setSearchBarState] = useState('');
+	const { userId } = useAppSelector((state) => state.user);
+	const { sendInviteToFriendShipMutation, acceptFriendshipInviteMutation, rejectFriendshipInviteMutation, sendInviteToGame, sendRejectionInviteToGame } = useFriendsActions();
 	const webSocket = useContext(WebSocketContext);
-	const { searchBarState, changeHendler, result, searchResultCount, ref, acceptFriendshipInvite } = usePlayerSearch(currentTab);
+	const PER_PAGE = 10;
+	const [globalSearchResult, setGlobalSearchResult] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>>([]);
+	const [friendsRequestResponse, setFriendsRequestResponse] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>>([]);
+	const [yourFriendsResponse, setYourFriendsResponse] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>>([]);
+	const { ref, inView } = useInView();
 
-	function sendInviteToFriendShip(invitationUserId: string) {
-		const message: IWebSocketMessage<ISendInviteToFriendship> = {
-			event: websocketEventNames.SEND_INVITE_TO_FRIENDSHIP,
-			userId: userInfo.userId,
-			data: {
-				invitationUserId,
-			},
-		};
+	const searchBarDebounce = useMemo(() => {
+		return debounce((pageParam) => {
+			switch (currentTab) {
+				case 'Global Search':
+					globalSearch.remove();
+					break;
+				case 'Friends requests':
+					friendsRequest.remove();
+					break;
+				case 'Your friends':
+					yourFriends.remove();
+			}
+		}, 300);
+	}, [debounce, currentTab]);
 
-		webSocket?.instance.send(JSON.stringify(message));
+	const searchBarHandler = useCallback((value: string) => {
+		setSearchBarState(value);
+		switch (currentTab) {
+			case 'Global Search':
+				globalSearch.remove();
+
+				break;
+			case 'Friends requests':
+				friendsRequest.remove();
+
+				break;
+			case 'Your friends':
+				yourFriends.remove();
+		}
+
+		// searchBarDebounce(0);
+	}, []);
+
+	function customRadioHandler(value: SearchModeTypes) {
+		setCurrentTab(value);
+		setSearchBarState('');
 	}
 
-	function sendInviteToGame(friendId: string) {
-		const message: IWebSocketMessage<ISendInviteToGame> = {
-			event: websocketEventNames.INVITE_TO_GAME,
-			userId: userInfo.userId,
-			data: {
-				friendId,
-			},
-		};
+	const globalSearch = useInfiniteQuery({
+		queryKey: ['globalSearach'],
+		queryFn: ({ pageParam }) => {
+			return searchUsersByNickname({ query: searchBarState, userId, page: pageParam ?? 0, perPage: PER_PAGE });
+		},
+		onSuccess: ({ pages }) => {
+			console.log(pages);
+			setGlobalSearchResult(pages);
+		},
+		getNextPageParam: (lastPage) => lastPage.nextPage,
+		enabled: currentTab === 'Global Search' && !!userId,
+	});
 
-		webSocket?.instance.send(JSON.stringify(message));
+	const friendsRequest = useInfiniteQuery({
+		queryKey: ['friendsRequest'],
+		queryFn: ({ pageParam }) => {
+			return getAllRequestsForFriendship({ query: searchBarState, userId, page: pageParam ?? 0, perPage: PER_PAGE });
+		},
+		onSuccess: ({ pages }) => {
+			setFriendsRequestResponse(pages);
+		},
+		getNextPageParam: (lastPage) => lastPage.nextPage,
+		enabled: currentTab === 'Friends requests' && !!userId,
+	});
+
+	const yourFriends = useInfiniteQuery({
+		queryKey: ['yourFriends'],
+		queryFn: ({ pageParam }) => {
+			return getAllFriends({ query: searchBarState, userId, page: pageParam ?? 0, perPage: PER_PAGE });
+		},
+		onSuccess: ({ pages }) => {
+			setYourFriendsResponse(pages);
+		},
+		getNextPageParam: (lastPage) => lastPage.nextPage,
+		enabled: currentTab === 'Your friends' && !!userId,
+		refetchOnWindowFocus: false,
+	});
+
+	function buttons(status: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo) {
+		switch (status) {
+			case null:
+				return <Button onClick={() => addToFriends(userId, ids.userId, paginationInfo)} size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Add friend'} />;
+			case 'invitation':
+				return (
+					<>
+						<Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} onClick={() => acceptFriendshipInvite(ids.invitationId ?? 0, paginationInfo)} title={'Accept'} />
+						<Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? 0, paginationInfo)} title={'Reject'} />
+					</>
+				);
+			case 'friend':
+				return <Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} onClick={() => inviteToGame(ids.userId, paginationInfo)} title={'Invite to game'} />;
+			case 'invitedToGame':
+				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectionInviteToGame(ids.userId, paginationInfo)} title={'Invited to game'} />;
+			case 'pending':
+				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? 0, paginationInfo)} title={'Pending'} />;
+			case 'loading':
+				return <div>loading...</div>;
+			case 'error':
+				return <Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} title={'Error'} />;
+		}
 	}
+
+	function inviteToGame(friendId: number, paginationInfo: IPaginationInfo) {
+		if (sendInviteToGame(friendId, userId, paginationInfo)) {
+			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'loading');
+		} else {
+			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'error');
+		}
+	}
+
+	function rejectionInviteToGame(friendId: number, paginationInfo: IPaginationInfo) {
+		if (sendRejectionInviteToGame(friendId, userId)) {
+			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'loading');
+		} else {
+			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'error');
+		}
+	}
+
+	async function addToFriends(userId: number, invitationUserId: number, paginationInfo: IPaginationInfo) {
+		replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
+		const formData: FormData = createFormData([
+			{ key: 'userId', value: String(userId) },
+			{ key: 'invitationUserId', value: String(invitationUserId) },
+		]);
+		const response = await sendInviteToFriendShipMutation.mutateAsync(formData);
+		if (response) {
+			setGlobalSearchResult((state) => {
+				state[paginationInfo.page].rows[paginationInfo.item].btnsStatus = 'pending';
+				state[paginationInfo.page].rows[paginationInfo.item].invitationId = response.invitationId;
+				return [...state];
+			});
+		} else {
+			replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'error');
+		}
+	}
+
+	async function acceptFriendshipInvite(inviteId: number, paginationInfo: IPaginationInfo) {
+		switch (currentTab) {
+			case 'Global Search':
+				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
+				break;
+			case 'Friends requests':
+				replaceBtnsStatus(setFriendsRequestResponse, paginationInfo, 'loading');
+				break;
+		}
+
+		const formData: FormData = createFormData([{ key: 'inviteId', value: String(inviteId) }]);
+		const response = await acceptFriendshipInviteMutation.mutateAsync(formData);
+		if (response) {
+			switch (currentTab) {
+				case 'Global Search':
+					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'friend');
+					break;
+				case 'Friends requests':
+					setFriendsRequestResponse((state) => {
+						state[paginationInfo.page].rows.splice(paginationInfo.item, 1);
+						return [...state];
+					});
+					break;
+			}
+		} else {
+			replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'error');
+		}
+	}
+
+	async function rejectFriendshipInvite(inviteId: number, paginationInfo: IPaginationInfo) {
+		switch (currentTab) {
+			case 'Global Search':
+				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
+				break;
+			case 'Friends requests':
+				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
+				break;
+		}
+
+		const formData: FormData = createFormData([{ key: 'inviteId', value: String(inviteId) }]);
+		const response = await rejectFriendshipInviteMutation.mutateAsync(formData);
+		if (response) {
+			switch (currentTab) {
+				case 'Global Search':
+					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, null);
+					break;
+				case 'Friends requests':
+					setFriendsRequestResponse((state) => {
+						state[paginationInfo.page].rows.splice(paginationInfo.item, 1);
+						return [...state];
+					});
+					break;
+			}
+		} else {
+			replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'error');
+		}
+	}
+
+	function replaceBtnsStatus(
+		setState: Dispatch<SetStateAction<Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>>>,
+		{ page, item }: IPaginationInfo,
+		friendshipStatus: FriendItemBtnsStatusTypes
+	) {
+		setState((state) => {
+			state[page].rows[item].btnsStatus = friendshipStatus;
+			return [...state];
+		});
+	}
+
+	useEffect(() => {
+		if ((globalSearch.hasNextPage || friendsRequest.hasNextPage || yourFriends.hasNextPage) && inView) {
+			switch (currentTab) {
+				case 'Global Search':
+					globalSearch.fetchNextPage();
+					break;
+				case 'Friends requests':
+					friendsRequest.fetchNextPage();
+					break;
+				case 'Your friends':
+					yourFriends.fetchNextPage();
+			}
+		}
+	}, [inView, globalSearch.hasNextPage, friendsRequest.hasNextPage, yourFriends.hasNextPage]);
+
+	useEffect(() => {
+		if (webSocket) {
+			webSocket.subscribeToOnUpdate(websocketEventNames.INVITATION_TO_GAME_HAS_BEEN_SENT, (message) => {
+				replaceBtnsStatus(setYourFriendsResponse, message.data.paginationInfo, 'invitedToGame');
+			});
+			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_REJECTED, (message) => {
+				for (let page = 0; page < yourFriendsResponse.length; page++) {
+					for (let item = 0; item < yourFriendsResponse[page].rows.length; item++) {
+						if (yourFriendsResponse[page].rows[item].userId === message.userId) {
+							replaceBtnsStatus(setYourFriendsResponse, { page, item }, 'friend');
+						}
+					}
+				}
+			});
+		}
+	});
 
 	return (
-		<div className="friends">
-			<Container className="friends__container" size={'large'}>
-				<SearchBar value={searchBarState} onChange={changeHendler} />
+		<div className='friends'>
+			<Container className='friends__container' size={'large'}>
+				<SearchBar value={searchBarState} onChange={searchBarHandler} />
 
-				<CustomRadio<SearchModeProp, SearchModeTypes> fields={['Your friends', 'Friends requests', 'Global Search']} value={currentTab} onChange={setCurrentTab} />
+				<CustomRadio<SearchModeProp, SearchModeTypes> fields={['Your friends', 'Friends requests', 'Global Search']} value={currentTab} onChange={customRadioHandler} />
 
 				{currentTab === 'Your friends' && (
-					<Section title={`Your Friend (${searchResultCount})`}>
-						<ListWrap>
-							{result.map(({ nickname, userId }, i) => {
-								if (result.length === i + 1 && ref) {
-									return (
-										<FriendItem ref={ref} key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button
-												size={'tiny'}
-												variant={'secondary'}
-												fullWidth={false}
-												title={'Invite to Game'}
-												type={'button'}
-												onClick={() => {
-													console.log('test');
-													sendInviteToGame(userId);
-												}}
-											/>
-										</FriendItem>
-									);
-								} else {
-									return (
-										<FriendItem key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button
-												size={'tiny'}
-												variant={'secondary'}
-												fullWidth={false}
-												title={'Invite to Game'}
-												type={'button'}
-												onClick={() => {
-													console.log('test');
-													sendInviteToGame(userId);
-												}}
-											/>
-										</FriendItem>
-									);
-								}
-							})}
-						</ListWrap>
-					</Section>
+					<ListOfUsers list={yourFriendsResponse} ref={ref}>
+						{buttons}
+					</ListOfUsers>
 				)}
 
 				{currentTab === 'Friends requests' && (
-					<Section title={`Request (${searchResultCount})`}>
-						<ListWrap>
-							{result.map(({ nickname, userFriend }, i) => {
-								if (result.length === i + 1 && ref) {
-									return (
-										<FriendItem ref={ref} key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button
-												size={'tiny'}
-												variant={'secondary'}
-												fullWidth={false}
-												title={'Accept'}
-												type={'button'}
-												onClick={() => acceptFriendshipInvite(userFriend.friendId)}
-											/>
-											<Button size={'tiny'} variant={'warning'} fullWidth={false} title={'Decline'} type={'button'} />
-										</FriendItem>
-									);
-								} else {
-									return (
-										<FriendItem key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button
-												size={'tiny'}
-												variant={'secondary'}
-												fullWidth={false}
-												title={'Accept'}
-												type={'button'}
-												onClick={() => acceptFriendshipInvite(userFriend.friendId)}
-											/>
-											<Button size={'tiny'} variant={'warning'} fullWidth={false} title={'Decline'} type={'button'} />
-										</FriendItem>
-									);
-								}
-							})}
-						</ListWrap>
-					</Section>
+					<ListOfUsers list={friendsRequestResponse} ref={ref}>
+						{buttons}
+					</ListOfUsers>
 				)}
 
 				{currentTab === 'Global Search' && (
-					<Section title={`Find (${searchResultCount})`}>
-						<ListWrap>
-							{result.map(({ nickname, userId }, i) => {
-								if (result.length === i + 1 && ref) {
-									return (
-										<FriendItem ref={ref} key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button
-												size={'tiny'}
-												variant={'secondary'}
-												fullWidth={false}
-												title={'Invite'}
-												type={'button'}
-												onClick={() => {
-													console.log('test');
-													sendInviteToFriendShip(userId);
-												}}
-											/>
-										</FriendItem>
-									);
-								} else {
-									return (
-										<FriendItem key={i} variant={'secondary'} nickname={nickname} status={'online'} src={''}>
-											<Button
-												size={'tiny'}
-												variant={'secondary'}
-												fullWidth={false}
-												title={'Invite'}
-												type={'button'}
-												onClick={() => {
-													console.log('test');
-													sendInviteToFriendShip(userId);
-												}}
-											/>
-										</FriendItem>
-									);
-								}
-							})}
-						</ListWrap>
-					</Section>
+					<ListOfUsers list={globalSearchResult} ref={ref}>
+						{buttons}
+					</ListOfUsers>
 				)}
 			</Container>
 		</div>

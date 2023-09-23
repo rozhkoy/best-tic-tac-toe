@@ -6,3 +6,7 @@ export interface InviteToGameNotifsProps {
 	isVisible: boolean;
 	id: string;
 }
+
+export interface IAcceptInviteToGame {
+	friendId: number;
+}
