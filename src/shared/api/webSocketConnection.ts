@@ -3,9 +3,9 @@ class WebSocketConnection {
 	private WEBSOCKET_ULR = 'ws:localhost:5000';
 	private websocketInstance!: WebSocket;
 
-	public getConnectionInstance() {
+	public getConnectionInstance(userId: number) {
 		if (this.readyState === 3) {
-			this.websocketInstance = new WebSocket(this.WEBSOCKET_ULR);
+			this.websocketInstance = new WebSocket(`${this.WEBSOCKET_ULR}?userId=${userId}`);
 			this.readyState = 0;
 			return this.websocketInstance;
 		}

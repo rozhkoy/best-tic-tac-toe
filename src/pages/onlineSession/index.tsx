@@ -187,7 +187,7 @@ export const OnlineSession = () => {
 				sessionId,
 			},
 		};
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 	}
 
 	function sendReadyState(userId: number, sessionId: string) {
@@ -198,7 +198,7 @@ export const OnlineSession = () => {
 				sessionId,
 			},
 		};
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 	}
 
 	function updateGameboard(friendId: number, playFieldState: Array<ICellData>, currentMove: ICurrentMove) {
@@ -211,7 +211,7 @@ export const OnlineSession = () => {
 				playFieldState,
 			},
 		};
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 	}
 
 	function updatePlayersData({ data }: IWebSocketMessage<IDataAboutOpponent>) {
@@ -245,7 +245,7 @@ export const OnlineSession = () => {
 				countGames,
 			},
 		};
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 	}
 
 	function resetGameState({ friendId }: IMessageWithFriendId) {
@@ -256,7 +256,7 @@ export const OnlineSession = () => {
 				friendId,
 			},
 		};
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 	}
 
 	function onGameOver({ friendId }: IOnGameOver) {
@@ -283,7 +283,7 @@ export const OnlineSession = () => {
 				secondPlayerId,
 			},
 		};
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 	}
 
 	return (

@@ -41,7 +41,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 			},
 		};
 
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 		dispatch(toggleVisible({ id, isVisible: false }));
 	}
 
@@ -54,7 +54,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 			},
 		};
 
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 		dispatch(toggleVisible({ id, isVisible: false }));
 	}
 

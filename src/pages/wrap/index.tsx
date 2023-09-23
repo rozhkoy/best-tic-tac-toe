@@ -59,7 +59,7 @@ export const Wrap = () => {
 				status,
 			},
 		};
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 	}
 
 	return (

@@ -11,13 +11,13 @@ function App() {
 	const queryClient = new QueryClient();
 
 	return (
-		<WebSocketProvider>
-			<QueryClientProvider client={queryClient}>
-				<Provider store={store}>
+		<QueryClientProvider client={queryClient}>
+			<Provider store={store}>
+				<WebSocketProvider>
 					<AppProvider />
-				</Provider>
-			</QueryClientProvider>
-		</WebSocketProvider>
+				</WebSocketProvider>
+			</Provider>
+		</QueryClientProvider>
 	);
 }
 

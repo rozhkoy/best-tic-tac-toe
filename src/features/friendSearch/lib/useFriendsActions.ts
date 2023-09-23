@@ -1,8 +1,8 @@
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { useMutation } from '@tanstack/react-query';
 import { useContext } from 'react';
-import { sendAcceptFriendshipInvite, sendInviteToFriendship, sendRejectFriendshipInvite } from '..';
-import { IPaginationInfo, IRejectionInviteToGame, ISendInviteToGame, IUseFriendsActionsResponse } from '../../types';
+import { sendAcceptFriendshipInvite, sendInviteToFriendship, sendRejectFriendshipInvite } from '../api';
+import { IPaginationInfo, IRejectionInviteToGame, ISendInviteToGame, IUseFriendsActionsResponse } from '../types';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 
