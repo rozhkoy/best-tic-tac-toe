@@ -5,7 +5,7 @@ import './style.scss';
 import { useFirebaseAuth } from '@/features/accountAuth';
 
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
-import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
+import { WebSocketContext, WebSocketProvider } from '@/shared/providers/WebSocketProvider';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { IUpdateUserStatusData } from '@/entities/user/types';
@@ -16,7 +16,7 @@ import { nanoid } from 'nanoid';
 
 export const Wrap = () => {
 	const userInfo = useAppSelector((state) => state.user);
-	const notifs = useAppSelector((state) => state.notifs);
+
 	const dispath = useAppDispatch();
 	const navigation = useNavigate();
 	const webSocket = useContext(WebSocketContext);
@@ -63,12 +63,14 @@ export const Wrap = () => {
 	}
 
 	return (
-		<div className='wrap'>
-			<Header />
-			<div className='wrap__container'>
-				<Outlet />
+		<WebSocketProvider url={`ws:localhost:5000?userId=${userInfo.userId}`} connect={userInfo.isAuth}>
+			<div className='wrap'>
+				<Header />
+				<div className='wrap__container'>
+					<Outlet />
+				</div>
+				<NotificationsProvider />
 			</div>
-			<NotificationsProvider />
-		</div>
+		</WebSocketProvider>
 	);
 };

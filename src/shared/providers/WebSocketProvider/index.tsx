@@ -1,11 +1,10 @@
 import webSocketConnection from '@/shared/api/webSocketConnection';
-import { PropsWithChildren, createContext, useCallback, useEffect, useRef } from 'react';
-import { IWebSocketProvider } from './types';
-import { useAppSelector } from '@/shared/hooks/reduxHooks';
+import { createContext, useCallback, useEffect, useRef } from 'react';
+import { IWebSocketProvider, WebsoketProviderProps } from './types';
 
 export const WebSocketContext = createContext<IWebSocketProvider | null>(null);
 
-export const WebSocketProvider: React.FC<PropsWithChildren> = ({ children }) => {
+export const WebSocketProvider: React.FC<WebsoketProviderProps> = ({ children, url, connect }) => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const subscribers = useRef(new Map<string, (message: any) => void>());
 	const webSocketInstance = useRef<WebSocket>();
@@ -14,7 +13,7 @@ export const WebSocketProvider: React.FC<PropsWithChildren> = ({ children }) => 
 		subscribers.current.set(event, callback);
 		return () => subscribers.current.delete(event);
 	}, []);
-	const userInfo = useAppSelector((state) => state.user);
+
 	const unSubscribeToOnUpdate = useCallback((event: string) => {
 		subscribers.current.delete(event);
 	}, []);
@@ -22,8 +21,8 @@ export const WebSocketProvider: React.FC<PropsWithChildren> = ({ children }) => 
 	const buffer = useRef(new Set<any>());
 
 	useEffect(() => {
-		if (userInfo.isAuth) {
-			webSocketInstance.current = webSocketConnection.getConnectionInstance(userInfo.userId);
+		if (connect) {
+			webSocketInstance.current = webSocketConnection.getConnectionInstance(url);
 
 			webSocketInstance.current.onerror = (error) => {
 				alert(error);
@@ -50,7 +49,7 @@ export const WebSocketProvider: React.FC<PropsWithChildren> = ({ children }) => 
 				subscription(message);
 			};
 		}
-	}, [userInfo]);
+	}, [connect]);
 
 	function send(message: any) {
 		if (webSocketConnection.getReadState() === WebSocket.OPEN) {

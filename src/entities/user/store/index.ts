@@ -7,6 +7,13 @@ interface IUserState {
 	userId: number;
 }
 
+interface IUpdateUserInfo {
+	nickname: string;
+	rating: number;
+
+	userId: number;
+}
+
 const initialState: IUserState = {
 	nickname: '',
 	userId: 0,
@@ -18,13 +25,15 @@ export const userSlice = createSlice({
 	name: 'userSlice',
 	initialState: initialState,
 	reducers: {
-		updateUserInfo: (state, { payload }: PayloadAction<IUserState>) => {
+		updateUserInfo: (state, { payload }: PayloadAction<IUpdateUserInfo>) => {
 			state.nickname = payload.nickname;
 			state.rating = payload.rating;
-			state.isAuth = payload.isAuth;
 			state.userId = payload.userId;
+		},
+		updateAuthState: (state, { payload }: PayloadAction<boolean>) => {
+			state.isAuth = payload;
 		},
 	},
 });
 
-export const { updateUserInfo } = userSlice.actions;
+export const { updateUserInfo, updateAuthState } = userSlice.actions;
