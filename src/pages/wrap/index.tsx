@@ -13,6 +13,7 @@ import { websocketEventNames } from '@/features/webSocketConnection/lib/websocke
 import { NotificationsProvider } from '@/features/notifications';
 import { addNotif } from '@/features/notifications/store';
 import { nanoid } from 'nanoid';
+import { AlertProvider } from '@/features/alertProvider';
 
 export const Wrap = () => {
 	const userInfo = useAppSelector((state) => state.user);
@@ -58,6 +59,7 @@ export const Wrap = () => {
 			data: {
 				status,
 			},
+			error: '',
 		};
 		webSocket?.send(JSON.stringify(message));
 	}
@@ -70,6 +72,7 @@ export const Wrap = () => {
 					<Outlet />
 				</div>
 				<NotificationsProvider />
+				<AlertProvider />
 			</div>
 		</WebSocketProvider>
 	);

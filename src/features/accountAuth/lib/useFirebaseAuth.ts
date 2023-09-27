@@ -11,7 +11,6 @@ import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 import { updateUserInfo } from '@/entities/user';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '@/shared/lib/firebase';
-import { updateAuthState } from '@/entities/user/store';
 
 export function useFirebaseAuth(): {
 	googleAuth: () => void;
@@ -29,7 +28,7 @@ export function useFirebaseAuth(): {
 	const registrationNewUserMutation = useMutation({
 		mutationFn: (formData: FormData) => registrationNewUser(formData),
 		onSuccess: ({ userResponse: { nickname, userId, rating } }) => {
-			dispatch(updateUserInfo({ nickname, userId, rating }));
+			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true }));
 			navigation('/');
 		},
 		onError: (res) => console.log(res),
@@ -39,7 +38,7 @@ export function useFirebaseAuth(): {
 	const signInMutation = useMutation({
 		mutationFn: (params: IGetUserInfoByUid) => getUserInfoByUid(params),
 		onSuccess: ({ nickname, userId, rating }) => {
-			dispatch(updateUserInfo({ nickname, userId, rating }));
+			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true }));
 			navigation('/');
 		},
 		onError: (err) => {
@@ -60,7 +59,7 @@ export function useFirebaseAuth(): {
 	const userInfoByUidMutation = useMutation({
 		mutationFn: (params: IGetUserInfoByUid) => getUserInfoByUid(params),
 		onSuccess: ({ nickname, userId, rating }) => {
-			dispatch(updateUserInfo({ nickname, userId, rating }));
+			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true }));
 		},
 	});
 
@@ -140,8 +139,6 @@ export function useFirebaseAuth(): {
 		onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				document.cookie = 'firebase_token=' + (await user.getIdToken());
-
-				dispatch(updateAuthState(true));
 				userInfoByUidMutation.mutate({ uid: user.uid });
 			}
 		});

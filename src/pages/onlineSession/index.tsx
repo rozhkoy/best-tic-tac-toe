@@ -186,6 +186,7 @@ export const OnlineSession = () => {
 			data: {
 				sessionId,
 			},
+			error: '',
 		};
 		webSocket?.send(JSON.stringify(message));
 	}
@@ -197,6 +198,7 @@ export const OnlineSession = () => {
 			data: {
 				sessionId,
 			},
+			error: '',
 		};
 		webSocket?.send(JSON.stringify(message));
 	}
@@ -210,6 +212,7 @@ export const OnlineSession = () => {
 				currentMove,
 				playFieldState,
 			},
+			error: '',
 		};
 		webSocket?.send(JSON.stringify(message));
 	}
@@ -244,6 +247,7 @@ export const OnlineSession = () => {
 				players,
 				countGames,
 			},
+			error: '',
 		};
 		webSocket?.send(JSON.stringify(message));
 	}
@@ -255,6 +259,7 @@ export const OnlineSession = () => {
 			data: {
 				friendId,
 			},
+			error: '',
 		};
 		webSocket?.send(JSON.stringify(message));
 	}
@@ -282,6 +287,7 @@ export const OnlineSession = () => {
 				firstPlayerId,
 				secondPlayerId,
 			},
+			error: '',
 		};
 		webSocket?.send(JSON.stringify(message));
 	}

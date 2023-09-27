@@ -49,7 +49,7 @@ export const WebSocketProvider: React.FC<WebsoketProviderProps> = ({ children, u
 				subscription(message);
 			};
 		}
-	}, [connect]);
+	}, [connect, url]);
 
 	function send(message: any) {
 		if (webSocketConnection.getReadState() === WebSocket.OPEN) {

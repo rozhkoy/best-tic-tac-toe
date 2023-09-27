@@ -1,0 +1,16 @@
+.pop-out-enter {
+	opacity: 0;
+	transform: translate(-50%, -100%);
+}
+
+.pop-out-enter-active {
+	opacity: 1;
+	transform: translate(-50%, 0%);
+	transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1.5), opacity 0.5s ease-in;
+}
+
+.pop-out-exit-active {
+	opacity: 0;
+	transform: translate(-50%, -100%);
+	transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}

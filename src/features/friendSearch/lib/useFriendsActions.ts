@@ -29,6 +29,7 @@ export function useFriendsActions(): IUseFriendsActionsResponse {
 				friendId,
 				paginationInfo,
 			},
+			error: '',
 		};
 
 		webSocket?.send(JSON.stringify(message));
@@ -42,6 +43,7 @@ export function useFriendsActions(): IUseFriendsActionsResponse {
 			data: {
 				friendId,
 			},
+			error: '',
 		};
 
 		webSocket?.send(JSON.stringify(message));
