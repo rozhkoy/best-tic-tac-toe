@@ -2,14 +2,13 @@ import { Avatar } from '../avatar';
 import { Button } from '../button';
 import { CSSTransition } from 'react-transition-group';
 import './styles.scss';
-import { InviteToGameNotifsProps } from './types';
+import { IAcceptInviteToGame, InviteToGameNotifsProps } from './types';
 import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 import { removeNotif, toggleVisible } from '@/features/notifications/store';
 import { useContext, useEffect } from 'react';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
-import { IAcceptInviteToGame } from '@/features/webSocketConnection/types';
 
 export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, friendId, userId, nickname, isVisible, id }) => {
 	const dispatch = useAppDispatch();
@@ -39,9 +38,10 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 			data: {
 				friendId,
 			},
+			error: '',
 		};
 
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 		dispatch(toggleVisible({ id, isVisible: false }));
 	}
 
@@ -52,9 +52,10 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 			data: {
 				friendId,
 			},
+			error: '',
 		};
 
-		webSocket?.instance.send(JSON.stringify(message));
+		webSocket?.send(JSON.stringify(message));
 		dispatch(toggleVisible({ id, isVisible: false }));
 	}
 

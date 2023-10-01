@@ -21,8 +21,8 @@ export const userSlice = createSlice({
 		updateUserInfo: (state, { payload }: PayloadAction<IUserState>) => {
 			state.nickname = payload.nickname;
 			state.rating = payload.rating;
-			state.isAuth = payload.isAuth;
 			state.userId = payload.userId;
+			state.isAuth = payload.isAuth;
 		},
 	},
 });

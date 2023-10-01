@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { SignIn } from '@/pages/signIn';
 import { SignUp } from '@/pages/signUp';
-import { Wrap } from '@/pages/wrap';
+
 import { routes } from '@/app/provider/routes';
 import { TwoPlayerSession } from '@/pages/twoPlayerSession';
 import { WithBotSession } from '@/pages/withBotSession';
@@ -9,12 +9,13 @@ import { Home } from '@/pages/home';
 import { OnlineSession } from '@/pages/onlineSession';
 import { Friends } from '@/pages/friends';
 import { Profile } from '@/pages/profile';
+import { PrivedRoute } from '@/features/privedRoute/ui';
 
 export const AppProvider = () => {
 	const router = createBrowserRouter([
 		{
 			path: routes.HOME,
-			element: <Wrap />,
+			element: <PrivedRoute />,
 			children: [
 				{
 					path: routes.HOME,

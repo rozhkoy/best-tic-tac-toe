@@ -136,8 +136,9 @@ export function useFirebaseAuth(): {
 	}
 
 	function getAuthState() {
-		onAuthStateChanged(auth, (user) => {
+		onAuthStateChanged(auth, async (user) => {
 			if (user) {
+				document.cookie = 'firebase_token=' + (await user.getIdToken());
 				userInfoByUidMutation.mutate({ uid: user.uid });
 			}
 		});

@@ -7,9 +7,9 @@ export const NotificationsProvider = () => {
 	const { notifs } = useAppSelector((state) => state.notifs);
 
 	return (
-		<div className="notifs-provider">
-			<div className="notifs-provider__box">
-				<TransitionGroup className="notifs-provider__scroll-box">
+		<div className='notifs-provider'>
+			<div className='notifs-provider__box'>
+				<TransitionGroup className='notifs-provider__scroll-box'>
 					{notifs.map((itemProps) => {
 						return <InviteToGameNotifs key={itemProps.id} {...itemProps} />;
 					})}
