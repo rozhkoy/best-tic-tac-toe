@@ -1,7 +1,8 @@
-import { AvatarProps } from "../avatar/types";
-import { UserStatusTypes } from "../userStatus/types";
+import { AvatarProps } from '../avatar/types';
+import { UserStatusTypes } from '../userStatus/types';
 
 export interface UserProfileProps extends AvatarProps {
-    nickname: string;
-    status: UserStatusTypes
+	nickname: string;
+	status: UserStatusTypes;
+	userId: number;
 }

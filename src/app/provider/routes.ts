@@ -9,5 +9,5 @@ export const routes = {
 	WITH_BOT_SESSION: '/with-bot-session',
 	TWO_PLAYERS_SESSION: '/two-players-session',
 	ONLINE_SSESSION: '/online-session/:sessionId',
-	PLAYER: '/user/:userId',
+	USER: '/user',
 };

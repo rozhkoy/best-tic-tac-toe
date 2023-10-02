@@ -6,6 +6,7 @@ export interface FriendItemProps {
 	src: string;
 	status: UserStatusTypes;
 	nickname: string;
+	userId: number;
 }
 
 export type FrienditemVariantTypes = 'primary' | 'secondary';

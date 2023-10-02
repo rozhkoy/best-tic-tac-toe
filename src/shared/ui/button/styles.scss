@@ -6,6 +6,11 @@
 	line-height: 24px;
 	color: var(--color-secondary);
 	transition: color 0.3s, background 0.3s, border-color 0.3s;
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
 	&.full-width {
 		width: 100%;
 	}
@@ -16,12 +21,12 @@
 		background: transparent;
 		border: 2px solid var(--color-secondary);
 		border-radius: 14px;
-		&:hover {
+		&:hover:not(:disabled) {
 			background: var(--color-secondary);
 			border: 2px solid var(--color-primary);
 			color: var(--color-primary);
 		}
-		&:hover svg {
+		&:hover:not(:disabled) svg {
 			fill: var(--color-primary);
 		}
 	}
@@ -42,12 +47,12 @@
 		border: 2px solid var(--color-secondary);
 		color: var(--color-primary);
 		border-radius: 14px;
-		&:hover {
+		&:hover:not(:disabled) {
 			background: var(--color-primary);
 			border: 2px solid var(--color-primary);
 			color: var(--color-secondary);
 		}
-		&:hover svg {
+		&:hover:not(:disabled) svg {
 			fill: var(--color-primary);
 		}
 	}

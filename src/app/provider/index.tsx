@@ -38,7 +38,7 @@ export const AppProvider = () => {
 					element: <Friends />,
 				},
 				{
-					path: routes.PLAYER,
+					path: routes.USER + '/:userId',
 					element: <Profile />,
 				},
 			],

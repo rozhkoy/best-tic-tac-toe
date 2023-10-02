@@ -7,7 +7,7 @@ import { FriendItemBtnsStatusTypes, IButtonsIds, IPaginationInfo, IPartialUserIn
 import { SearchBar } from '@/shared/ui/Searchbar';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
-import { useAppSelector } from '@/shared/hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getAllFriends, getAllRequestsForFriendship, searchUsersByNickname } from '@/features/friendSearch/api';
 import { IPaginationResponse } from '@/shared/types/findAndCount';
@@ -16,6 +16,10 @@ import debounce from 'lodash/debounce';
 import { ListOfUsers } from '@/features/friendSearch';
 import { createFormData } from '@/shared/lib/CreateFormData';
 import { useFriendsActions } from '@/features/friendSearch/api/lib/useFriendsActions';
+import { UserStatusTypes } from '@/shared/ui/userStatus/types';
+import { nanoid } from 'nanoid';
+import { updateInfoinAlert } from '@/features/alertProvider';
+import { queryClient } from '@/app/App';
 
 export const Friends = () => {
 	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Your friends');
@@ -28,42 +32,20 @@ export const Friends = () => {
 	const [friendsRequestResponse, setFriendsRequestResponse] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>>([]);
 	const [yourFriendsResponse, setYourFriendsResponse] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>>([]);
 	const { ref, inView } = useInView();
+	const dispatch = useAppDispatch();
 
-	const searchBarDebounce = useMemo(() => {
-		return debounce((pageParam) => {
-			switch (currentTab) {
-				case 'Global Search':
-					globalSearch.remove();
-					break;
-				case 'Friends requests':
-					friendsRequest.remove();
-					break;
-				case 'Your friends':
-					yourFriends.remove();
-			}
-		}, 300);
-	}, [debounce, currentTab]);
-
-	const searchBarHandler = useCallback((value: string) => {
-		setSearchBarState(value);
+	function customRadioHandler(value: SearchModeTypes) {
+		setCurrentTab(value);
 		switch (currentTab) {
 			case 'Global Search':
 				globalSearch.remove();
-
 				break;
 			case 'Friends requests':
 				friendsRequest.remove();
-
 				break;
 			case 'Your friends':
 				yourFriends.remove();
 		}
-
-		// searchBarDebounce(0);
-	}, []);
-
-	function customRadioHandler(value: SearchModeTypes) {
-		setCurrentTab(value);
 		setSearchBarState('');
 	}
 
@@ -73,11 +55,11 @@ export const Friends = () => {
 			return searchUsersByNickname({ query: searchBarState, userId, page: pageParam ?? 0, perPage: PER_PAGE });
 		},
 		onSuccess: ({ pages }) => {
-			console.log(pages);
 			setGlobalSearchResult(pages);
 		},
 		getNextPageParam: (lastPage) => lastPage.nextPage,
 		enabled: currentTab === 'Global Search' && !!userId,
+		refetchInterval: 30_000,
 	});
 
 	const friendsRequest = useInfiniteQuery({
@@ -90,6 +72,7 @@ export const Friends = () => {
 		},
 		getNextPageParam: (lastPage) => lastPage.nextPage,
 		enabled: currentTab === 'Friends requests' && !!userId,
+		refetchInterval: 30_000,
 	});
 
 	const yourFriends = useInfiniteQuery({
@@ -103,10 +86,11 @@ export const Friends = () => {
 		getNextPageParam: (lastPage) => lastPage.nextPage,
 		enabled: currentTab === 'Your friends' && !!userId,
 		refetchOnWindowFocus: false,
+		refetchInterval: 30_000,
 	});
 
-	function buttons(status: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo) {
-		switch (status) {
+	function buttons(btnStatus: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo, userStatus: UserStatusTypes) {
+		switch (btnStatus) {
 			case null:
 				return <Button onClick={() => addToFriends(userId, ids.userId, paginationInfo)} size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Add friend'} />;
 			case 'invitation':
@@ -117,7 +101,17 @@ export const Friends = () => {
 					</>
 				);
 			case 'friend':
-				return <Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} onClick={() => inviteToGame(ids.userId, paginationInfo)} title={'Invite to game'} />;
+				return (
+					<Button
+						size={'tiny'}
+						variant={'primary'}
+						fullWidth={false}
+						type={'button'}
+						onClick={() => inviteToGame(ids.userId, paginationInfo)}
+						title={'Invite to game'}
+						disabled={userStatus === 'offline'}
+					/>
+				);
 			case 'invitedToGame':
 				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectionInviteToGame(ids.userId, paginationInfo)} title={'Invited to game'} />;
 			case 'pending':
@@ -138,8 +132,9 @@ export const Friends = () => {
 	}
 
 	function rejectionInviteToGame(friendId: number, paginationInfo: IPaginationInfo) {
+		replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'loading');
 		if (sendRejectionInviteToGame(friendId, userId)) {
-			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'loading');
+			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'friend');
 		} else {
 			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'error');
 		}
@@ -245,24 +240,68 @@ export const Friends = () => {
 					yourFriends.fetchNextPage();
 			}
 		}
-	}, [inView, globalSearch.hasNextPage, friendsRequest.hasNextPage, yourFriends.hasNextPage]);
+	}, [inView, globalSearch, friendsRequest, yourFriends, currentTab]);
 
 	useEffect(() => {
 		if (webSocket) {
 			webSocket.subscribeToOnUpdate(websocketEventNames.INVITATION_TO_GAME_HAS_BEEN_SENT, (message) => {
 				replaceBtnsStatus(setYourFriendsResponse, message.data.paginationInfo, 'invitedToGame');
 			});
-			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_REJECTED, (message) => {
-				for (let page = 0; page < yourFriendsResponse.length; page++) {
-					for (let item = 0; item < yourFriendsResponse[page].rows.length; item++) {
-						if (yourFriendsResponse[page].rows[item].userId === message.userId) {
-							replaceBtnsStatus(setYourFriendsResponse, { page, item }, 'friend');
-						}
-					}
+
+			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_REJECTED, () => {
+				switch (currentTab) {
+					case 'Global Search':
+						globalSearch.refetch();
+						break;
+					case 'Your friends':
+						yourFriends.refetch();
 				}
 			});
+			webSocket.subscribeToOnUpdate(websocketEventNames.USER_IS_NOT_ONLINE, () => {
+				dispatch(updateInfoinAlert({ heading: 'Oooooopsss!', text: 'User is not currently online', isVisible: false, alertId: nanoid() }));
+				switch (currentTab) {
+					case 'Global Search':
+						globalSearch.refetch();
+						break;
+					case 'Your friends':
+						yourFriends.refetch();
+				}
+			});
+
+			return () => {
+				webSocket.unSubscribeToOnUpdate(websocketEventNames.INVITATION_TO_GAME_HAS_BEEN_SENT);
+				webSocket.unSubscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_REJECTED);
+				webSocket.unSubscribeToOnUpdate(websocketEventNames.USER_IS_NOT_ONLINE);
+			};
 		}
-	});
+	}, [currentTab, dispatch, globalSearch, webSocket, yourFriends]);
+
+	const searchBarDebounce = useMemo(() => {
+		return debounce(() => {
+			switch (currentTab) {
+				case 'Global Search':
+					queryClient.removeQueries({ queryKey: ['globalSearach'] });
+					globalSearch.fetchNextPage();
+					break;
+				case 'Friends requests':
+					queryClient.removeQueries({ queryKey: ['friendsRequest'] });
+					friendsRequest.fetchNextPage();
+
+					break;
+				case 'Your friends':
+					queryClient.removeQueries({ queryKey: ['yourFriends'] });
+					yourFriends.fetchNextPage();
+			}
+		}, 300);
+	}, [currentTab, globalSearch, friendsRequest, yourFriends]);
+
+	const searchBarHandler = useCallback(
+		(value: string) => {
+			setSearchBarState(value);
+			searchBarDebounce();
+		},
+		[currentTab]
+	);
 
 	return (
 		<div className='friends'>
@@ -276,13 +315,11 @@ export const Friends = () => {
 						{buttons}
 					</ListOfUsers>
 				)}
-
 				{currentTab === 'Friends requests' && (
 					<ListOfUsers list={friendsRequestResponse} ref={ref}>
 						{buttons}
 					</ListOfUsers>
 				)}
-
 				{currentTab === 'Global Search' && (
 					<ListOfUsers list={globalSearchResult} ref={ref}>
 						{buttons}
