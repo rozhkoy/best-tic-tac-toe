@@ -5,7 +5,7 @@ import { showNextAlert, toggleAlertVisible } from '../store';
 import { useEffect } from 'react';
 
 export const AlertProvider = () => {
-	const { alerts, currentAlert } = useAppSelector((state) => state.alert);
+	const { currentAlert } = useAppSelector((state) => state.alert);
 
 	const dispatch = useAppDispatch();
 

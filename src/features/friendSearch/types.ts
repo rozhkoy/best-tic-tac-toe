@@ -50,7 +50,7 @@ export interface IButtonsIds {
 
 export interface ListOfUsersProps {
 	list: Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>;
-	children: (status: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo) => React.ReactNode;
+	children: (status: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo, userStatus: UserStatusTypes) => React.ReactNode;
 }
 
 interface sendInviteToFriendShipMutationData {

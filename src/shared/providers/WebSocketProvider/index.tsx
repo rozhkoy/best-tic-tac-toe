@@ -38,8 +38,8 @@ export const WebSocketProvider: React.FC<WebsoketProviderProps> = ({ children, u
 			};
 
 			webSocketInstance.current.onmessage = (event) => {
+				console.log(subscribers);
 				const message = JSON.parse(event.data);
-
 				const subscription = subscribers.current.get(message.event);
 
 				if (!subscription) {

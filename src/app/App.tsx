@@ -6,15 +6,16 @@ import './styles/_animations.scss';
 import { Provider } from 'react-redux';
 import store from './store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+export const queryClient = new QueryClient();
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 function App() {
-	const queryClient = new QueryClient();
-
 	return (
 		<QueryClientProvider client={queryClient}>
 			<Provider store={store}>
 				<AppProvider />
 			</Provider>
+			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	);
 }

@@ -65,15 +65,13 @@ export const Wrap = () => {
 	}
 
 	return (
-		<WebSocketProvider url={`ws:localhost:5000?userId=${userInfo.userId}`} connect={userInfo.isAuth}>
-			<div className='wrap'>
-				<Header />
-				<div className='wrap__container'>
-					<Outlet />
-				</div>
-				<NotificationsProvider />
-				<AlertProvider />
+		<div className='wrap'>
+			<Header />
+			<div className='wrap__container'>
+				<Outlet />
 			</div>
-		</WebSocketProvider>
+			<NotificationsProvider />
+			<AlertProvider />
+		</div>
 	);
 };
