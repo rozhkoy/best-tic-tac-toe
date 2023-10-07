@@ -17,4 +17,5 @@ export const websocketEventNames: Record<string, string> = {
 	DATA_ABOUT_OPONENT: 'DATA_ABOUT_OPONENT',
 	WINNER_FIND: 'WINNER_FIND',
 	GAME_OVER: 'GAME_OVER',
+	SESSIONS_IS_CLOSED: 'SESSIONS_IS_CLOSED',
 } as const;

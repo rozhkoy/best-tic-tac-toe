@@ -18,7 +18,7 @@ import { createFormData } from '@/shared/lib/CreateFormData';
 import { useFriendsActions } from '@/features/friendSearch/api/lib/useFriendsActions';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 import { nanoid } from 'nanoid';
-import { updateInfoinAlert } from '@/features/alertProvider';
+import { addAlert } from '@/features/alertProvider';
 import { queryClient } from '@/app/App';
 
 export const Friends = () => {
@@ -258,7 +258,7 @@ export const Friends = () => {
 				}
 			});
 			webSocket.subscribeToOnUpdate(websocketEventNames.USER_IS_NOT_ONLINE, () => {
-				dispatch(updateInfoinAlert({ heading: 'Oooooopsss!', text: 'User is not currently online', isVisible: false, alertId: nanoid() }));
+				dispatch(addAlert({ heading: 'Oooooopsss!', text: 'User is not currently online' }));
 				switch (currentTab) {
 					case 'Global Search':
 						globalSearch.refetch();

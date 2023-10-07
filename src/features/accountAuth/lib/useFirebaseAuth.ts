@@ -37,6 +37,7 @@ export function useFirebaseAuth(): {
 
 	const signInMutation = useMutation({
 		mutationFn: (params: IGetUserInfoByUid) => getUserInfoByUid(params),
+
 		onSuccess: ({ nickname, userId, rating }) => {
 			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true }));
 			navigation('/');
@@ -53,7 +54,7 @@ export function useFirebaseAuth(): {
 			const formData = createFormData(registrationInfo);
 			registrationNewUserMutation.mutate(formData);
 		},
-		retry: false,
+		retry: 3,
 	});
 
 	const userInfoByUidMutation = useMutation({
@@ -61,6 +62,7 @@ export function useFirebaseAuth(): {
 		onSuccess: ({ nickname, userId, rating }) => {
 			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true }));
 		},
+		retry: 3,
 	});
 
 	function googleAuth() {

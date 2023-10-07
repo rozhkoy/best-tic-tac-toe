@@ -6,8 +6,16 @@ import './styles/_animations.scss';
 import { Provider } from 'react-redux';
 import store from './store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-export const queryClient = new QueryClient();
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+export const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: 5,
+			retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+		},
+	},
+});
 
 function App() {
 	return (

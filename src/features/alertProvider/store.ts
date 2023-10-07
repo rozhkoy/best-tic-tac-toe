@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IAlert, IAlertState } from './types';
+import { nanoid } from 'nanoid';
 
 const initialState: IAlertState = {
 	alerts: [],
@@ -28,14 +29,23 @@ export const alertSlice = createSlice({
 		removeAlertFromBuffer: (state, { payload }: PayloadAction<string>) => {
 			state.alerts = state.alerts.filter((item) => item.alertId !== payload);
 		},
-		updateInfoinAlert: (state, { payload }: PayloadAction<IAlert>) => {
+		addAlert: (state, { payload: { heading, text } }: PayloadAction<{ heading: string; text: string }>) => {
+			const alertTemplate: IAlert = {
+				alertId: nanoid(),
+				isVisible: false,
+				heading,
+				text,
+			};
+
+			alertTemplate.isVisible = false;
 			if (state.alerts.length === 0) {
-				state.currentAlert = payload;
+				state.currentAlert = alertTemplate;
 				state.currentAlert.isVisible = true;
 			}
-			state.alerts.push(payload);
+
+			state.alerts.push(alertTemplate);
 		},
 	},
 });
 
-export const { toggleAlertVisible, updateInfoinAlert, removeAlertFromBuffer, showNextAlert } = alertSlice.actions;
+export const { toggleAlertVisible, addAlert, removeAlertFromBuffer, showNextAlert } = alertSlice.actions;

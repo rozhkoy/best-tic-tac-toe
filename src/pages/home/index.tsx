@@ -3,7 +3,7 @@ import { GameSelector } from '@/features/gameSelector';
 import { Button } from '@/shared/ui/button';
 import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 
-import { updateInfoinAlert } from '@/features/alertProvider/store';
+import { addAlert } from '@/features/alertProvider/store';
 import { nanoid } from 'nanoid';
 
 export const Home = () => {
@@ -15,7 +15,7 @@ export const Home = () => {
 				<GameSelector />
 
 				<Button
-					onClick={() => dispatch(updateInfoinAlert({ heading: 'Oooooopsss!', text: 'If you leave this match, ure you want to exit?' + nanoid(), isVisible: false, alertId: nanoid() }))}
+					onClick={() => dispatch(addAlert({ heading: 'Oooooopsss!', text: 'If you leave this match, ure you want to exit?' + nanoid() }))}
 					size={'medium'}
 					variant={'primary'}
 					title='add notifs'

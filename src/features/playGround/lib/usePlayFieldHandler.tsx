@@ -2,14 +2,15 @@ import { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { ICellData, SymbolTypes } from '@/shared/ui/fieldCell/types';
 import { ICurrentMove, IPlayers } from '../types';
 import { IGameboardState } from '@/features/webSocketConnection/types';
+import { nanoid } from 'nanoid';
 
 export function usePlayFieldHandler(
 	initialState: Array<ICellData>,
 	playersData: IPlayers,
-	eventIfFindedWinner: (symbol: SymbolTypes) => void,
+	eventIfFindWinner: (symbol: SymbolTypes) => void,
 	eventIfDraw: () => void,
 	resetEvent: () => void,
-	handleMove?: (gameState: IGameboardState) => void
+	handleMove?: (gameState: IGameboardState, isWinnerFound: boolean) => void
 ): {
 	playFieldState: Array<ICellData>;
 	setPlayFieldState: Dispatch<SetStateAction<Array<ICellData>>>;
@@ -35,10 +36,11 @@ export function usePlayFieldHandler(
 		if (boardState[index].symbol === 'empty') {
 			boardState[index].symbol = currentMove.symbol;
 			setPlayFieldState(boardState);
-			checkIfWinnerFind(boardState, currentMove.symbol);
+			const isWinnerFound = checkIfWinnerFind(boardState, currentMove.symbol);
 			const currentMoveTemplate: ICurrentMove = {
 				symbol: currentMove.symbol === 'cross' ? 'nought' : 'cross',
 				numberOfMoves: ++currentMove.numberOfMoves,
+				player: playersData[currentMove.symbol === 'cross' ? 'nought' : 'cross'].nickname,
 			};
 			setCurrentMove(currentMoveTemplate);
 
@@ -48,7 +50,7 @@ export function usePlayFieldHandler(
 			};
 
 			if (handleMove) {
-				handleMove(gameState);
+				handleMove(gameState, isWinnerFound);
 			}
 		}
 	}
@@ -73,7 +75,7 @@ export function usePlayFieldHandler(
 					playFiledState[b].highlight = true;
 					playFiledState[c].highlight = true;
 					setPlayFieldState(playFiledState);
-					eventIfFindedWinner(symbol);
+					eventIfFindWinner(symbol);
 					setIsWinner(true);
 					return true;
 				}
@@ -86,14 +88,13 @@ export function usePlayFieldHandler(
 	}
 
 	function autoFill() {
-		const cellDataTemplate: ICellData = {
-			symbol: 'empty',
-			highlight: false,
-		};
-
 		const filledBoard: Array<ICellData> = [];
 		for (let i = 0; i < 9; i++) {
-			filledBoard.push({ ...cellDataTemplate });
+			filledBoard.push({
+				id: nanoid(),
+				symbol: 'empty',
+				highlight: false,
+			});
 		}
 		setPlayFieldState(filledBoard);
 	}

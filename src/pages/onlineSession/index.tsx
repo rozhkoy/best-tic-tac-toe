@@ -1,26 +1,30 @@
+import { addAlert } from '@/features/alertProvider';
 import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
 import { GameStatusMessage, ICurrentMove, IPlayers, PlayerSymbolsType } from '@/features/playGround/types';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 import { IGetDataAboutOpponent, IIfWinnerFind, IMessageOnGameOver, IMessageWithFriendId, IOnGameOver, IReadyStateToGame, ISyncGameboardState } from '@/features/webSocketConnection/types';
-import { useAppSelector } from '@/shared/hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { FieldCell } from '@/shared/ui/fieldCell';
 import { ICellData } from '@/shared/ui/fieldCell/types';
-import { nanoid } from 'nanoid';
 import { useContext, useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { IInfoAboutOpponent, IPartialPlayerData } from './types';
 
 export const OnlineSession = () => {
 	const { sessionId } = useParams();
+	const dispatch = useAppDispatch();
+	const navigation = useNavigate();
+
 	const webSocket = useContext(WebSocketContext);
-	const [isBlockMove, setIsBlockMove] = useState<boolean>(true);
 	const userInfo = useAppSelector((state) => state.user);
+
+	const [isBlockMove, setIsBlockMove] = useState<boolean>(true);
 	const [friendId, setFriendId] = useState<number>(0);
 	const [isWinnerFound, setIsWinnerFound] = useState<boolean>(false);
 	const [countGames, setCountGames] = useState<number>(0);
-	const navigation = useNavigate();
-	const [playersData, setPlayerData] = useState<IPlayers>({
+	const [playersData, setPlayersData] = useState<IPlayers>({
 		cross: {
 			nickname: '',
 			score: 0,
@@ -32,11 +36,15 @@ export const OnlineSession = () => {
 			userId: 0,
 		},
 	});
+	const [gameStatusMessage, setGameStatusMessage] = useState<GameStatusMessage>({
+		message: '',
+		isShow: false,
+		color: 'secondary',
+	});
 	const { playFieldState, resetState, currentMove, markCell, setPlayFieldState, setCurrentMove } = usePlayFieldHandler(
 		[],
 		playersData,
 		(symbol) => {
-			console.log('test test');
 			const message: GameStatusMessage = {
 				color: 'secondary',
 				isShow: true,
@@ -55,18 +63,22 @@ export const OnlineSession = () => {
 					players.nought.score = ++playersData.nought.score;
 					break;
 			}
-			setPlayerData(players);
-			setCountGames((prev) => ++prev);
-			sendMessageifWinnerFind({ gameStatusMessage: message, players, friendId, countGames: countGames + 1 });
-			setGameStatusMessage(message);
 			setIsWinnerFound(true);
+			setPlayersData(players);
+			setCountGames((prev) => ++prev);
+			sendMessageIfWinnerFind({ gameStatusMessage: message, players, friendId, countGames: countGames + 1 });
+			setGameStatusMessage(message);
 		},
 		() => {
-			setGameStatusMessage({
+			const message: GameStatusMessage = {
 				message: 'Draw!',
 				isShow: true,
 				color: 'secondary',
-			});
+			};
+
+			setGameStatusMessage(message);
+			sendMessageIfWinnerFind({ gameStatusMessage: message, players: playersData, friendId, countGames: countGames + 1 });
+			setIsWinnerFound(true);
 		},
 		() => {
 			setGameStatusMessage({
@@ -75,35 +87,11 @@ export const OnlineSession = () => {
 				color: 'secondary',
 			});
 		},
-		({ playFieldState, currentMove }) => {
+		({ playFieldState, currentMove }, isWinnerFound) => {
 			setIsBlockMove(true);
-			updateGameboard(friendId, playFieldState, currentMove);
+			updateGameboard(friendId, playFieldState, currentMove, isWinnerFound);
 		}
 	);
-	const [gameStatusMessage, setGameStatusMessage] = useState<GameStatusMessage>({
-		message: '',
-		isShow: false,
-		color: 'secondary',
-	});
-
-	interface IDataAboutOpponent {
-		firstPlayer: {
-			userId: number;
-			isReady: boolean;
-			role: 'cross' | 'nought';
-			friendId: number;
-			nickname: string;
-		};
-		secondPlayer: {
-			userId: number;
-			isReady: boolean;
-			role: 'cross' | 'nought';
-			friendId: number;
-			nickname: string;
-		};
-	}
-
-	type IPlayerData = 'firstPlayer' | 'secondPlayer';
 
 	useEffect(() => {
 		getDataAboutOpponent(sessionId as string);
@@ -118,17 +106,18 @@ export const OnlineSession = () => {
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.SYNC_PLAYGROUND, ({ data }: IWebSocketMessage<ISyncGameboardState>) => {
-				console.log(data);
-				setIsBlockMove(false);
+				if (!data.isWinnerFound) {
+					setIsBlockMove(false);
+				}
 				setPlayFieldState(data.playFieldState);
 				setCurrentMove(data.currentMove);
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.WINNER_FIND, ({ data: { gameStatusMessage, players, countGames } }: IWebSocketMessage<IIfWinnerFind>) => {
 				setGameStatusMessage(gameStatusMessage);
-				setPlayerData(players);
+				setPlayersData(players);
 				setCountGames(countGames);
-				setIsBlockMove(false);
+				setIsBlockMove(true);
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.RESET_GAME_STATE, () => {
@@ -136,6 +125,11 @@ export const OnlineSession = () => {
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.GAME_OVER, () => {
+				navigation('/');
+			});
+
+			webSocket.subscribeToOnUpdate(websocketEventNames.SESSIONS_IS_CLOSED, (message) => {
+				dispatch(addAlert({ heading: 'Oooooopssss', text: message.error }));
 				navigation('/');
 			});
 		}
@@ -152,6 +146,7 @@ export const OnlineSession = () => {
 		if (playersData.cross.nickname && playersData.cross.userId === userInfo.userId) {
 			sendReadyState(userInfo.userId, sessionId as string);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [playersData]);
 
 	useEffect(() => {
@@ -177,6 +172,7 @@ export const OnlineSession = () => {
 		return () => {
 			clearTimeout(restartTimer);
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isWinnerFound]);
 
 	function getDataAboutOpponent(sessionId: string) {
@@ -203,7 +199,7 @@ export const OnlineSession = () => {
 		webSocket?.send(JSON.stringify(message));
 	}
 
-	function updateGameboard(friendId: number, playFieldState: Array<ICellData>, currentMove: ICurrentMove) {
+	function updateGameboard(friendId: number, playFieldState: Array<ICellData>, currentMove: ICurrentMove, isWinnerFound: boolean) {
 		const message: IWebSocketMessage<ISyncGameboardState> = {
 			event: websocketEventNames.SYNC_PLAYGROUND,
 			userId: userInfo.userId,
@@ -211,33 +207,38 @@ export const OnlineSession = () => {
 				friendId,
 				currentMove,
 				playFieldState,
+				isWinnerFound,
 			},
 			error: '',
 		};
 		webSocket?.send(JSON.stringify(message));
 	}
 
-	function updatePlayersData({ data }: IWebSocketMessage<IDataAboutOpponent>) {
-		setPlayerData((prev) => {
-			console.log(data);
-			const objectKeys = Object.keys(data);
-			for (const key of objectKeys) {
-				const player = data[key as IPlayerData];
+	function updatePlayersData({ data }: IWebSocketMessage<IInfoAboutOpponent>) {
+		const prevPlayersDataState = playersData;
 
-				if (player.userId === userInfo.userId) {
-					console.log(player, userInfo);
-					setFriendId(player.friendId);
-				}
-
-				prev[player.role].nickname = player.nickname;
-				prev[player.role].userId = player.userId;
+		const objectKeys = Object.keys(data.players);
+		for (const key of objectKeys) {
+			const player = data.players[key as IPartialPlayerData];
+			console.log(player.nickname);
+			if (player.userId === userInfo.userId) {
+				setFriendId(player.friendId);
 			}
 
-			return { ...prev };
+			prevPlayersDataState[player.role].nickname = player.nickname;
+			prevPlayersDataState[player.role].userId = player.userId;
+		}
+
+		setCurrentMove((state) => {
+			state.symbol = 'cross';
+			state.player = prevPlayersDataState.cross.nickname;
+			return state;
 		});
+
+		setPlayersData({ ...prevPlayersDataState });
 	}
 
-	function sendMessageifWinnerFind({ gameStatusMessage, players, friendId, countGames }: IIfWinnerFind) {
+	function sendMessageIfWinnerFind({ gameStatusMessage, players, friendId, countGames }: IIfWinnerFind) {
 		const message: IWebSocketMessage<IIfWinnerFind> = {
 			event: websocketEventNames.WINNER_FIND,
 			userId: userInfo.userId,
@@ -297,7 +298,7 @@ export const OnlineSession = () => {
 			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
 			<PlayField>
 				{playFieldState.map((item, index) => {
-					return <FieldCell blockMove={isBlockMove} key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+					return <FieldCell blockMove={isBlockMove} key={item.id} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
 				})}
 			</PlayField>
 		</GameBoardWrap>
