@@ -9,10 +9,13 @@ import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { FieldCell } from '@/shared/ui/fieldCell';
 import { ICellData } from '@/shared/ui/fieldCell/types';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useBeforeUnload, useNavigate, useParams } from 'react-router-dom';
 import { IInfoAboutOpponent, IPartialPlayerData } from './types';
+import { GameOverPopup } from '@/shared/ui/gameOverPopup';
+import { CSSTransition } from 'react-transition-group';
 
 export const OnlineSession = () => {
+	const NUMBER_OF_GAMES = 3;
 	const { sessionId } = useParams();
 	const dispatch = useAppDispatch();
 	const navigation = useNavigate();
@@ -21,6 +24,12 @@ export const OnlineSession = () => {
 	const userInfo = useAppSelector((state) => state.user);
 
 	const [isBlockMove, setIsBlockMove] = useState<boolean>(true);
+
+	const [gameOverMessage, setGameOverMessage] = useState<GameStatusMessage>({
+		message: '',
+		isShow: false,
+		color: 'secondary',
+	});
 	const [friendId, setFriendId] = useState<number>(0);
 	const [isWinnerFound, setIsWinnerFound] = useState<boolean>(false);
 	const [countGames, setCountGames] = useState<number>(0);
@@ -93,11 +102,15 @@ export const OnlineSession = () => {
 		}
 	);
 
+	useBeforeUnload(() => {
+		const resposne = confirm('sdf');
+	});
+
 	useEffect(() => {
 		getDataAboutOpponent(sessionId as string);
 
 		if (webSocket) {
-			webSocket.subscribeToOnUpdate(websocketEventNames.DATA_ABOUT_OPONENT, (message: IWebSocketMessage<IDataAboutOpponent>) => {
+			webSocket.subscribeToOnUpdate(websocketEventNames.DATA_ABOUT_OPONENT, (message: IWebSocketMessage<IInfoAboutOpponent>) => {
 				updatePlayersData(message);
 			});
 
@@ -124,8 +137,13 @@ export const OnlineSession = () => {
 				resetState();
 			});
 
-			webSocket.subscribeToOnUpdate(websocketEventNames.GAME_OVER, () => {
-				navigation('/');
+			webSocket.subscribeToOnUpdate(websocketEventNames.GAME_OVER, ({ data: { winnerPlayerId } }) => {
+				setGameOverMessage((state) => {
+					state.message = winnerPlayerId == userInfo.userId ? 'You Won!' : winnerPlayerId == 0 ? 'Draw!' : 'You Lost!';
+					state.isShow = true;
+					state.color = winnerPlayerId !== userInfo.userId ? 'red' : 'secondary';
+					return { ...state };
+				});
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.SESSIONS_IS_CLOSED, (message) => {
@@ -153,7 +171,7 @@ export const OnlineSession = () => {
 		let restartTimer: ReturnType<typeof setTimeout>;
 		if (isWinnerFound) {
 			restartTimer = setTimeout(() => {
-				if (countGames <= 4) {
+				if (countGames < NUMBER_OF_GAMES) {
 					resetGameState({ friendId });
 					resetState();
 					setIsWinnerFound(false);
@@ -279,6 +297,13 @@ export const OnlineSession = () => {
 			}
 		}
 
+		setGameOverMessage((state) => {
+			state.message = winnerPlayerId == userInfo.userId ? 'You Won!' : winnerPlayerId == 0 ? 'Draw!' : 'You Lost!';
+			state.isShow = true;
+			state.color = winnerPlayerId !== userInfo.userId ? 'red' : 'secondary';
+			return { ...state };
+		});
+
 		const message: IWebSocketMessage<IMessageOnGameOver> = {
 			event: websocketEventNames.GAME_OVER,
 			userId: userInfo.userId,
@@ -290,17 +315,23 @@ export const OnlineSession = () => {
 			},
 			error: '',
 		};
+
 		webSocket?.send(JSON.stringify(message));
 	}
 
 	return (
-		<GameBoardWrap>
-			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
-			<PlayField>
-				{playFieldState.map((item, index) => {
-					return <FieldCell blockMove={isBlockMove} key={item.id} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
-				})}
-			</PlayField>
-		</GameBoardWrap>
+		<>
+			<GameBoardWrap>
+				<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
+				<PlayField>
+					{playFieldState.map((item, index) => {
+						return <FieldCell blockMove={isBlockMove} key={item.id} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+					})}
+				</PlayField>
+			</GameBoardWrap>
+			<CSSTransition in={gameOverMessage.isShow} timeout={300} classNames='opacity' unmountOnExit>
+				<GameOverPopup message={gameOverMessage.message} color={gameOverMessage.color} />
+			</CSSTransition>
+		</>
 	);
 };

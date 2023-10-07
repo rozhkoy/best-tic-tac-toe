@@ -1,0 +1,42 @@
+.game-over-pop-up {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 600;
+
+	&__window {
+		display: flex;
+		max-width: 400px;
+		width: 100%;
+		padding: 24px;
+		flex-direction: column;
+		align-items: center;
+		gap: 40px;
+		border-radius: 14px;
+		background: var(--color-primary);
+	}
+
+	&__heading {
+		font-family: 'Poppins';
+		font-style: normal;
+		font-weight: 500;
+		font-size: 32px;
+		line-height: 48px;
+		text-align: center;
+		&--secondary {
+			color: var(--color-secondary);
+		}
+		&--red {
+			color: var(--color-red);
+		}
+	}
+
+	&__btns {
+		width: 100%;
+	}
+}

@@ -5,7 +5,7 @@ import './style.scss';
 import { useFirebaseAuth } from '@/features/accountAuth';
 
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
-import { WebSocketContext, WebSocketProvider } from '@/shared/providers/WebSocketProvider';
+import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { IUpdateUserStatusData } from '@/entities/user/types';
