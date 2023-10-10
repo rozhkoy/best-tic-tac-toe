@@ -10,3 +10,8 @@ export async function registrationNewUser(formData: FormData) {
 	const { data } = await server.post<IRegistrationRespone>('/v1/api/user/registration', formData);
 	return data;
 }
+
+export async function getUserRating(params: { userId: number }) {
+	const { data } = await server.get<number>('/v1/api/user/getUserRating', { params });
+	return data;
+}

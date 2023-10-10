@@ -24,7 +24,10 @@ export const userSlice = createSlice({
 			state.userId = payload.userId;
 			state.isAuth = payload.isAuth;
 		},
+		updateUserRating: (state, { payload }: PayloadAction<number>) => {
+			state.rating = payload;
+		},
 	},
 });
 
-export const { updateUserInfo } = userSlice.actions;
+export const { updateUserInfo, updateUserRating } = userSlice.actions;

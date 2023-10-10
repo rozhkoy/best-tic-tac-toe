@@ -13,15 +13,29 @@ import { useBeforeUnload, useNavigate, useParams } from 'react-router-dom';
 import { IInfoAboutOpponent, IPartialPlayerData } from './types';
 import { GameOverPopup } from '@/shared/ui/gameOverPopup';
 import { CSSTransition } from 'react-transition-group';
+import { useQuery } from '@tanstack/react-query';
+import { updateUserRating } from '@/entities/user';
+import { getUserRating } from '@/features/accountAuth/api';
 
 export const OnlineSession = () => {
-	const NUMBER_OF_GAMES = 3;
+	const NUMBER_OF_GAMES = 1;
 	const { sessionId } = useParams();
 	const dispatch = useAppDispatch();
 	const navigation = useNavigate();
+	const userInfo = useAppSelector((state) => state.user);
+	const [isFetchUserRating, setIsFetchUserRating] = useState(false);
+
+	const userRating = useQuery({
+		queryKey: ['userRating'],
+		queryFn: () => getUserRating({ userId: userInfo.userId }),
+		onSuccess: (data) => {
+			dispatch(updateUserRating(data));
+			setIsFetchUserRating(false);
+		},
+		enabled: isFetchUserRating,
+	});
 
 	const webSocket = useContext(WebSocketContext);
-	const userInfo = useAppSelector((state) => state.user);
 
 	const [isBlockMove, setIsBlockMove] = useState<boolean>(true);
 
@@ -84,7 +98,7 @@ export const OnlineSession = () => {
 				isShow: true,
 				color: 'secondary',
 			};
-
+			setCountGames((prev) => ++prev);
 			setGameStatusMessage(message);
 			sendMessageIfWinnerFind({ gameStatusMessage: message, players: playersData, friendId, countGames: countGames + 1 });
 			setIsWinnerFound(true);
@@ -139,11 +153,13 @@ export const OnlineSession = () => {
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.GAME_OVER, ({ data: { winnerPlayerId } }) => {
 				setGameOverMessage((state) => {
-					state.message = winnerPlayerId == userInfo.userId ? 'You Won!' : winnerPlayerId == 0 ? 'Draw!' : 'You Lost!';
+					state.message = winnerPlayerId == 0 ? 'Draw!' : winnerPlayerId == userInfo.userId ? 'You Won!' : 'You Lost!';
 					state.isShow = true;
 					state.color = winnerPlayerId !== userInfo.userId ? 'red' : 'secondary';
 					return { ...state };
 				});
+
+				setIsFetchUserRating(true);
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.SESSIONS_IS_CLOSED, (message) => {
@@ -287,18 +303,22 @@ export const OnlineSession = () => {
 		const firstPlayerId: number = playersData.cross.userId ?? 0;
 		const secondPlayerId: number = playersData.nought.userId ?? 0;
 		let winnerPlayerId = 0;
-		let score = 0;
-		const objectKeys = Object.keys(playersData);
-		for (const key of objectKeys) {
-			const player = playersData[key as PlayerSymbolsType];
-			if (player.score >= score && player.userId) {
-				score = player.score;
-				winnerPlayerId = player.userId;
-			}
+		// let score = 0;
+		// // const objectKeys = Object.keys(playersData);
+		// // for (const key of objectKeys) {
+		// // 	const player = playersData[key as PlayerSymbolsType];
+		// // 	if (player.score >= score && player.userId) {
+		// // 		score = player.score;
+		// // 		winnerPlayerId = player.userId;
+		// // 	}
+		// // }
+
+		if (playersData.cross.userId && playersData.nought.userId) {
+			winnerPlayerId = playersData.cross.score > playersData.nought.score ? playersData.cross.userId : playersData.cross.score !== playersData.nought.score ? playersData.nought.userId : 0;
 		}
 
 		setGameOverMessage((state) => {
-			state.message = winnerPlayerId == userInfo.userId ? 'You Won!' : winnerPlayerId == 0 ? 'Draw!' : 'You Lost!';
+			state.message = winnerPlayerId == 0 ? 'Draw!' : winnerPlayerId == userInfo.userId ? 'You Won!' : 'You Lost!';
 			state.isShow = true;
 			state.color = winnerPlayerId !== userInfo.userId ? 'red' : 'secondary';
 			return { ...state };
