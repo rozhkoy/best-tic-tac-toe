@@ -14,3 +14,19 @@
 	transform: translate(-50%, -100%);
 	transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
+
+.opacity-enter {
+	opacity: 0;
+}
+.opacity-enter-active {
+	opacity: 1;
+	transform: translateX(0);
+	transition: opacity 300ms, transform 300ms;
+}
+.opacity-exit {
+	opacity: 1;
+}
+.opacity-exit-active {
+	opacity: 0;
+	transition: opacity 300ms, transform 300ms;
+}

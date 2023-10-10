@@ -23,6 +23,7 @@ export interface ISyncGameboardState {
 	friendId: number;
 	currentMove: ICurrentMove;
 	playFieldState: Array<ICellData>;
+	isWinnerFound: boolean;
 }
 
 export interface IIfWinnerFind {

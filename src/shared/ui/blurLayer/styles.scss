@@ -1,8 +1,9 @@
 .blur-layer {
 	width: 100%;
-	height: 100%;
+	height: 100vh;
+	height: 100dvh;
 	background: rgba(69, 69, 69, 0.7);
-	backdrop-filter: blur(25px);
+	backdrop-filter: blur(5px);
 	display: flex;
 	justify-content: center;
 	align-items: center;
