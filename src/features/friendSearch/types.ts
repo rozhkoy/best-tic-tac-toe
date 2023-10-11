@@ -25,7 +25,7 @@ export type SearchModeTypes = 'Your friends' | 'Friends requests' | 'Global Sear
 export type SearchModeProp = Array<SearchModeTypes>;
 
 export interface IPartialUserInfoWithBtnsStatus extends IPartialUserInfo {
-	btnsStatus: FriendItemBtnsStatusTypes;
+	btnsStatus: FrindshipBtnsStatusTypes;
 	invitationId?: number | null;
 }
 
@@ -36,7 +36,7 @@ export interface ListOfUserResponse extends IPartialUserInfo {
 
 export type FrienshipStatusTypes = null | 'friend' | 'invitation' | 'pending';
 
-export type FriendItemBtnsStatusTypes = FrienshipStatusTypes | 'loading' | 'error' | 'invitedToGame';
+export type FrindshipBtnsStatusTypes = FrienshipStatusTypes | 'loading' | 'error' | 'invitedToGame';
 
 export interface IPaginationInfo {
 	page: number;

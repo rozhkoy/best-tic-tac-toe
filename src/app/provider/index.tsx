@@ -8,8 +8,8 @@ import { WithBotSession } from '@/pages/withBotSession';
 import { Home } from '@/pages/home';
 import { OnlineSession } from '@/pages/onlineSession';
 import { Friends } from '@/pages/friends';
-import { Profile } from '@/pages/profile';
 import { PrivedRoute } from '@/features/privedRoute/ui';
+import { Profile } from '@/pages/profile';
 
 export const AppProvider = () => {
 	const router = createBrowserRouter([

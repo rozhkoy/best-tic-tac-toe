@@ -3,12 +3,8 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Header } from '@/widgets';
 import './style.scss';
 import { useFirebaseAuth } from '@/features/accountAuth';
-
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
-import { UserStatusTypes } from '@/shared/ui/userStatus/types';
-import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
-import { IUpdateUserStatusData } from '@/entities/user/types';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 import { NotificationsProvider } from '@/features/notifications';
 import { addNotif } from '@/features/notifications/store';
@@ -46,23 +42,23 @@ export const Wrap = () => {
 		}
 	}, []);
 
-	useEffect(() => {
-		if (userInfo.isAuth) {
-			udpateUserStatus('online');
-		}
-	}, [userInfo.isAuth]);
+	// useEffect(() => { // this is older way update online status
+	// 	if (userInfo.isAuth) {
+	// 		udpateUserStatus('online');
+	// 	}
+	// }, [userInfo.isAuth]);
 
-	function udpateUserStatus(status: UserStatusTypes) {
-		const message: IWebSocketMessage<IUpdateUserStatusData> = {
-			event: websocketEventNames.UPDATE_USER_STATUS,
-			userId: userInfo.userId,
-			data: {
-				status,
-			},
-			error: '',
-		};
-		webSocket?.send(JSON.stringify(message));
-	}
+	// function udpateUserStatus(status: UserStatusTypes) {
+	// 	const message: IWebSocketMessage<IUpdateUserStatusData> = {
+	// 		event: websocketEventNames.UPDATE_USER_STATUS,
+	// 		userId: userInfo.userId,
+	// 		data: {
+	// 			status,
+	// 		},
+	// 		error: '',
+	// 	};
+	// 	webSocket?.send(JSON.stringify(message));
+	// }
 
 	return (
 		<div className='wrap'>

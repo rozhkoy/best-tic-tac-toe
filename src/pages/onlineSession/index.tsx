@@ -18,14 +18,14 @@ import { updateUserRating } from '@/entities/user';
 import { getUserRating } from '@/features/accountAuth/api';
 
 export const OnlineSession = () => {
-	const NUMBER_OF_GAMES = 1;
+	const NUMBER_OF_GAMES = 3;
 	const { sessionId } = useParams();
 	const dispatch = useAppDispatch();
 	const navigation = useNavigate();
 	const userInfo = useAppSelector((state) => state.user);
 	const [isFetchUserRating, setIsFetchUserRating] = useState(false);
 
-	const userRating = useQuery({
+	useQuery({
 		queryKey: ['userRating'],
 		queryFn: () => getUserRating({ userId: userInfo.userId }),
 		onSuccess: (data) => {

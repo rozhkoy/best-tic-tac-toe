@@ -14,67 +14,127 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { getGameHistoryByUserId, getProfileInfoByUserId } from './api';
 import { useInView } from 'react-intersection-observer';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
+import { UserStatusTypes } from '@/shared/ui/userStatus/types';
+import { FrindshipBtnsStatusTypes } from '@/features/friendSearch/types';
+import { useFriendsActions } from '@/features/friendSearch/lib/useFriendsActions';
+import { IProfileFriendshipBtns } from './types';
+import { createFormData } from '@/shared/lib/CreateFormData';
 
 export const Profile = () => {
 	const PER_PAGE = 10;
 	const userInfo = useAppSelector((state) => state.user);
 	const { userId } = useParams();
-	const [isFriend, setIsFriend] = useState(false);
-
+	const [btnStatus, setBtnStatus] = useState<IProfileFriendshipBtns>({
+		status: null,
+	});
 	const navigation = useNavigate();
-
+	const { sendInviteToFriendShipMutation, acceptFriendshipInviteMutation, rejectFriendshipInviteMutation, sendInviteToGame, sendRejectionInviteToGame } = useFriendsActions();
 	const [ref, inView] = useInView();
 
 	const profileInfoByUserId = useQuery({
 		queryKey: ['userInfoByUserId', userId],
 		queryFn: () => getProfileInfoByUserId({ userId: Number(userId) ?? 0, currentUserId: userInfo.userId }),
-		enabled: !!userInfo.userId,
+		onSuccess: (data) => setBtnStatus(data.friendshipResponse),
+		enabled: !!userInfo.isAuth,
 	});
 
 	const history = useInfiniteQuery({
 		queryKey: ['gameHistory'],
 		queryFn: ({ pageParam }) => {
-			return getGameHistoryByUserId({ userId: +userId!, page: pageParam ?? 0, perPage: PER_PAGE });
+			return getGameHistoryByUserId({ userId: Number(userId), page: pageParam ?? 0, perPage: PER_PAGE });
 		},
 		getNextPageParam: (lastPage) => lastPage.nextPage,
+		enabled: !!userInfo.isAuth,
 	});
 
 	useEffect(() => {
 		if (inView && history.hasNextPage) {
 			history.fetchNextPage();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [inView, history.hasNextPage]);
 
-	// useEffect(() => {
-	// 	if (profileInfoByUserId.isError || !userId) {
-	// 		navigation('/');
-	// 	}
-	// }, [profileInfoByUserId.isError, userId]);
+	useEffect(() => {
+		if (profileInfoByUserId.isError || !userId) {
+			navigation('/');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [profileInfoByUserId.isError, userId]);
+
+	function buttons(btnStatus: FrindshipBtnsStatusTypes, userStatus: UserStatusTypes) {
+		switch (btnStatus) {
+			case null:
+				return <Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Add friend'} onClick={() => addToFriends(userInfo.userId, Number(userId))} />;
+			case 'invitation':
+				return (
+					<>
+						<Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Accept'} />
+						<Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} title={'Reject'} />
+					</>
+				);
+			case 'friend':
+				return <Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Invite to game'} disabled={userStatus === 'offline'} />;
+			case 'invitedToGame':
+				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Invited to game'} />;
+			case 'pending':
+				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Pending'} />;
+			case 'loading':
+				return <div>loading...</div>;
+			case 'error':
+				return <Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} title={'Error'} />;
+		}
+	}
+
+	async function addToFriends(userId: number, invitationUserId: number) {
+		setBtnStatus((state) => {
+			state.status = 'loading';
+			return { ...state };
+		});
+		const formData: FormData = createFormData([
+			{ key: 'userId', value: String(userInfo.userId) },
+			{ key: 'invitationUserId', value: String(invitationUserId) },
+		]);
+		const response = await sendInviteToFriendShipMutation.mutateAsync(formData);
+		if (response) {
+			setBtnStatus((state) => {
+				state.status = 'pending';
+				state.invitationId = response.invitationId;
+				return { ...state };
+			});
+		} else {
+			setBtnStatus((state) => {
+				state.status = 'error';
+				return { ...state };
+			});
+		}
+	}
 
 	return (
-		<div className="profile">
-			<Container size="large" className="profile__container">
+		<div className='profile'>
+			<Container size='large' className='profile__container'>
 				{profileInfoByUserId.isSuccess ? (
-					<div className="profile__user-info">
-						<UserProfile nickname={profileInfoByUserId.data.userInfo.nickname} status={profileInfoByUserId.data.userInfo.status} src={''} size="large"></UserProfile>
-						<div className="profile__btns">
-							{profileInfoByUserId.data.friendshiptResponse ? (
-								<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Invite to game'} type={'button'} disabled={false} />
-							) : (
-								<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Invite to friends'} type={'button'} disabled={false} />
-							)}
-						</div>
-					</div>
-				) : null}
-				<Section title="Statistics" className="profile__stats">
-					<div className="profile__stats-wrap">
-						<StatsItem number={1500} text={'Wins'} />
-						<StatsItem number={1500} text={'Wins'} />
-						<StatsItem number={1500} text={'Wins'} />
-					</div>
-				</Section>
+					<>
+						<div className='profile__user-info'>
+							<UserProfile
+								nickname={profileInfoByUserId.data.userInfo.nickname}
+								status={profileInfoByUserId.data.userInfo.status}
+								src={''}
+								rating={profileInfoByUserId.data.userInfo.rating}
+								size='large'></UserProfile>
 
-				<Section title="Statistics" className="profile__history">
+							{Number(userId) != userInfo.userId ? <div className='profile__btns'> {btnStatus && buttons(btnStatus.status, profileInfoByUserId.data.userInfo.status)}</div> : null}
+						</div>
+
+						<Section title='Statistics' className='profile__stats'>
+							<div className='profile__stats-wrap'>
+								<StatsItem number={profileInfoByUserId.data.stats.wins} text={'Wins'} />
+								<StatsItem number={profileInfoByUserId.data.stats.losses} text={'Losses'} />
+								<StatsItem number={profileInfoByUserId.data.stats.draws} text={'Draws'} />
+							</div>
+						</Section>
+					</>
+				) : null}
+				<Section title='History' className='profile__history'>
 					<ListWrap>
 						{history.data && history.data?.pages[0].rows.length > 0 ? (
 							history.data.pages.map((page, pageIndex, pages) => (

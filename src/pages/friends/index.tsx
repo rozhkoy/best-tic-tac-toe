@@ -3,7 +3,7 @@ import { Container } from '@/shared/ui/container';
 import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import './styles.scss';
 import { CustomRadio } from '@/shared/ui/CustomRadio';
-import { FriendItemBtnsStatusTypes, IButtonsIds, IPaginationInfo, IPartialUserInfoWithBtnsStatus, SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
+import { FrindshipBtnsStatusTypes, IButtonsIds, IPaginationInfo, IPartialUserInfoWithBtnsStatus, SearchModeProp, SearchModeTypes } from '@/features/friendSearch/types';
 import { SearchBar } from '@/shared/ui/Searchbar';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
@@ -17,7 +17,6 @@ import { ListOfUsers } from '@/features/friendSearch';
 import { createFormData } from '@/shared/lib/CreateFormData';
 import { useFriendsActions } from '@/features/friendSearch/api/lib/useFriendsActions';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
-import { nanoid } from 'nanoid';
 import { addAlert } from '@/features/alertProvider';
 import { queryClient } from '@/app/App';
 
@@ -219,7 +218,7 @@ export const Friends = () => {
 	function replaceBtnsStatus(
 		setState: Dispatch<SetStateAction<Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>>>,
 		{ page, item }: IPaginationInfo,
-		friendshipStatus: FriendItemBtnsStatusTypes
+		friendshipStatus: FrindshipBtnsStatusTypes
 	) {
 		setState((state) => {
 			state[page].rows[item].btnsStatus = friendshipStatus;
