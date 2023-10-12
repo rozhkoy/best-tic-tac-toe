@@ -61,7 +61,7 @@ export interface IUseFriendsActionsResponse {
 	sendInviteToFriendShipMutation: UseMutationResult<sendInviteToFriendShipMutationData, unknown, FormData, unknown>;
 	acceptFriendshipInviteMutation: UseMutationResult<boolean, unknown, FormData, unknown>;
 	rejectFriendshipInviteMutation: UseMutationResult<boolean, unknown, FormData, unknown>;
-	sendInviteToGame: (friendId: number, userId: number, paginationInfo: IPaginationInfo) => boolean;
+	sendInviteToGame: (friendId: number, userId: number, paginationInfo?: IPaginationInfo) => boolean;
 	sendRejectionInviteToGame: (friendId: number, userId: number) => boolean;
 }
 
@@ -71,5 +71,5 @@ export interface IRejectionInviteToGame {
 
 export interface ISendInviteToGame {
 	friendId: number;
-	paginationInfo: IPaginationInfo;
+	paginationInfo?: IPaginationInfo;
 }

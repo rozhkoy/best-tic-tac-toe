@@ -21,7 +21,7 @@ export function useFriendsActions(): IUseFriendsActionsResponse {
 		mutationFn: async (formData: FormData) => await sendRejectFriendshipInvite(formData),
 	});
 
-	function sendInviteToGame(friendId: number, userId: number, paginationInfo: IPaginationInfo) {
+	function sendInviteToGame(friendId: number, userId: number, paginationInfo?: IPaginationInfo) {
 		const message: IWebSocketMessage<ISendInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME,
 			userId,
