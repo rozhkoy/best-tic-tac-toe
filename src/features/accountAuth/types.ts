@@ -7,7 +7,7 @@ export interface IGetUserInfoByUid {
 export type RegistrationInfoFieldsTypes = 'uid' | 'nickname' | 'settingsCode';
 
 export interface IUserResponse {
-	userId: number;
+	userId: string;
 	uid: string;
 	nickname: string;
 	rating: number;
@@ -18,7 +18,7 @@ export interface IUserResponse {
 }
 
 export interface IPartialUserInfo {
-	userId: number;
+	userId: string;
 	nickname: string;
 	status: UserStatusTypes;
 }

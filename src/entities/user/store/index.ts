@@ -1,15 +1,9 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-
-interface IUserState {
-	nickname: string;
-	rating: number;
-	isAuth: boolean;
-	userId: number;
-}
+import { IUserState } from '../types';
 
 const initialState: IUserState = {
 	nickname: '',
-	userId: 0,
+	userId: '',
 	rating: 0,
 	isAuth: false,
 };

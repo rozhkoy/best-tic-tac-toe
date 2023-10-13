@@ -1,6 +1,6 @@
 export interface IWebSocketMessage<T> {
 	event: string;
-	userId: number;
+	userId: string;
 	data: T;
 	error: string;
 }

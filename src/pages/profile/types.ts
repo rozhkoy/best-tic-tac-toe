@@ -4,12 +4,12 @@ import { IPagination } from '@/shared/types/IPagination';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 
 export interface IGetProfileInfoByUserId {
-	userId: number;
-	currentUserId: number;
+	userId: string;
+	currentUserId: string;
 }
 
 export interface IGetGameHistoryByUserId extends IPagination {
-	userId: number;
+	userId: string;
 }
 
 export interface IProfileInfoByUserIdResponse {
@@ -28,5 +28,5 @@ export interface IProfileInfoByUserIdResponse {
 
 export interface IProfileFriendshipBtns {
 	status: FrindshipBtnsStatusTypes;
-	invitationId?: number;
+	invitationId?: string;
 }

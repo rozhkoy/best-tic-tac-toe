@@ -15,7 +15,7 @@ import { useInView } from 'react-intersection-observer';
 import debounce from 'lodash/debounce';
 import { ListOfUsers } from '@/features/friendSearch';
 import { createFormData } from '@/shared/lib/CreateFormData';
-import { useFriendsActions } from '@/features/friendSearch/api/lib/useFriendsActions';
+import { useFriendsActions } from '@/features/friendSearch/lib/useFriendsActions';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 import { addAlert } from '@/features/alertProvider';
 import { queryClient } from '@/app/App';
@@ -122,7 +122,7 @@ export const Friends = () => {
 		}
 	}
 
-	function inviteToGame(friendId: number, paginationInfo: IPaginationInfo) {
+	function inviteToGame(friendId: string, paginationInfo: IPaginationInfo) {
 		if (sendInviteToGame(friendId, userId, paginationInfo)) {
 			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'loading');
 		} else {
@@ -130,7 +130,7 @@ export const Friends = () => {
 		}
 	}
 
-	function rejectionInviteToGame(friendId: number, paginationInfo: IPaginationInfo) {
+	function rejectionInviteToGame(friendId: string, paginationInfo: IPaginationInfo) {
 		replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'loading');
 		if (sendRejectionInviteToGame(friendId, userId)) {
 			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'friend');
@@ -139,7 +139,7 @@ export const Friends = () => {
 		}
 	}
 
-	async function addToFriends(userId: number, invitationUserId: number, paginationInfo: IPaginationInfo) {
+	async function addToFriends(userId: string, invitationUserId: string, paginationInfo: IPaginationInfo) {
 		replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
 		const formData: FormData = createFormData([
 			{ key: 'userId', value: String(userId) },

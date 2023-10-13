@@ -21,7 +21,7 @@ export function useFriendsActions(): IUseFriendsActionsResponse {
 		mutationFn: async (formData: FormData) => await sendRejectFriendshipInvite(formData),
 	});
 
-	function sendInviteToGame(friendId: number, userId: number, paginationInfo?: IPaginationInfo) {
+	function sendInviteToGame(friendId: string, userId: string, paginationInfo?: IPaginationInfo) {
 		const message: IWebSocketMessage<ISendInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME,
 			userId,
@@ -36,7 +36,7 @@ export function useFriendsActions(): IUseFriendsActionsResponse {
 		return true;
 	}
 
-	function sendRejectionInviteToGame(friendId: number, userId: number) {
+	function sendRejectionInviteToGame(friendId: string, userId: string) {
 		const message: IWebSocketMessage<IRejectionInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME_IS_REJECTED,
 			userId: userId,

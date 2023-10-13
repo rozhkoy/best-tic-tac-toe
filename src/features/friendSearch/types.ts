@@ -12,12 +12,12 @@ export interface IFriend {
 
 export interface ISearchUsersByNickname extends IPagination {
 	query: string;
-	userId: number;
+	userId: string;
 }
 
 export interface IGetAllRequestsForFriendship extends IPagination {
 	query: string;
-	userId: number;
+	userId: string;
 }
 
 export type SearchModeTypes = 'Your friends' | 'Friends requests' | 'Global Search';
@@ -26,12 +26,12 @@ export type SearchModeProp = Array<SearchModeTypes>;
 
 export interface IPartialUserInfoWithBtnsStatus extends IPartialUserInfo {
 	btnsStatus: FrindshipBtnsStatusTypes;
-	invitationId?: number | null;
+	invitationId?: string | null;
 }
 
 export interface ListOfUserResponse extends IPartialUserInfo {
 	btnsStatus: FrienshipStatusTypes;
-	invitationId?: number | null;
+	invitationId?: string | null;
 }
 
 export type FrienshipStatusTypes = null | 'friend' | 'invitation' | 'pending';
@@ -44,7 +44,7 @@ export interface IPaginationInfo {
 }
 
 export interface IButtonsIds {
-	userId: number;
+	userId: string;
 	invitationId?: number | null;
 }
 
@@ -54,22 +54,22 @@ export interface ListOfUsersProps {
 }
 
 interface sendInviteToFriendShipMutationData {
-	invitationId: number;
+	invitationId: string;
 }
 
 export interface IUseFriendsActionsResponse {
 	sendInviteToFriendShipMutation: UseMutationResult<sendInviteToFriendShipMutationData, unknown, FormData, unknown>;
 	acceptFriendshipInviteMutation: UseMutationResult<boolean, unknown, FormData, unknown>;
 	rejectFriendshipInviteMutation: UseMutationResult<boolean, unknown, FormData, unknown>;
-	sendInviteToGame: (friendId: number, userId: number, paginationInfo?: IPaginationInfo) => boolean;
-	sendRejectionInviteToGame: (friendId: number, userId: number) => boolean;
+	sendInviteToGame: (friendId: string, userId: string, paginationInfo?: IPaginationInfo) => boolean;
+	sendRejectionInviteToGame: (friendId: string, userId: string) => boolean;
 }
 
 export interface IRejectionInviteToGame {
-	friendId: number;
+	friendId: string;
 }
 
 export interface ISendInviteToGame {
-	friendId: number;
+	friendId: string;
 	paginationInfo?: IPaginationInfo;
 }
