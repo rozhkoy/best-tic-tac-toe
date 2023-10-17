@@ -19,6 +19,7 @@ import {
 	Info,
 	Mark,
 	Reject,
+	CloseIcon,
 } from './Static';
 import { IconNamesTypes, IconProps } from './types';
 import './styles.scss';
@@ -45,6 +46,7 @@ const icons: Record<IconNamesTypes, React.ReactNode> = {
 	info: <Info />,
 	mark: <Mark />,
 	reject: <Reject />,
+	close: <CloseIcon />,
 };
 
 export function Icon({ name, className }: IconProps) {

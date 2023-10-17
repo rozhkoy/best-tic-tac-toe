@@ -40,6 +40,9 @@
 		text-align: center;
 		position: relative;
 		z-index: 3;
+		&:first-letter {
+			text-transform: uppercase;
+		}
 		&.disabled {
 			color: var(--color-disabled);
 		}

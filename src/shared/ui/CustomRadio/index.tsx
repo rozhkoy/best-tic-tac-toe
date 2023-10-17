@@ -15,7 +15,7 @@ export const CustomRadio = <ArrayFields extends Array<string>, CurrentField>({ c
 		<div className={classes}>
 			{fields.map((item) => (
 				<div key={item} className={classNames('custom-radio__item', { disabled })}>
-					<input onChange={radioHandler} name={id} id={item} type="radio" className="custom-radio__radio" value={item} checked={value === item && !disabled} disabled={disabled} />
+					<input onChange={radioHandler} name={id} id={item} type='radio' className='custom-radio__radio' value={item} checked={value === item && !disabled} disabled={disabled} />
 					<label htmlFor={item} className={classNames('custom-radio__label', { disabled })}>
 						{item}
 					</label>
