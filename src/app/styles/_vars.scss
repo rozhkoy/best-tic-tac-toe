@@ -1,6 +1,20 @@
-:root {
+.dark-theme {
 	--color-primary: #000000;
 	--color-secondary: #fff;
+	--color-white: #fff;
+	--color-light-gray: #454545;
+	--color-gray: #202020;
+	--color-dark-gray: #131313;
+	--color-red: #eb5757;
+	--transition-duration: 0.3s;
+	--color-disabled: #333333;
+	--color-online: #57eb5d;
+	--color-playing: #ebc257;
+}
+
+.light-theme {
+	--color-primary: #fff;
+	--color-secondary: #000000;
 	--color-white: #fff;
 	--color-light-gray: #454545;
 	--color-gray: #202020;

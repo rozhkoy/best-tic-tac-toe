@@ -4,13 +4,28 @@ import { BlurLayer } from '@/shared/ui/blurLayer';
 import { Button } from '@/shared/ui/button';
 import { Devider } from '@/shared/ui/devider';
 import { Icon } from '@/shared/ui/icon';
-import { Section } from '@/shared/ui/section';
+
 import './styles.scss';
+import { useEffect, useState } from 'react';
+import { themeTypes } from '../types';
 
 export const Settings = () => {
+	const [theme, setTheme] = useState<themeTypes>('auto');
+
+	function changeTheme(newTheme: themeTypes) {
+		setTheme(newTheme);
+		if (newTheme !== 'auto') document.body.className = `${newTheme}-theme`;
+		localStorage.setItem('theme', newTheme);
+	}
+
+	useEffect(() => {
+		setTheme((localStorage.getItem('theme') as themeTypes) ?? 'auto');
+	}, []);
+
 	return (
 		<BlurLayer className='settings'>
-			<Section className='settings__window' title='Settings'>
+			<div className='settings__window' title='Settings'>
+				<h2 className='settings__heading'> Settings</h2>
 				<button className='settings__close'>
 					<Icon name={'close'} />
 				</button>
@@ -24,11 +39,11 @@ export const Settings = () => {
 						<Icon name={'moon'} className={'settings__theme-heading-icon'} />
 						<span className={'settings__theme-heading-text'}>Themes</span>
 					</div>
-					<CustomRadio fields={['dark', 'light', 'auto']} value={''} onChange={() => console.log('')} />
+					<CustomRadio fields={['dark', 'light', 'auto'] as Array<themeTypes>} value={theme} onChange={changeTheme} />
 				</div>
 				<Devider />
 				<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} icon={'logout'} title={'Log out'} />
-			</Section>
+			</div>
 		</BlurLayer>
 	);
 };
