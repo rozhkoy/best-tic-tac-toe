@@ -2,10 +2,14 @@ import './styles.scss';
 import avatarPng from './assets/avatar.png';
 import { UserInfoProps } from '../../types';
 import { Rating } from '@/shared/ui/rating';
+import { useAppDispatch } from '@/shared/hooks/reduxHooks';
+import { toggleSettingsVisible } from '@/features/settings/store';
 
 export const UserPanel: React.FC<UserInfoProps> = ({ nickname, rating }) => {
+	const dispatch = useAppDispatch();
+
 	return (
-		<div className='user-panel'>
+		<div className='user-panel' onClick={() => dispatch(toggleSettingsVisible())}>
 			<div className='user-panel__info'>
 				<div className='user-panel__nickname'>{nickname}</div>
 				<Rating number={rating} />

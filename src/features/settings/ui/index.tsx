@@ -4,12 +4,17 @@ import { BlurLayer } from '@/shared/ui/blurLayer';
 import { Button } from '@/shared/ui/button';
 import { Devider } from '@/shared/ui/devider';
 import { Icon } from '@/shared/ui/icon';
-
+import { CSSTransition } from 'react-transition-group';
 import './styles.scss';
 import { useEffect, useState } from 'react';
 import { themeTypes } from '../types';
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
+import { toggleSettingsVisible } from '../store';
 
 export const Settings = () => {
+	const settings = useAppSelector((state) => state.settings);
+
+	const dispatch = useAppDispatch();
 	const [theme, setTheme] = useState<themeTypes>('auto');
 
 	function changeTheme(newTheme: themeTypes) {
@@ -23,27 +28,29 @@ export const Settings = () => {
 	}, []);
 
 	return (
-		<BlurLayer className='settings'>
-			<div className='settings__window' title='Settings'>
-				<h2 className='settings__heading'> Settings</h2>
-				<button className='settings__close'>
-					<Icon name={'close'} />
-				</button>
-				<div className='settings__profile-info'>
-					<Avatar src={''} className={'settings__avatar'} />
-					<input value={'nickname'} type='text' className='settings__nickname' />
-				</div>
-				<Devider />
-				<div className='settings__themes'>
-					<div className='settings__theme-heading'>
-						<Icon name={'moon'} className={'settings__theme-heading-icon'} />
-						<span className={'settings__theme-heading-text'}>Themes</span>
+		<CSSTransition timeout={300} in={settings.isVisible} classNames='opacity' unmountOnExit>
+			<BlurLayer className='settings'>
+				<div className='settings__window' title='Settings'>
+					<h2 className='settings__heading'> Settings</h2>
+					<button className='settings__close' onClick={() => dispatch(toggleSettingsVisible())}>
+						<Icon name={'close'} />
+					</button>
+					<div className='settings__profile-info'>
+						<Avatar src={''} className={'settings__avatar'} />
+						<input value={'nickname'} onChange={() => console.log('')} type='text' className='settings__nickname' />
 					</div>
-					<CustomRadio fields={['dark', 'light', 'auto'] as Array<themeTypes>} value={theme} onChange={changeTheme} />
+					<Devider />
+					<div className='settings__themes'>
+						<div className='settings__theme-heading'>
+							<Icon name={'moon'} className={'settings__theme-heading-icon'} />
+							<span className={'settings__theme-heading-text'}>Themes</span>
+						</div>
+						<CustomRadio fields={['dark', 'light', 'auto'] as Array<themeTypes>} value={theme} onChange={changeTheme} />
+					</div>
+					<Devider />
+					<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} icon={'logout'} title={'Log out'} />
 				</div>
-				<Devider />
-				<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} icon={'logout'} title={'Log out'} />
-			</div>
-		</BlurLayer>
+			</BlurLayer>
+		</CSSTransition>
 	);
 };
