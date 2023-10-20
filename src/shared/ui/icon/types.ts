@@ -41,4 +41,5 @@ export type IconNamesTypes =
 	| 'cross'
 	| 'info'
 	| 'mark'
-	| 'reject';
+	| 'reject'
+	| 'close';

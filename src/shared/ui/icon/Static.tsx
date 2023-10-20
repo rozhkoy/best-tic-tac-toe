@@ -202,3 +202,18 @@ export const Reject = () => {
 		</svg>
 	);
 };
+
+export const CloseIcon = () => {
+	return (
+		<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
+			<g clipPath='url(#clip0_1944_911)'>
+				<path d='M12 10.5862L16.95 5.63623L18.364 7.05023L13.414 12.0002L18.364 16.9502L16.95 18.3642L12 13.4142L7.04999 18.3642L5.63599 16.9502L10.586 12.0002L5.63599 7.05023L7.04999 5.63623L12 10.5862Z' />
+			</g>
+			<defs>
+				<clipPath id='clip0_1944_911'>
+					<rect width='24' height='24' />
+				</clipPath>
+			</defs>
+		</svg>
+	);
+};

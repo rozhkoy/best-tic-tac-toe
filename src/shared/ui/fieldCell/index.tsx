@@ -15,7 +15,10 @@ export const FieldCell: React.FC<FieldCellProps> = ({ symbolName, highlight, mar
 			onClick={() => {
 				if (!blockMove) markCell(index);
 			}}
-			className={classNames('field-cell', { 'field-cell--nought-active': highlight && symbolName === 'nought', 'field-cell--cross-active': highlight && symbolName === 'cross' })}>
+			className={classNames('field-cell', `field-cell--${symbolName}`, {
+				'field-cell--nought-active': highlight && symbolName === 'nought',
+				'field-cell--cross-active': highlight && symbolName === 'cross',
+			})}>
 			{symbols[symbolName]}
 		</div>
 	);

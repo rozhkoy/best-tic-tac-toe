@@ -1,0 +1,78 @@
+.settings {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 895;
+
+	&__window {
+		display: flex;
+		width: 360px;
+		padding: 24px;
+		gap: 24px;
+		border-radius: 14px;
+		background: var(--color-primary);
+		display: flex;
+		flex-direction: column;
+		position: absolute;
+	}
+
+	&__heading {
+		text-transform: uppercase;
+		font-size: 20px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: var(--color-secondary);
+	}
+
+	&__profile-info {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&__avatar {
+		margin: 0 24px 0 0;
+	}
+
+	&__nickname {
+		padding: 11px 20px;
+		color: var(--color-secondary);
+		font-size: 16px;
+		font-style: normal;
+		font-weight: 500;
+		line-height: normal;
+		border-radius: 10px;
+		border: 2px solid var(--color-light-gray);
+		max-width: 100%;
+		width: 100%;
+	}
+
+	&__themes {
+	}
+
+	&__theme-heading {
+		display: flex;
+		align-items: center;
+		margin: 0 0 27px 0;
+	}
+
+	&__theme-heading-icon {
+		margin: 0 10px 0 0;
+	}
+
+	&__theme-heading-text {
+		color: var(--color-secondary);
+
+		font-family: Poppins;
+		font-size: 20px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: normal;
+	}
+
+	&__close {
+		position: absolute;
+		right: 24px;
+		top: 24px;
+	}
+}

@@ -10,8 +10,23 @@ import { OnlineSession } from '@/pages/onlineSession';
 import { Friends } from '@/pages/friends';
 import { PrivedRoute } from '@/features/privedRoute/ui';
 import { Profile } from '@/pages/profile';
+import { useEffect } from 'react';
 
 export const AppProvider = () => {
+	useEffect(() => {
+		const theme = localStorage.getItem('theme');
+		if (theme && theme !== 'auto') {
+			document.body.className = `${theme}-theme`;
+		} else {
+			const getCurrentTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (getCurrentTheme()) {
+				document.body.className = `dark-theme`;
+			} else {
+				document.body.className = `light-theme`;
+			}
+		}
+	}, []);
+
 	const router = createBrowserRouter([
 		{
 			path: routes.HOME,

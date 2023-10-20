@@ -4,10 +4,9 @@ export interface FormInputProps {
 	className?: string;
 	placeholder: string;
 	onChange: ChangeHandler;
-	onBlur: ChangeHandler;
+	onBlur?: ChangeHandler;
 	name: string;
 	error?: FieldError | undefined;
-	touched: boolean | undefined;
 	type: 'text' | 'password' | 'email';
-	autocomplete: string;
+	autocomplete?: string;
 }

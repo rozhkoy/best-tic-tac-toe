@@ -1,6 +1,5 @@
 .profile {
-	background: rgba(69, 69, 69, 0.7);
-	backdrop-filter: blur(25px);
+	background: var(--color-background);
 	padding: 42px 0;
 	&__container {
 		display: flex;
@@ -13,7 +12,7 @@
 		justify-content: space-between;
 		align-items: center;
 		border-radius: 10px;
-		background: var(--black, #000);
+		background: var(--color-primary);
 		padding: 20px 20px;
 		width: 100%;
 	}

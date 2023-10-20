@@ -10,6 +10,7 @@ import { NotificationsProvider } from '@/features/notifications';
 import { addNotif } from '@/features/notifications/store';
 import { nanoid } from 'nanoid';
 import { AlertProvider } from '@/features/alertProvider';
+import { Settings } from '@/features/settings/ui';
 
 export const Wrap = () => {
 	const userInfo = useAppSelector((state) => state.user);
@@ -68,6 +69,7 @@ export const Wrap = () => {
 			</div>
 			<NotificationsProvider />
 			<AlertProvider />
+			<Settings />
 		</div>
 	);
 };

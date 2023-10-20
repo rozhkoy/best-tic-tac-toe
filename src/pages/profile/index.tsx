@@ -20,6 +20,7 @@ import { createFormData } from '@/shared/lib/CreateFormData';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { addAlert } from '@/features/alertProvider';
+import { BlurLayer } from '@/shared/ui/blurLayer';
 
 export const Profile = () => {
 	const PER_PAGE = 10;

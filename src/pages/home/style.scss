@@ -1,8 +1,7 @@
 .home {
-	background: rgba(69, 69, 69, 0.7);
+	background: var(--color-background);
 	backdrop-filter: blur(25px);
 	padding: 25px 0;
-	height: calc(100vh - 105px);
 
 	&__container {
 		display: flex;
