@@ -28,12 +28,12 @@ export const GameSelector = () => {
 	}
 
 	return (
-		<div className="game-selector">
-			<div className="game-option">
-				<div className="game-option__heading">Number of players</div>
+		<div className='game-selector'>
+			<div className='game-option'>
+				<div className='game-option__heading'>Number of players</div>
 				<CustomRadio onChange={setGameMode} value={gameMode} fields={['1p', '2p', 'Online']} />
 			</div>
-			<div className="game-option">
+			<div className='game-option'>
 				<div className={classNames('game-option__heading', { 'game-option__heading--disabled': gameMode !== '1p' })}>Hard level</div>
 				<CustomRadio onChange={setHardlevel} value={hardLevel} disabled={gameMode !== '1p'} fields={['Easy', 'Normal', 'Hard']} />
 			</div>

@@ -1,24 +1,32 @@
+import { FrindshipBtnsStatusTypes } from '@/features/friendSearch/types';
+
 import { IPagination } from '@/shared/types/IPagination';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 
 export interface IGetProfileInfoByUserId {
-	userId: number;
-	currentUserId: number;
+	userId: string;
+	currentUserId: string;
 }
 
 export interface IGetGameHistoryByUserId extends IPagination {
-	userId: number;
+	userId: string;
 }
 
 export interface IProfileInfoByUserIdResponse {
 	userInfo: {
 		nickname: string;
 		status: UserStatusTypes;
+		rating: number;
 	};
 	stats: {
 		wins: number;
 		draws: number;
 		losses: number;
 	};
-	friendshiptResponse: boolean;
+	friendshipResponse: IProfileFriendshipBtns;
+}
+
+export interface IProfileFriendshipBtns {
+	status: FrindshipBtnsStatusTypes;
+	invitationId?: string;
 }

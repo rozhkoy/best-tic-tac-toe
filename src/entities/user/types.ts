@@ -12,3 +12,10 @@ export interface IUpdateUserStatusData {
 export interface IUserEvents {
 	updateUserStatus(status: string, userId: string): IWebSocketMessage<IUpdateUserStatusData>;
 }
+
+export interface IUserState {
+	nickname: string;
+	rating: number;
+	isAuth: boolean;
+	userId: string;
+}

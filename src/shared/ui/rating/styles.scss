@@ -1,0 +1,21 @@
+.rating {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&__number {
+		font-style: normal;
+		font-weight: 400;
+		font-size: 20px;
+		line-height: 100%;
+		color: var(--color-red);
+		text-transform: uppercase;
+	}
+
+	&__icon {
+		margin: 0 5px 0 0;
+	}
+	&__icon > svg {
+		fill: var(--color-red);
+	}
+}
