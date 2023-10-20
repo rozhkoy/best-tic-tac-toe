@@ -13,6 +13,7 @@ import { toggleSettingsVisible } from '../store';
 
 export const Settings = () => {
 	const settings = useAppSelector((state) => state.settings);
+	const userInfo = useAppSelector((state) => state.user);
 
 	const dispatch = useAppDispatch();
 	const [theme, setTheme] = useState<themeTypes>('auto');
@@ -36,7 +37,7 @@ export const Settings = () => {
 						<Icon name={'close'} />
 					</button>
 					<div className='settings__profile-info'>
-						<Avatar src={''} className={'settings__avatar'} />
+						<Avatar src={userInfo.url} className={'settings__avatar'} />
 						<input value={'nickname'} onChange={() => console.log('')} type='text' className='settings__nickname' />
 					</div>
 					<Devider />

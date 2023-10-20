@@ -3,6 +3,7 @@ import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 export interface UserInfoProps {
 	nickname: string;
 	rating: number;
+	url: string;
 }
 
 export interface IUpdateUserStatusData {
@@ -18,4 +19,5 @@ export interface IUserState {
 	rating: number;
 	isAuth: boolean;
 	userId: string;
+	url: string;
 }

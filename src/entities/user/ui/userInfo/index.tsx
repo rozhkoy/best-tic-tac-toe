@@ -1,11 +1,10 @@
 import './styles.scss';
-import avatarPng from './assets/avatar.png';
 import { UserInfoProps } from '../../types';
 import { Rating } from '@/shared/ui/rating';
 import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 import { toggleSettingsVisible } from '@/features/settings/store';
 
-export const UserPanel: React.FC<UserInfoProps> = ({ nickname, rating }) => {
+export const UserPanel: React.FC<UserInfoProps> = ({ nickname, rating, url }) => {
 	const dispatch = useAppDispatch();
 
 	return (
@@ -15,7 +14,7 @@ export const UserPanel: React.FC<UserInfoProps> = ({ nickname, rating }) => {
 				<Rating number={rating} />
 			</div>
 			<div className='user-panel__avatar-box'>
-				<img src={avatarPng} width={64} height={64} alt='avatar' className='user-panel__avatar' />
+				<img src={url} width={64} height={64} alt='avatar' className='user-panel__avatar' />
 			</div>
 		</div>
 	);

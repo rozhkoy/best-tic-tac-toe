@@ -45,7 +45,7 @@ export interface IPaginationInfo {
 
 export interface IButtonsIds {
 	userId: string;
-	invitationId?: number | null;
+	invitationId?: string | null;
 }
 
 export interface ListOfUsersProps {

@@ -6,6 +6,7 @@ const initialState: IUserState = {
 	userId: '',
 	rating: 0,
 	isAuth: false,
+	url: '',
 };
 
 export const userSlice = createSlice({
@@ -17,6 +18,7 @@ export const userSlice = createSlice({
 			state.rating = payload.rating;
 			state.userId = payload.userId;
 			state.isAuth = payload.isAuth;
+			state.url = `https://source.boringavatars.com/beam/100/${payload.nickname}`;
 		},
 		updateUserRating: (state, { payload }: PayloadAction<number>) => {
 			state.rating = payload;
