@@ -8,12 +8,12 @@ import { useAppSelector } from '@/shared/hooks/reduxHooks';
 export const Header = () => {
 	const userState = useAppSelector((state) => state.user);
 	return (
-		<div className="header">
-			<div className="header__side-panel">
-				<Logo className="header__logo" />
+		<div className='header'>
+			<div className='header__side-panel'>
+				<Logo className='header__logo' />
 				<Navbar />
 			</div>
-			{userState.isAuth ? <UserPanel nickname={userState.nickname} rating={userState.rating} /> : <AuthBtnsHeader />}
+			{userState.isAuth ? <UserPanel url={userState.url} nickname={userState.nickname} rating={userState.rating} /> : <AuthBtnsHeader />}
 		</div>
 	);
 };

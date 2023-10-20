@@ -4,6 +4,6 @@ import { UserStatusTypes } from '../userStatus/types';
 export interface UserProfileProps extends AvatarProps {
 	nickname: string;
 	status: UserStatusTypes;
-	userId?: number;
+	userId?: string;
 	rating?: number;
 }

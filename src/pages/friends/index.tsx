@@ -95,8 +95,8 @@ export const Friends = () => {
 			case 'invitation':
 				return (
 					<>
-						<Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} onClick={() => acceptFriendshipInvite(ids.invitationId ?? 0, paginationInfo)} title={'Accept'} />
-						<Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? 0, paginationInfo)} title={'Reject'} />
+						<Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} onClick={() => acceptFriendshipInvite(ids.invitationId ?? '0', paginationInfo)} title={'Accept'} />
+						<Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? '0', paginationInfo)} title={'Reject'} />
 					</>
 				);
 			case 'friend':
@@ -114,7 +114,9 @@ export const Friends = () => {
 			case 'invitedToGame':
 				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectionInviteToGame(ids.userId, paginationInfo)} title={'Invited to game'} />;
 			case 'pending':
-				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? 0, paginationInfo)} title={'Pending'} />;
+				return (
+					<Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? '0', paginationInfo)} title={'Pending'} />
+				);
 			case 'loading':
 				return <div>loading...</div>;
 			case 'error':
@@ -157,7 +159,7 @@ export const Friends = () => {
 		}
 	}
 
-	async function acceptFriendshipInvite(inviteId: number, paginationInfo: IPaginationInfo) {
+	async function acceptFriendshipInvite(inviteId: string, paginationInfo: IPaginationInfo) {
 		switch (currentTab) {
 			case 'Global Search':
 				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
@@ -186,7 +188,7 @@ export const Friends = () => {
 		}
 	}
 
-	async function rejectFriendshipInvite(inviteId: number, paginationInfo: IPaginationInfo) {
+	async function rejectFriendshipInvite(inviteId: string, paginationInfo: IPaginationInfo) {
 		switch (currentTab) {
 			case 'Global Search':
 				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');

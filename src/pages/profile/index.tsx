@@ -230,7 +230,7 @@ export const Profile = () => {
 							<UserProfile
 								nickname={profileInfoByUserId.data.userInfo.nickname}
 								status={profileInfoByUserId.data.userInfo.status}
-								src={''}
+								src={`https://source.boringavatars.com/beam/100/${profileInfoByUserId.data.userInfo.nickname}`}
 								rating={profileInfoByUserId.data.userInfo.rating}
 								size='large'></UserProfile>
 
