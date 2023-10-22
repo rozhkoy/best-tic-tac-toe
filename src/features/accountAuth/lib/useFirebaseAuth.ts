@@ -11,6 +11,7 @@ import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 import { updateUserInfo } from '@/entities/user';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '@/shared/lib/firebase';
+import { userInfo } from 'os';
 
 export function useFirebaseAuth(): {
 	googleAuth: () => void;
@@ -130,6 +131,7 @@ export function useFirebaseAuth(): {
 		signOut(auth)
 			.then(() => {
 				console.log('sign out');
+				dispatch(updateUserInfo({ nickname: '', userId: '0', rating: 0, isAuth: false, url: '' }));
 			})
 			.catch((error) => {
 				console.log(error);
