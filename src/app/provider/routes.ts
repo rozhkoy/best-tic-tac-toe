@@ -4,10 +4,9 @@ export const routes = {
 	SIGN_UP: '/sign-up',
 	GAME: '/game',
 	FRIENDS: '/friends',
-	TOP_PLAYER: '/top-player',
-	SESSION: '/session',
-	WITH_BOT_SESSION: '/with-bot-session',
-	TWO_PLAYERS_SESSION: '/two-players-session',
-	ONLINE_SSESSION: '/online-session/:sessionId',
+	SESSION: 'session',
+	WITH_BOT_SESSION: 'with-bot-session',
+	TWO_PLAYERS_SESSION: 'two-players-session',
+	ONLINE_SSESSION: 'online-session/:sessionId',
 	USER: '/user',
-};
+} as const;

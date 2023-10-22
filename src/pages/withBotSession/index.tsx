@@ -1,7 +1,7 @@
 import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
 import { useEffect, useState } from 'react';
 import { FieldCell } from '@/shared/ui/fieldCell';
-import { GameStatusMessage, IPlayerData } from '@/features/playGround/types';
+import { GameStatusMessage, IPlayers } from '@/features/playGround/types';
 import { nanoid } from 'nanoid';
 import { Button } from '@/shared/ui/button';
 import { useParams } from 'react-router-dom';
@@ -10,10 +10,16 @@ import { ParamsWithBotSessionPageTypes } from './types';
 
 export const WithBotSession = () => {
 	const { hardLevel } = useParams<ParamsWithBotSessionPageTypes>();
-	const [playersData, setPlayersData] = useState<Array<IPlayerData>>([
-		{ nickName: 'Player', score: 0 },
-		{ nickName: 'Bot', score: 0 },
-	]);
+	const [playersData, setPlayersData] = useState<IPlayers>({
+		cross: {
+			nickname: 'Player',
+			score: 0,
+		},
+		nought: {
+			nickname: 'BOT',
+			score: 0,
+		},
+	});
 	const { playFieldState, resetState, currentMove, markCell, isWinner } = usePlayFieldHandler(
 		[],
 		playersData,
@@ -28,7 +34,7 @@ export const WithBotSession = () => {
 					});
 
 					setPlayersData(({ ...value }) => {
-						value[1].score = ++value[0].score;
+						value.cross.score = ++value.cross.score;
 						return value;
 					});
 					break;
@@ -40,7 +46,7 @@ export const WithBotSession = () => {
 						return value;
 					});
 					setPlayersData(({ ...value }) => {
-						value[0].score = ++value[1].score;
+						value.nought.score = ++value.nought.score;
 						return value;
 					});
 					break;
@@ -66,17 +72,15 @@ export const WithBotSession = () => {
 		isShow: false,
 		color: 'secondary',
 	});
-	const { miniMax } = useMiniMax(hardLevel ?? 'Easy');
+	const { miniMax } = useMiniMax(hardLevel ?? 'easy');
 
 	useEffect(() => {
-		let timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {}, 500);
+		let timeoutId: ReturnType<typeof setTimeout>;
 
-		if (currentMove.player === 'Bot' && !isWinner) {
+		if (currentMove.player === 'BOT' && !isWinner) {
 			timeoutId = setTimeout(() => {
 				const moveResult = miniMax(playFieldState, 'nought', 0);
-				if (moveResult.index) {
-					markCell(moveResult.index);
-				}
+				markCell(moveResult.index ? moveResult.index : 0);
 			}, 500);
 		}
 

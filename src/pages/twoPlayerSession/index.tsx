@@ -7,16 +7,14 @@ import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/featu
 import { nanoid } from 'nanoid';
 
 export const TwoPlayerSession = () => {
-	const [playersData] = useState<IPlayers>({
+	const [playersData, setPlayersData] = useState<IPlayers>({
 		nought: {
-			nickName: 'Player 1',
+			nickname: 'Player 1',
 			score: 0,
-			userId: 0,
 		},
 		cross: {
-			nickName: 'Player 1',
+			nickname: 'Player 1',
 			score: 0,
-			userId: 0,
 		},
 	});
 	const { playFieldState, resetState, currentMove, markCell } = usePlayFieldHandler(
@@ -31,12 +29,23 @@ export const TwoPlayerSession = () => {
 						value.message = 'The crosses won!';
 						return value;
 					});
+
+					setPlayersData(({ ...value }) => {
+						value.cross.score = ++value.cross.score;
+						return value;
+					});
+
 					break;
 				case 'nought':
 					setGameStatusMessage(({ ...value }) => {
 						value.color = 'red';
 						value.isShow = true;
 						value.message = 'The noughts won!';
+						return value;
+					});
+
+					setPlayersData(({ ...value }) => {
+						value.nought.score = ++value.nought.score;
 						return value;
 					});
 					break;
