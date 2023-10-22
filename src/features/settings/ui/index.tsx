@@ -10,10 +10,12 @@ import { useEffect, useState } from 'react';
 import { themeTypes } from '../types';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
 import { toggleSettingsVisible } from '../store';
+import { useFirebaseAuth } from '@/features/accountAuth';
 
 export const Settings = () => {
 	const settings = useAppSelector((state) => state.settings);
 	const userInfo = useAppSelector((state) => state.user);
+	const { signOutAccount } = useFirebaseAuth();
 
 	const dispatch = useAppDispatch();
 	const [theme, setTheme] = useState<themeTypes>('auto');
@@ -37,8 +39,8 @@ export const Settings = () => {
 						<Icon name={'close'} />
 					</button>
 					<div className='settings__profile-info'>
-						<Avatar src={userInfo.url} className={'settings__avatar'} />
-						<input value={'nickname'} onChange={() => console.log('')} type='text' className='settings__nickname' />
+						<Avatar src={userInfo.url ?? ''} className={'settings__avatar'} />
+						<input value={userInfo.nickname} onChange={() => console.log('')} type='text' className='settings__nickname' />
 					</div>
 					<Devider />
 					<div className='settings__themes'>
@@ -49,7 +51,7 @@ export const Settings = () => {
 						<CustomRadio fields={['dark', 'light', 'auto'] as Array<themeTypes>} value={theme} onChange={changeTheme} />
 					</div>
 					<Devider />
-					<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} icon={'logout'} title={'Log out'} />
+					<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} icon={'logout'} title={'Logout'} onClick={signOutAccount} />
 				</div>
 			</BlurLayer>
 		</CSSTransition>
