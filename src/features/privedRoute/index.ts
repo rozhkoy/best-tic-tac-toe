@@ -1,1 +1,0 @@
-export { PrivedRoute } from './ui';

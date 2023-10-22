@@ -8,9 +8,10 @@ import { WithBotSession } from '@/pages/withBotSession';
 import { Home } from '@/pages/home';
 import { OnlineSession } from '@/pages/onlineSession';
 import { Friends } from '@/pages/friends';
-import { PrivedRoute } from '@/features/privedRoute/ui';
+import { WebSocketWrap } from '@/features/webSocketWrap/ui';
 import { Profile } from '@/pages/profile';
 import { useEffect } from 'react';
+import { PrivateRoutes } from '@/features/privateRoutes';
 
 export const AppProvider = () => {
 	useEffect(() => {
@@ -30,7 +31,7 @@ export const AppProvider = () => {
 	const router = createBrowserRouter([
 		{
 			path: routes.HOME,
-			element: <PrivedRoute />,
+			element: <WebSocketWrap />,
 			children: [
 				{
 					path: routes.HOME,
@@ -54,17 +55,29 @@ export const AppProvider = () => {
 				},
 				{
 					path: routes.USER + '/:userId',
-					element: <Profile />,
+					element: (
+						<PrivateRoutes>
+							<Profile />
+						</PrivateRoutes>
+					),
 				},
 			],
 		},
 		{
 			path: routes.SIGN_IN,
-			element: <SignIn />,
+			element: (
+				<PrivateRoutes isReverse={true}>
+					<SignIn />
+				</PrivateRoutes>
+			),
 		},
 		{
 			path: routes.SIGN_UP,
-			element: <SignUp />,
+			element: (
+				<PrivateRoutes isReverse={true}>
+					<SignUp />
+				</PrivateRoutes>
+			),
 		},
 	]);
 

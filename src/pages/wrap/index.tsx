@@ -43,24 +43,6 @@ export const Wrap = () => {
 		}
 	}, []);
 
-	// useEffect(() => { // this is older way update online status
-	// 	if (userInfo.isAuth) {
-	// 		udpateUserStatus('online');
-	// 	}
-	// }, [userInfo.isAuth]);
-
-	// function udpateUserStatus(status: UserStatusTypes) {
-	// 	const message: IWebSocketMessage<IUpdateUserStatusData> = {
-	// 		event: websocketEventNames.UPDATE_USER_STATUS,
-	// 		userId: userInfo.userId,
-	// 		data: {
-	// 			status,
-	// 		},
-	// 		error: '',
-	// 	};
-	// 	webSocket?.send(JSON.stringify(message));
-	// }
-
 	return (
 		<div className='wrap'>
 			<Header />

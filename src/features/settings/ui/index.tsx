@@ -10,11 +10,12 @@ import { useEffect, useState } from 'react';
 import { themeTypes } from '../types';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
 import { toggleSettingsVisible } from '../store';
+import { useFirebaseAuth } from '@/features/accountAuth';
 
 export const Settings = () => {
 	const settings = useAppSelector((state) => state.settings);
 	const userInfo = useAppSelector((state) => state.user);
-
+	const { signOutAccount } = useFirebaseAuth();
 	const dispatch = useAppDispatch();
 	const [theme, setTheme] = useState<themeTypes>('auto');
 
@@ -49,7 +50,7 @@ export const Settings = () => {
 						<CustomRadio fields={['dark', 'light', 'auto'] as Array<themeTypes>} value={theme} onChange={changeTheme} />
 					</div>
 					<Devider />
-					<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} icon={'logout'} title={'Log out'} />
+					<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} icon={'logout'} title={'Log out'} onClick={signOutAccount} />
 				</div>
 			</BlurLayer>
 		</CSSTransition>
