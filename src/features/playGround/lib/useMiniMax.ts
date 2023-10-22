@@ -69,32 +69,33 @@ export function useMiniMax(hardLevel: HardLevelTypes): { miniMax: (playFieldStat
 			moves.push(move);
 		}
 
-		let bestMoveIndex = 0;
+		let bestMoveIndex = -1;
 		moves.sort((a, b) => a.score - b.score);
 		if (currentSymbol === 'cross') {
 			switch (hardLevel) {
-				case 'Easy':
+				case 'easy':
 					bestMoveIndex = moves.length - 1;
 					break;
-				case 'Normal':
+				case 'normal':
 					bestMoveIndex = Math.floor(moves.length / 2);
 					break;
-				case 'Hard':
+				case 'hard':
 					bestMoveIndex = 0;
 			}
 		} else {
 			switch (hardLevel) {
-				case 'Easy':
+				case 'easy':
 					bestMoveIndex = 0;
 					break;
-				case 'Normal':
+				case 'normal':
 					bestMoveIndex = Math.floor(moves.length / 2);
 					break;
-				case 'Hard':
+				case 'hard':
 					bestMoveIndex = moves.length - 1;
 			}
 		}
-		return moves[bestMoveIndex];
+
+		return bestMoveIndex === -1 ? { score: 0, index: -1 } : moves[bestMoveIndex];
 	}
 	return {
 		miniMax,

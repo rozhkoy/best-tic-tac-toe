@@ -7,7 +7,7 @@ export interface FieldCellProps {
 }
 
 export interface ICellData {
-	id: string;
+	id?: string;
 	symbol: SymbolTypes;
 	highlight: boolean;
 }
