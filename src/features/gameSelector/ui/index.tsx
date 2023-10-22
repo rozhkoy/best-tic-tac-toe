@@ -13,8 +13,6 @@ export const GameSelector = () => {
 	const navigate = useNavigate();
 
 	function gameSelectorHandler() {
-		console.log(gameMode, gameMode === 'online');
-		console.log(routes);
 		switch (gameMode) {
 			case '1p':
 				navigate(`/${routes.WITH_BOT_SESSION}/${hardLevel}`);
@@ -23,7 +21,7 @@ export const GameSelector = () => {
 				navigate(`/${routes.TWO_PLAYERS_SESSION}`);
 				break;
 			case 'online':
-				navigate(`/${routes.FRIENDS}`);
+				navigate(`${routes.FRIENDS}`);
 				break;
 		}
 	}
