@@ -7,6 +7,7 @@ const initialState: IUserState = {
 	rating: 0,
 	isAuth: false,
 	url: '',
+	isloaded: false,
 };
 
 export const userSlice = createSlice({
@@ -19,11 +20,15 @@ export const userSlice = createSlice({
 			state.userId = payload.userId;
 			state.isAuth = payload.isAuth;
 			state.url = `https://source.boringavatars.com/beam/100/${payload.nickname}`;
+			state.isloaded = true;
 		},
 		updateUserRating: (state, { payload }: PayloadAction<number>) => {
 			state.rating = payload;
 		},
+		updateIsloadedStatus: (state, { payload }: PayloadAction<boolean>) => {
+			state.isloaded = payload;
+		},
 	},
 });
 
-export const { updateUserInfo, updateUserRating } = userSlice.actions;
+export const { updateUserInfo, updateUserRating, updateIsloadedStatus } = userSlice.actions;
