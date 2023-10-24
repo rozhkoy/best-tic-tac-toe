@@ -1,20 +1,18 @@
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
-import { PrivateRoutesProps } from '../types';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { routes } from '@/app/provider/routes';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { PrivateRoutesProps } from '../types';
 
-export const PrivateRoutes: React.FC<PrivateRoutesProps> = ({ isReverse = false, children }) => {
+export const PrivateRoutes: React.FC<PrivateRoutesProps> = ({ children, redirectPath, isAllow }) => {
 	const userInfo = useAppSelector((state) => state.user);
 	const navigation = useNavigate();
+	const location = useLocation();
 
 	useEffect(() => {
-		if (!userInfo && !isReverse) {
-			navigation(routes.SIGN_IN);
-		} else if (userInfo && isReverse) {
-			navigation(routes.HOME);
+		if (!userInfo.isAuth && isAllow) {
+			navigation(redirectPath, { replace: true });
 		}
-	}, [userInfo, isReverse, navigation]);
+	}, [isAllow, location, navigation, redirectPath, userInfo.isAuth]);
 
 	return <>{children}</>;
 };

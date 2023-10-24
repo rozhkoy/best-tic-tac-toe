@@ -59,7 +59,7 @@ export const Profile = () => {
 
 	useEffect(() => {
 		if (profileInfoByUserId.isError || !userId) {
-			navigation('/');
+			navigation('/', { replace: true });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [profileInfoByUserId.isError, userId]);

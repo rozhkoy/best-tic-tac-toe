@@ -1,17 +1,17 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { SignIn } from '@/pages/signIn';
 import { SignUp } from '@/pages/signUp';
-
 import { routes } from '@/app/provider/routes';
 import { TwoPlayerSession } from '@/pages/twoPlayerSession';
 import { WithBotSession } from '@/pages/withBotSession';
 import { Home } from '@/pages/home';
 import { OnlineSession } from '@/pages/onlineSession';
 import { Friends } from '@/pages/friends';
-import { WebSocketWrap } from '@/features/webSocketWrap/ui';
 import { Profile } from '@/pages/profile';
 import { useEffect } from 'react';
+import { Wrap } from '@/pages/wrap';
 import { PrivateRoutes } from '@/features/privateRoutes';
+import { GetAuthState } from '@/features/accountAuth/lib/getAuthState';
 
 export const AppProvider = () => {
 	useEffect(() => {
@@ -31,7 +31,7 @@ export const AppProvider = () => {
 	const router = createBrowserRouter([
 		{
 			path: routes.HOME,
-			element: <WebSocketWrap />,
+			element: <Wrap />,
 			children: [
 				{
 					path: routes.HOME,
@@ -47,16 +47,24 @@ export const AppProvider = () => {
 				},
 				{
 					path: routes.ONLINE_SSESSION,
-					element: <OnlineSession />,
+					element: (
+						<PrivateRoutes redirectPath={`${routes.ACCOUNTS}/${routes.SIGN_IN}`} isAllow={true}>
+							<OnlineSession />
+						</PrivateRoutes>
+					),
 				},
 				{
 					path: routes.FRIENDS,
-					element: <Friends />,
+					element: (
+						<PrivateRoutes redirectPath={`${routes.ACCOUNTS}/${routes.SIGN_IN}`} isAllow={true}>
+							<Friends />
+						</PrivateRoutes>
+					),
 				},
 				{
 					path: routes.USER + '/:userId',
 					element: (
-						<PrivateRoutes>
+						<PrivateRoutes redirectPath={`${routes.ACCOUNTS}/${routes.SIGN_IN}`} isAllow={true}>
 							<Profile />
 						</PrivateRoutes>
 					),
@@ -64,20 +72,30 @@ export const AppProvider = () => {
 			],
 		},
 		{
-			path: routes.SIGN_IN,
+			path: routes.ACCOUNTS,
 			element: (
-				<PrivateRoutes isReverse={true}>
-					<SignIn />
-				</PrivateRoutes>
+				<GetAuthState>
+					<Outlet />
+				</GetAuthState>
 			),
-		},
-		{
-			path: routes.SIGN_UP,
-			element: (
-				<PrivateRoutes isReverse={true}>
-					<SignUp />
-				</PrivateRoutes>
-			),
+			children: [
+				{
+					path: routes.SIGN_IN,
+					element: (
+						<PrivateRoutes redirectPath={routes.HOME} isAllow={false}>
+							<SignIn />
+						</PrivateRoutes>
+					),
+				},
+				{
+					path: routes.SIGN_UP,
+					element: (
+						<PrivateRoutes redirectPath={routes.HOME} isAllow={false}>
+							<SignUp />
+						</PrivateRoutes>
+					),
+				},
+			],
 		},
 	]);
 

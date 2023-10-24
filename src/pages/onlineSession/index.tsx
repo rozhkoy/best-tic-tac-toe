@@ -164,7 +164,7 @@ export const OnlineSession = () => {
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.SESSIONS_IS_CLOSED, (message) => {
 				dispatch(addAlert({ heading: 'Oooooopssss', text: message.error }));
-				navigation('/');
+				navigation('/', { replace: true });
 			});
 		}
 

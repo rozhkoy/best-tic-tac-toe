@@ -1,3 +1,4 @@
+export { GetAuthState } from './lib/getAuthState';
 export { SignInWith } from './ui/signInWith';
 export { useFirebaseAuth } from '@/features/accountAuth/lib/useFirebaseAuth';
 export { SignUpForm } from './ui/signUpForm/index';
