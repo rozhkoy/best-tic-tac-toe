@@ -20,4 +20,5 @@ export interface IUserState {
 	isAuth: boolean;
 	userId: string;
 	url: string;
+	isloaded?: boolean;
 }

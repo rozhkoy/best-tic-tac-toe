@@ -11,6 +11,7 @@ import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 import { updateUserInfo } from '@/entities/user';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '@/shared/lib/firebase';
+import { updateIsloadedStatus } from '@/entities/user/store';
 
 export function useFirebaseAuth(): {
 	googleAuth: () => void;
@@ -142,6 +143,8 @@ export function useFirebaseAuth(): {
 			if (user) {
 				document.cookie = 'firebase_token=' + (await user.getIdToken());
 				userInfoByUidMutation.mutate({ uid: user.uid });
+			} else {
+				dispatch(updateIsloadedStatus(true));
 			}
 		});
 

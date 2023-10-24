@@ -2,13 +2,13 @@ import { Button } from '@/shared/ui/button';
 import { Container } from '@/shared/ui/container';
 import { UserProfile } from '@/shared/ui/userProfile';
 import './styles.scss';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Section } from '@/shared/ui/section';
 import { StatsItem } from '@/shared/ui/statsItem';
 import { ListWrap } from '@/shared/ui/listWrap';
 import { HistoryItem } from '@/shared/ui/historyItem';
 import { Nothing } from '@/shared/ui/nothing';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useBeforeUnload, useNavigate, useParams } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { getGameHistoryByUserId, getProfileInfoByUserId } from './api';
 import { useInView } from 'react-intersection-observer';
@@ -20,7 +20,6 @@ import { createFormData } from '@/shared/lib/CreateFormData';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { addAlert } from '@/features/alertProvider';
-import { BlurLayer } from '@/shared/ui/blurLayer';
 
 export const Profile = () => {
 	const PER_PAGE = 10;
