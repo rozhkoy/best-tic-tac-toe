@@ -16,7 +16,6 @@ export const Settings = () => {
 	const settings = useAppSelector((state) => state.settings);
 	const userInfo = useAppSelector((state) => state.user);
 	const { signOutAccount } = useFirebaseAuth();
-
 	const dispatch = useAppDispatch();
 	const [theme, setTheme] = useState<themeTypes>('auto');
 
@@ -24,6 +23,11 @@ export const Settings = () => {
 		setTheme(newTheme);
 		if (newTheme !== 'auto') document.body.className = `${newTheme}-theme`;
 		localStorage.setItem('theme', newTheme);
+	}
+
+	function logOut() {
+		signOutAccount();
+		dispatch(toggleSettingsVisible());
 	}
 
 	useEffect(() => {
@@ -51,7 +55,8 @@ export const Settings = () => {
 						<CustomRadio fields={['dark', 'light', 'auto'] as Array<themeTypes>} value={theme} onChange={changeTheme} />
 					</div>
 					<Devider />
-					<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} icon={'logout'} title={'Logout'} onClick={signOutAccount} />
+
+					<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} icon={'logout'} title={'Log out'} onClick={logOut} />
 				</div>
 			</BlurLayer>
 		</CSSTransition>

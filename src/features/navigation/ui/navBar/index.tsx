@@ -19,7 +19,7 @@ export const Navbar = () => {
 				</NavLink>
 			</li>
 			<li className='nav-bar__item'>
-				<NavLink to={`${routes.USER}/${userInfo.userId}`} className={({ isActive }) => (isActive ? 'nav-bar__item-link nav-bar__item-link--active' : 'nav-bar__item-link')}>
+				<NavLink to={`${routes.USER}/${userInfo.userId || '0'}`} className={({ isActive }) => (isActive ? 'nav-bar__item-link nav-bar__item-link--active' : 'nav-bar__item-link')}>
 					profile
 				</NavLink>
 			</li>

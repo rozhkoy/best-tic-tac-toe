@@ -13,7 +13,7 @@ export const GameOverPopup: React.FC<GameOverPopupProps> = ({ message, color }) 
 			<div className='game-over-pop-up__window'>
 				<div className={classNames('game-info__status', `game-info__status--${color}`)}>{message}</div>
 				<div className='game-over-pop-up__btns'>
-					<Button size={'medium'} variant={'secondary'} fullWidth={true} type={'button'} title={'Home'} onClick={() => navigation('/')} />
+					<Button size={'medium'} variant={'secondary'} fullWidth={true} type={'button'} title={'Home'} onClick={() => navigation('/', { replace: true })} />
 				</div>
 			</div>
 		</BlurLayer>

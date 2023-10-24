@@ -1,0 +1,1 @@
+export { PrivateRoutes } from './ui';
