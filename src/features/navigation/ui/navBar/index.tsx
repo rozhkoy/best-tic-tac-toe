@@ -2,6 +2,7 @@ import { routes } from '@/app/provider/routes';
 import { NavLink } from 'react-router-dom';
 import './style.scss';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
+import { CustomNavLink } from '@/shared/ui/customNavlink';
 
 export const Navbar = () => {
 	const userInfo = useAppSelector((state) => state.user);
