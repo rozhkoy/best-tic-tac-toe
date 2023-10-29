@@ -15,7 +15,6 @@ export const CustomNavLink: React.FC<CustomLinkProps> = ({ className, children, 
 			return;
 		}
 		if (isBlock) {
-			console.log(isActive);
 			onWarning(to);
 		} else {
 			navigate(to);

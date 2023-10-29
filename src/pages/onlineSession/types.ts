@@ -1,8 +1,8 @@
 export interface IPlayerSessionInfo {
-	userId: number;
+	userId: string;
 	isReady: boolean;
 	role: 'cross' | 'nought';
-	friendId: number;
+	friendId: string;
 	nickname: string;
 }
 

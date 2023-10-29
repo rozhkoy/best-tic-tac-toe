@@ -8,6 +8,7 @@ const initialState: IUserState = {
 	isAuth: false,
 	url: '',
 	isloaded: false,
+	isPlaying: false,
 };
 
 export const userSlice = createSlice({
@@ -28,7 +29,10 @@ export const userSlice = createSlice({
 		updateIsloadedStatus: (state, { payload }: PayloadAction<boolean>) => {
 			state.isloaded = payload;
 		},
+		updateIsPlayingStatus: (state, { payload }: PayloadAction<boolean>) => {
+			state.isPlaying = payload;
+		},
 	},
 });
 
-export const { updateUserInfo, updateUserRating, updateIsloadedStatus } = userSlice.actions;
+export const { updateUserInfo, updateUserRating, updateIsloadedStatus, updateIsPlayingStatus } = userSlice.actions;

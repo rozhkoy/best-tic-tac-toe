@@ -8,21 +8,24 @@ import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { FieldCell } from '@/shared/ui/fieldCell';
 import { ICellData } from '@/shared/ui/fieldCell/types';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useBeforeUnload, useNavigate, useParams } from 'react-router-dom';
 import { IInfoAboutOpponent, IPartialPlayerData } from './types';
 import { GameOverPopup } from '@/shared/ui/gameOverPopup';
 import { CSSTransition } from 'react-transition-group';
 import { useQuery } from '@tanstack/react-query';
-import { updateUserRating } from '@/entities/user';
+import { updateIsPlayingStatus, updateUserRating } from '@/entities/user';
 import { getUserRating } from '@/features/accountAuth/api';
+import { WarningPopup } from '@/shared/ui/warning';
+import { toggleVisible } from '@/features/warningPopupProvider';
 
 export const OnlineSession = () => {
 	const NUMBER_OF_GAMES = 3;
 	const { sessionId } = useParams();
 	const dispatch = useAppDispatch();
-	const navigation = useNavigate();
+	const navigate = useNavigate();
 	const userInfo = useAppSelector((state) => state.user);
+	const warningPopup = useAppSelector((state) => state.warnignPopup);
 	const [isFetchUserRating, setIsFetchUserRating] = useState(false);
 
 	useQuery({
@@ -44,19 +47,19 @@ export const OnlineSession = () => {
 		isShow: false,
 		color: 'secondary',
 	});
-	const [friendId, setFriendId] = useState<number>(0);
+	const [friendId, setFriendId] = useState<string>('0');
 	const [isWinnerFound, setIsWinnerFound] = useState<boolean>(false);
 	const [countGames, setCountGames] = useState<number>(0);
 	const [playersData, setPlayersData] = useState<IPlayers>({
 		cross: {
 			nickname: '',
 			score: 0,
-			userId: 0,
+			userId: '0',
 		},
 		nought: {
 			nickname: '',
 			score: 0,
-			userId: 0,
+			userId: '0',
 		},
 	});
 	const [gameStatusMessage, setGameStatusMessage] = useState<GameStatusMessage>({
@@ -116,15 +119,12 @@ export const OnlineSession = () => {
 		}
 	);
 
-	useBeforeUnload(() => {
-		const resposne = confirm('sdf');
-	});
-
 	useEffect(() => {
 		getDataAboutOpponent(sessionId as string);
 
 		if (webSocket) {
 			webSocket.subscribeToOnUpdate(websocketEventNames.DATA_ABOUT_OPONENT, (message: IWebSocketMessage<IInfoAboutOpponent>) => {
+				dispatch(updateIsPlayingStatus(true));
 				updatePlayersData(message);
 			});
 
@@ -158,13 +158,13 @@ export const OnlineSession = () => {
 					state.color = winnerPlayerId !== userInfo.userId ? 'red' : 'secondary';
 					return { ...state };
 				});
-
+				dispatch(updateIsPlayingStatus(false));
 				setIsFetchUserRating(true);
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.SESSIONS_IS_CLOSED, (message) => {
 				dispatch(addAlert({ heading: 'Oooooopssss', text: message.error }));
-				navigation('/', { replace: true });
+				navigate('/', { replace: true });
 			});
 		}
 
@@ -208,7 +208,7 @@ export const OnlineSession = () => {
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isWinnerFound]);
-
+	console.log(userInfo);
 	function getDataAboutOpponent(sessionId: string) {
 		const message: IWebSocketMessage<IGetDataAboutOpponent> = {
 			event: websocketEventNames.DATA_ABOUT_OPONENT,
@@ -221,7 +221,7 @@ export const OnlineSession = () => {
 		webSocket?.send(JSON.stringify(message));
 	}
 
-	function sendReadyState(userId: number, sessionId: string) {
+	function sendReadyState(userId: string, sessionId: string) {
 		const message: IWebSocketMessage<IReadyStateToGame> = {
 			event: websocketEventNames.START_GAME,
 			userId: userId,
@@ -233,7 +233,7 @@ export const OnlineSession = () => {
 		webSocket?.send(JSON.stringify(message));
 	}
 
-	function updateGameboard(friendId: number, playFieldState: Array<ICellData>, currentMove: ICurrentMove, isWinnerFound: boolean) {
+	function updateGameboard(friendId: string, playFieldState: Array<ICellData>, currentMove: ICurrentMove, isWinnerFound: boolean) {
 		const message: IWebSocketMessage<ISyncGameboardState> = {
 			event: websocketEventNames.SYNC_PLAYGROUND,
 			userId: userInfo.userId,
@@ -299,45 +299,69 @@ export const OnlineSession = () => {
 		webSocket?.send(JSON.stringify(message));
 	}
 
-	function onGameOver({ friendId }: IOnGameOver) {
-		const firstPlayerId: number = playersData.cross.userId ?? 0;
-		const secondPlayerId: number = playersData.nought.userId ?? 0;
-		let winnerPlayerId = 0;
-		// let score = 0;
-		// // const objectKeys = Object.keys(playersData);
-		// // for (const key of objectKeys) {
-		// // 	const player = playersData[key as PlayerSymbolsType];
-		// // 	if (player.score >= score && player.userId) {
-		// // 		score = player.score;
-		// // 		winnerPlayerId = player.userId;
-		// // 	}
-		// // }
-
-		if (playersData.cross.userId && playersData.nought.userId) {
-			winnerPlayerId = playersData.cross.score > playersData.nought.score ? playersData.cross.userId : playersData.cross.score !== playersData.nought.score ? playersData.nought.userId : 0;
-		}
-
-		setGameOverMessage((state) => {
-			state.message = winnerPlayerId == 0 ? 'Draw!' : winnerPlayerId == userInfo.userId ? 'You Won!' : 'You Lost!';
-			state.isShow = true;
-			state.color = winnerPlayerId !== userInfo.userId ? 'red' : 'secondary';
-			return { ...state };
-		});
-
+	function sendGameOverMessage(data: IMessageOnGameOver) {
 		const message: IWebSocketMessage<IMessageOnGameOver> = {
 			event: websocketEventNames.GAME_OVER,
 			userId: userInfo.userId,
-			data: {
-				friendId,
-				winnerPlayerId,
-				firstPlayerId,
-				secondPlayerId,
-			},
+			data,
 			error: '',
 		};
 
 		webSocket?.send(JSON.stringify(message));
 	}
+
+	function onGameOver({ friendId }: IOnGameOver) {
+		const firstPlayerId: string = playersData.cross.userId ?? '0';
+		const secondPlayerId: string = playersData.nought.userId ?? '0';
+		let winnerPlayerId = '0';
+
+		if (playersData.cross.userId && playersData.nought.userId) {
+			winnerPlayerId = playersData.cross.score > playersData.nought.score ? playersData.cross.userId : playersData.cross.score !== playersData.nought.score ? playersData.nought.userId : '0';
+		}
+
+		setGameOverMessage((state) => {
+			state.message = winnerPlayerId == '0' ? 'Draw!' : winnerPlayerId == userInfo.userId ? 'You Won!' : 'You Lost!';
+			state.isShow = true;
+			state.color = winnerPlayerId !== userInfo.userId ? 'red' : 'secondary';
+			return { ...state };
+		});
+
+		sendGameOverMessage({
+			sessionId: sessionId ?? '0',
+			friendId,
+			winnerPlayerId,
+			firstPlayerId,
+			secondPlayerId,
+			factor: 1,
+		});
+	}
+
+	function onYes() {
+		const firstPlayerId: string = playersData.cross.userId ?? '0';
+		const secondPlayerId: string = playersData.nought.userId ?? '0';
+		const winnerPlayerId = playersData.cross.userId === userInfo.userId ? secondPlayerId : firstPlayerId;
+
+		sendGameOverMessage({
+			sessionId: sessionId ?? '0',
+			friendId,
+			winnerPlayerId,
+			firstPlayerId,
+			secondPlayerId,
+			factor: 2,
+		});
+		dispatch(toggleVisible(false));
+		navigate(warningPopup.redirectPath, { replace: true });
+	}
+
+	function onNo() {
+		dispatch(toggleVisible(false));
+	}
+
+	useBeforeUnload(
+		useCallback((e) => {
+			return (e.returnValue = 'Leave a Match?');
+		}, [])
+	);
 
 	return (
 		<>
@@ -351,6 +375,9 @@ export const OnlineSession = () => {
 			</GameBoardWrap>
 			<CSSTransition in={gameOverMessage.isShow} timeout={300} classNames='opacity' unmountOnExit>
 				<GameOverPopup message={gameOverMessage.message} color={gameOverMessage.color} />
+			</CSSTransition>
+			<CSSTransition in={warningPopup.isVisible} timeout={300} classNames='opacity' unmountOnExit>
+				<WarningPopup heading={'Leave a Match?'} text={'If you leave this match, it will count as a lost. Are you sure you want to exit?'} onYes={onYes} onNo={onNo} />
 			</CSSTransition>
 		</>
 	);

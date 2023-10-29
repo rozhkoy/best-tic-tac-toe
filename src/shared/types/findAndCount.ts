@@ -14,7 +14,7 @@ export type GamestatusTypes = 'won' | 'lost' | 'draw';
 
 export interface IGameHistoryItemResponse {
 	userInfo: {
-		userId: number;
+		userId: string;
 		nickname: string;
 	};
 	gameHistoryId: string;

@@ -1,12 +1,12 @@
 export interface InviteToGameNotifsProps {
 	src: string;
 	nickname: string;
-	userId: number;
-	friendId: number;
+	userId: string;
+	friendId: string;
 	isVisible: boolean;
 	id: string;
 }
 
 export interface IAcceptInviteToGame {
-	friendId: number;
+	friendId: string;
 }

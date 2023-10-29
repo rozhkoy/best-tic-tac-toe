@@ -9,6 +9,7 @@ import { useContext, useEffect } from 'react';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
+import { updateIsPlayingStatus } from '@/entities/user';
 
 export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, friendId, userId, nickname, isVisible, id }) => {
 	const dispatch = useAppDispatch();
@@ -31,7 +32,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 		};
 	}, [dispatch, id]);
 
-	function acceptInviteToGame(friendId: number, userId: number) {
+	function acceptInviteToGame(friendId: string, userId: string) {
 		const message: IWebSocketMessage<IAcceptInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME_IS_ACCEPTED,
 			userId: userId,
@@ -45,7 +46,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 		dispatch(toggleVisible({ id, isVisible: false }));
 	}
 
-	function rejectInviteToGame(friendId: number, userId: number) {
+	function rejectInviteToGame(friendId: string, userId: string) {
 		const message: IWebSocketMessage<IAcceptInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME_IS_REJECTED,
 			userId: userId,

@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { Wrap } from '@/pages/wrap';
 import { PrivateRoutes } from '@/features/privateRoutes';
 import { GetAuthState } from '@/features/accountAuth/lib/getAuthState';
+import { Providers } from '@/features/providers';
 
 export const AppProvider = () => {
 	useEffect(() => {
@@ -31,7 +32,11 @@ export const AppProvider = () => {
 	const router = createBrowserRouter([
 		{
 			path: routes.HOME,
-			element: <Wrap />,
+			element: (
+				<Providers>
+					<Wrap />
+				</Providers>
+			),
 			children: [
 				{
 					path: routes.HOME,
