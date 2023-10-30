@@ -31,7 +31,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 		};
 	}, [dispatch, id]);
 
-	function acceptInviteToGame(friendId: number, userId: number) {
+	function acceptInviteToGame(friendId: string, userId: string) {
 		const message: IWebSocketMessage<IAcceptInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME_IS_ACCEPTED,
 			userId: userId,
@@ -45,7 +45,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 		dispatch(toggleVisible({ id, isVisible: false }));
 	}
 
-	function rejectInviteToGame(friendId: number, userId: number) {
+	function rejectInviteToGame(friendId: string, userId: string) {
 		const message: IWebSocketMessage<IAcceptInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME_IS_REJECTED,
 			userId: userId,

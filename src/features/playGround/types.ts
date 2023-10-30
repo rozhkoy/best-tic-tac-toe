@@ -3,7 +3,7 @@ import { SymbolTypes } from '@/shared/ui/fieldCell/types';
 export interface IPlayerData {
 	nickname: string;
 	score: number;
-	userId?: number;
+	userId?: string;
 }
 
 export interface IPlayers {

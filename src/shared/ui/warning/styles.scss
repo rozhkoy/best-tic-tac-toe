@@ -1,0 +1,38 @@
+.blur-layer {
+	&__warnign-pop-up {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 891;
+	}
+}
+.warning-pop-up {
+	width: 400px;
+	padding: 24px;
+	gap: 24x;
+	border-radius: 14px;
+	background: var(--color-primary);
+	&__heading {
+		font-size: 24px;
+		font-style: normal;
+		font-weight: 500;
+		line-height: normal;
+		color: var(--color-secondary);
+	}
+
+	&__text {
+		color: var(--color-light-gray);
+		font-size: 16px;
+		font-style: normal;
+		font-weight: 300;
+		line-height: normal;
+		margin: 10px 0 0 0;
+	}
+
+	&__btns {
+		margin: 20px 0 0 0;
+		display: grid;
+		grid-gap: 20px;
+		grid-template-columns: repeat(2, 1fr);
+	}
+}

@@ -20,30 +20,32 @@ export interface IGameboardState {
 }
 
 export interface ISyncGameboardState {
-	friendId: number;
+	friendId: string;
 	currentMove: ICurrentMove;
 	playFieldState: Array<ICellData>;
 	isWinnerFound: boolean;
 }
 
 export interface IIfWinnerFind {
-	friendId: number;
+	friendId: string;
 	players: IPlayers;
 	gameStatusMessage: GameStatusMessage;
 	countGames: number;
 }
 
 export interface IMessageWithFriendId {
-	friendId: number;
+	friendId: string;
 }
 
 export interface IOnGameOver {
-	friendId: number;
+	friendId: string;
 }
 
 export interface IMessageOnGameOver {
-	friendId: number;
-	firstPlayerId: number;
-	secondPlayerId: number;
-	winnerPlayerId: number;
+	friendId: string;
+	firstPlayerId: string;
+	secondPlayerId: string;
+	winnerPlayerId: string;
+	sessionId: string;
+	factor: number;
 }
