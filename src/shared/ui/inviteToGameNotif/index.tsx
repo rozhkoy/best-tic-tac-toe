@@ -9,7 +9,6 @@ import { useContext, useEffect } from 'react';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
-import { updateIsPlayingStatus } from '@/entities/user';
 
 export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, friendId, userId, nickname, isVisible, id }) => {
 	const dispatch = useAppDispatch();

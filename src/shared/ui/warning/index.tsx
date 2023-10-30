@@ -10,7 +10,7 @@ export const WarningPopup: React.FC<WarningPopupProps> = ({ heading, onNo, onYes
 				<h2 className='warning-pop-up__heading'>{heading}</h2>
 				<div className='warning-pop-up__text'>{text}</div>
 				<div className='warning-pop-up__btns'>
-					<Button size={'medium'} variant={'default'} fullWidth={true} type={'button'} title='Yes' onClick={onYes} />
+					<Button size={'medium'} variant={'primary'} fullWidth={true} type={'button'} title='Yes' onClick={onYes} />
 					<Button size={'medium'} variant={'warning'} fullWidth={true} type={'button'} title='No' onClick={onNo} />
 				</div>
 			</div>

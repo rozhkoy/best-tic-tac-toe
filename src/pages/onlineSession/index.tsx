@@ -13,9 +13,7 @@ import { useBeforeUnload, useNavigate, useParams } from 'react-router-dom';
 import { IInfoAboutOpponent, IPartialPlayerData } from './types';
 import { GameOverPopup } from '@/shared/ui/gameOverPopup';
 import { CSSTransition } from 'react-transition-group';
-import { useQuery } from '@tanstack/react-query';
-import { updateIsPlayingStatus, updateUserRating } from '@/entities/user';
-import { getUserRating } from '@/features/accountAuth/api';
+import { updateIsPlayingStatus } from '@/entities/user';
 import { WarningPopup } from '@/shared/ui/warning';
 import { toggleVisible } from '@/features/warningPopupProvider';
 
@@ -26,17 +24,6 @@ export const OnlineSession = () => {
 	const navigate = useNavigate();
 	const userInfo = useAppSelector((state) => state.user);
 	const warningPopup = useAppSelector((state) => state.warnignPopup);
-	const [isFetchUserRating, setIsFetchUserRating] = useState(false);
-
-	useQuery({
-		queryKey: ['userRating'],
-		queryFn: () => getUserRating({ userId: userInfo.userId }),
-		onSuccess: (data) => {
-			dispatch(updateUserRating(data));
-			setIsFetchUserRating(false);
-		},
-		enabled: isFetchUserRating,
-	});
 
 	const webSocket = useContext(WebSocketContext);
 
@@ -159,7 +146,6 @@ export const OnlineSession = () => {
 					return { ...state };
 				});
 				dispatch(updateIsPlayingStatus(false));
-				setIsFetchUserRating(true);
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.SESSIONS_IS_CLOSED, (message) => {
@@ -349,6 +335,7 @@ export const OnlineSession = () => {
 			secondPlayerId,
 			factor: 2,
 		});
+		dispatch(updateIsPlayingStatus(false));
 		dispatch(toggleVisible(false));
 		navigate(warningPopup.redirectPath, { replace: true });
 	}
