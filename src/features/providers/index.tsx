@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
 import { WebSocketProvider } from '@/shared/providers/WebSocketProvider';
-import { PropsWithChildren, useContext } from 'react';
+import { PropsWithChildren } from 'react';
 import { GetAuthState } from '../accountAuth';
 
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {

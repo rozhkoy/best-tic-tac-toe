@@ -16,10 +16,12 @@
 		letter-spacing: 0.04em;
 		color: var(--color-secondary);
 		transition: border-color 0.3s;
-
+		@include mobile {
+			padding: 13px 13px;
+		}
 		&:hover,
 		&:focus-within {
-			border-color: #fff;
+			border-color: var(--color-secondary);
 		}
 		&::placeholder {
 			color: var(--color-light-gray);

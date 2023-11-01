@@ -39,9 +39,10 @@ export const Settings = () => {
 			<BlurLayer className='settings'>
 				<div className='settings__window' title='Settings'>
 					<h2 className='settings__heading'> Settings</h2>
-					<button className='settings__close' onClick={() => dispatch(toggleSettingsVisible())}>
+					<Button size={'default'} variant={'default'} className='settings__close' icon='close' fullWidth={false} type={'button'} onClick={() => dispatch(toggleSettingsVisible())}></Button>
+					{/* <button className='settings__close' onClick={() => dispatch(toggleSettingsVisible())}>
 						<Icon name={'close'} />
-					</button>
+					</button> */}
 					<div className='settings__profile-info'>
 						<Avatar src={userInfo.url ?? ''} className={'settings__avatar'} />
 						<input value={userInfo.nickname} onChange={() => console.log('')} type='text' className='settings__nickname' />

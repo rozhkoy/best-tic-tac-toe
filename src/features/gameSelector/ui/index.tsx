@@ -8,13 +8,13 @@ import { routes } from '@/app/provider/routes';
 import { CustomRadio } from '@/shared/ui/CustomRadio';
 
 export const GameSelector = () => {
-	const [gameMode, setGameMode] = useState<string>('1p');
+	const [gameMode, setGameMode] = useState<string>('bot');
 	const [hardLevel, setHardlevel] = useState<string>('easy');
 	const navigate = useNavigate();
 
 	function gameSelectorHandler() {
 		switch (gameMode) {
-			case '1p':
+			case 'bot':
 				navigate(`/${routes.WITH_BOT_SESSION}/${hardLevel}`);
 				break;
 			case '2p':
@@ -30,11 +30,11 @@ export const GameSelector = () => {
 		<div className='game-selector'>
 			<div className='game-option'>
 				<div className='game-option__heading'>Number of players</div>
-				<CustomRadio onChange={setGameMode} value={gameMode} fields={['1p', '2p', 'online']} />
+				<CustomRadio onChange={setGameMode} value={gameMode} fields={['bot', '2p', 'online']} />
 			</div>
 			<div className='game-option'>
-				<div className={classNames('game-option__heading', { 'game-option__heading--disabled': gameMode !== '1p' })}>Hard level</div>
-				<CustomRadio onChange={setHardlevel} value={hardLevel} disabled={gameMode !== '1p'} fields={['easy', 'normal', 'hard']} />
+				<div className={classNames('game-option__heading', { 'game-option__heading--disabled': gameMode !== 'bot' })}>Hard level</div>
+				<CustomRadio onChange={setHardlevel} value={hardLevel} disabled={gameMode !== 'bot'} fields={['easy', 'normal', 'hard']} />
 			</div>
 			<Devider />
 			<Button size={'medium'} variant={'primary'} onClick={gameSelectorHandler} fullWidth={true} title={'Start'} type={'button'} />

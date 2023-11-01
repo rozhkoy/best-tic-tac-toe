@@ -8,27 +8,12 @@ import { Home } from '@/pages/home';
 import { OnlineSession } from '@/pages/onlineSession';
 import { Friends } from '@/pages/friends';
 import { Profile } from '@/pages/profile';
-import { useEffect } from 'react';
 import { Wrap } from '@/pages/wrap';
 import { PrivateRoutes } from '@/features/privateRoutes';
 import { GetAuthState } from '@/features/accountAuth/lib/getAuthState';
 import { Providers } from '@/features/providers';
 
 export const AppProvider = () => {
-	useEffect(() => {
-		const theme = localStorage.getItem('theme');
-		if (theme && theme !== 'auto') {
-			document.body.className = `${theme}-theme`;
-		} else {
-			const getCurrentTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
-			if (getCurrentTheme()) {
-				document.body.className = `dark-theme`;
-			} else {
-				document.body.className = `light-theme`;
-			}
-		}
-	}, []);
-
 	const router = createBrowserRouter([
 		{
 			path: routes.HOME,

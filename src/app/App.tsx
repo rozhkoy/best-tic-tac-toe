@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { GetAuthState } from '@/features/accountAuth/lib/getAuthState';
+import { GetTheme } from '@/features/theme/lib/GetTheme';
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -22,7 +22,9 @@ function App() {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<Provider store={store}>
-				<AppProvider />
+				<GetTheme>
+					<AppProvider />
+				</GetTheme>
 			</Provider>
 			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>

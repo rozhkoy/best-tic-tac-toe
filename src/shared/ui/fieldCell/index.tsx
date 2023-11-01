@@ -2,6 +2,7 @@ import { CrossSybmol, NoughtSybmol } from './assets';
 import { FieldCellProps, SymbolTypes } from './types';
 import './styles.scss';
 import classNames from 'classnames';
+import { CSSTransition } from 'react-transition-group';
 
 const symbols: Record<SymbolTypes, React.ReactNode> = {
 	nought: <NoughtSybmol />,
@@ -19,7 +20,9 @@ export const FieldCell: React.FC<FieldCellProps> = ({ symbolName, highlight, mar
 				'field-cell--nought-active': highlight && symbolName === 'nought',
 				'field-cell--cross-active': highlight && symbolName === 'cross',
 			})}>
-			{symbols[symbolName]}
+			<CSSTransition timeout={300} in={symbolName !== 'empty'} classNames='opacity'>
+				{symbols[symbolName]}
+			</CSSTransition>
 		</div>
 	);
 };

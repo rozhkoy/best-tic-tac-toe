@@ -186,8 +186,8 @@ export const Info = () => {
 
 export const Mark = () => {
 	return (
-		<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'>
-			<path d='M9.99972 15.17L19.1927 5.979L20.6067 7.393L10.0007 17.999L3.63672 11.635L5.05072 10.221L10.0007 15.171L9.99972 15.17Z' fill='white' />
+		<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
+			<path d='M9.99972 15.17L19.1927 5.979L20.6067 7.393L10.0007 17.999L3.63672 11.635L5.05072 10.221L10.0007 15.171L9.99972 15.17Z' />
 		</svg>
 	);
 };

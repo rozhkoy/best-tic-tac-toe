@@ -77,7 +77,7 @@ export const TwoPlayerSession = () => {
 			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
 			<PlayField>
 				{playFieldState.map((item, index) => {
-					return <FieldCell key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+					return <FieldCell key={item.id} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
 				})}
 			</PlayField>
 			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={resetState} icon={'restart'} />

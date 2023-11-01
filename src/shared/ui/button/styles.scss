@@ -15,7 +15,16 @@
 		width: 100%;
 	}
 	&.default {
-		padding: 0;
+		padding: 0px;
+		border: 2px solid transparent;
+		border-radius: 4px;
+		&:hover {
+			border: 2px solid var(--color-secondary);
+			background: var(--color-secondary);
+		}
+		&:hover svg {
+			fill: var(--color-primary);
+		}
 	}
 	&.primary {
 		background: transparent;
