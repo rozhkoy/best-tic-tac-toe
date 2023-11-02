@@ -12,6 +12,14 @@
 	background: var(--color-primary);
 	border-bottom: 1px solid var(--color-gray);
 
+	@include smallTablet {
+		border: none;
+	}
+
+	@include smallTablet {
+		padding: 15px 15px;
+	}
+
 	&__side-panel {
 		display: flex;
 	}

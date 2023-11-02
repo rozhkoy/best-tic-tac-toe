@@ -1,4 +1,7 @@
 .auth-btns-header {
+	@include smallTablet {
+		display: none;
+	}
 	display: flex;
 	justify-content: flex-end;
 	gap: 42px;

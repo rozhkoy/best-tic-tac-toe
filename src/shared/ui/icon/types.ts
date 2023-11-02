@@ -42,4 +42,9 @@ export type IconNamesTypes =
 	| 'info'
 	| 'mark'
 	| 'reject'
-	| 'close';
+	| 'close'
+	| 'home'
+	| 'profile'
+	| 'notifications'
+	| 'friends'
+	| 'settings';

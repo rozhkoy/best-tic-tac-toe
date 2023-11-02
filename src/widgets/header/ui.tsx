@@ -4,6 +4,7 @@ import { Logo } from '@/shared/ui/logo';
 import { Navbar } from '@/features/navigation';
 import { AuthBtnsHeader } from '@/features/accountAuth';
 import { useAppSelector } from '@/shared/hooks/reduxHooks';
+import { MobileNotifsBtn } from '@/features/notifications/ui/mobileNotifsBtn';
 
 export const Header = () => {
 	const userState = useAppSelector((state) => state.user);
@@ -13,7 +14,14 @@ export const Header = () => {
 				<Logo className='header__logo' />
 				<Navbar />
 			</div>
-			{userState.isAuth ? <UserPanel url={userState.url} nickname={userState.nickname} rating={userState.rating} /> : <AuthBtnsHeader />}
+			{userState.isAuth ? (
+				<>
+					<MobileNotifsBtn />
+					<UserPanel url={userState.url} nickname={userState.nickname} rating={userState.rating} />
+				</>
+			) : (
+				<AuthBtnsHeader />
+			)}
 		</div>
 	);
 };

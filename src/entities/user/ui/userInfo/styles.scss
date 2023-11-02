@@ -3,6 +3,9 @@
 	grid-template-columns: fit-content(100%) 64px;
 	grid-gap: 14px;
 	grid-template-rows: 1fr;
+	@include smallTablet {
+		display: none;
+	}
 
 	&__info {
 		display: flex;

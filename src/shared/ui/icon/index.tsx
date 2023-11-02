@@ -20,6 +20,11 @@ import {
 	Mark,
 	Reject,
 	CloseIcon,
+	HomeIcon,
+	SettingsIcon,
+	ProfileIcon,
+	NotificationsIcon,
+	FriendsIcon,
 } from './Static';
 import { IconNamesTypes, IconProps } from './types';
 import './styles.scss';
@@ -47,6 +52,11 @@ const icons: Record<IconNamesTypes, React.ReactNode> = {
 	mark: <Mark />,
 	reject: <Reject />,
 	close: <CloseIcon />,
+	home: <HomeIcon />,
+	settings: <SettingsIcon />,
+	profile: <ProfileIcon />,
+	notifications: <NotificationsIcon />,
+	friends: <FriendsIcon />,
 };
 
 export function Icon({ name, className }: IconProps) {

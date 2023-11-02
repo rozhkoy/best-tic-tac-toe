@@ -3,10 +3,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: INotifsState = {
 	notifs: [],
+	isVisible: true,
 };
 
 export interface INotifsState {
 	notifs: Array<InviteToGameNotifsProps>;
+	isVisible: boolean;
 }
 
 export const notifsSlice = createSlice({
@@ -23,7 +25,10 @@ export const notifsSlice = createSlice({
 			const index = state.notifs.findIndex((item) => item.id === id);
 			state.notifs[index].isVisible = isVisible;
 		},
+		toggleNotificationsVisible: (state, { payload }: PayloadAction<boolean>) => {
+			state.isVisible = payload;
+		},
 	},
 });
 
-export const { addNotif, toggleVisible, removeNotif } = notifsSlice.actions;
+export const { addNotif, toggleVisible, removeNotif, toggleNotificationsVisible } = notifsSlice.actions;
