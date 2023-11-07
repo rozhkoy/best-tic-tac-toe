@@ -26,7 +26,7 @@ function App() {
 					<AppProvider />
 				</GetTheme>
 			</Provider>
-			<ReactQueryDevtools initialIsOpen={false} />
+			{/* <ReactQueryDevtools initialIsOpen={false} /> */}
 		</QueryClientProvider>
 	);
 }

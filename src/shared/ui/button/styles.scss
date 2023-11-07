@@ -6,6 +6,9 @@
 	line-height: 24px;
 	color: var(--color-secondary);
 	transition: color 0.3s, background 0.3s, border-color 0.3s;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	&:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
@@ -18,11 +21,20 @@
 		padding: 0px;
 		border: 2px solid transparent;
 		border-radius: 4px;
-		&:hover {
+		@include desktopHover {
+			&:hover {
+				border: 2px solid var(--color-secondary);
+				background: var(--color-secondary);
+			}
+			&:hover svg {
+				fill: var(--color-primary);
+			}
+		}
+		&:active {
 			border: 2px solid var(--color-secondary);
 			background: var(--color-secondary);
 		}
-		&:hover svg {
+		&:active svg {
 			fill: var(--color-primary);
 		}
 	}
@@ -30,12 +42,23 @@
 		background: transparent;
 		border: 2px solid var(--color-secondary);
 		border-radius: 14px;
-		&:hover:not(:disabled) {
+		@include desktopHover {
+			&:hover:not(:disabled) {
+				background: var(--color-secondary);
+				border: 2px solid var(--color-primary);
+				color: var(--color-primary);
+			}
+			&:hover:not(:disabled) svg {
+				fill: var(--color-primary);
+			}
+		}
+
+		&:active:not(:disabled) {
 			background: var(--color-secondary);
 			border: 2px solid var(--color-primary);
 			color: var(--color-primary);
 		}
-		&:hover:not(:disabled) svg {
+		&:active:not(:disabled) svg {
 			fill: var(--color-primary);
 		}
 	}
@@ -50,13 +73,22 @@
 		color: var(--color-white);
 		border: 2px solid var(--color-red);
 		border-radius: 14px;
-
-		&:hover:not(:disabled) {
+		@include desktopHover {
+			&:hover:not(:disabled) {
+				background: var(--color-primary);
+				border: 2px solid var(--color-red);
+				color: var(--color-red);
+			}
+			&:hover:not(:disabled) svg {
+				fill: var(--color-primary);
+			}
+		}
+		&:active:not(:disabled) {
 			background: var(--color-primary);
 			border: 2px solid var(--color-red);
 			color: var(--color-red);
 		}
-		&:hover:not(:disabled) svg {
+		&:active:not(:disabled) svg {
 			fill: var(--color-primary);
 		}
 	}
@@ -65,12 +97,23 @@
 		border: 2px solid var(--color-secondary);
 		color: var(--color-primary);
 		border-radius: 14px;
-		&:hover:not(:disabled) {
+		@include desktopHover {
+			&:hover:not(:disabled) {
+				background: var(--color-primary);
+				border: 2px solid var(--color-secondary);
+				color: var(--color-secondary);
+			}
+			&:hover:not(:disabled) svg {
+				fill: var(--color-primary);
+			}
+		}
+
+		&:active:not(:disabled) {
 			background: var(--color-primary);
 			border: 2px solid var(--color-secondary);
 			color: var(--color-secondary);
 		}
-		&:hover:not(:disabled) svg {
+		&:active:not(:disabled) svg {
 			fill: var(--color-primary);
 		}
 	}

@@ -4,8 +4,26 @@
 	position: relative;
 	justify-content: center;
 	align-items: center;
+	border: 2px solid transparent;
+	border-radius: 4px;
 	@include tablet {
 		display: flex;
+	}
+	@include desktopHover {
+		&:hover {
+			border: 2px solid var(--color-secondary);
+			background: var(--color-secondary);
+		}
+		&:hover svg {
+			fill: var(--color-primary);
+		}
+	}
+	&:active {
+		border: 2px solid var(--color-secondary);
+		background: var(--color-secondary);
+	}
+	&:active svg {
+		fill: var(--color-primary);
 	}
 
 	&__number-of-notifs {

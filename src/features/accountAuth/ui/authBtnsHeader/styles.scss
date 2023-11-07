@@ -5,7 +5,7 @@
 	align-items: center;
 	&__btn {
 		&--sign-up {
-			@include smallTablet {
+			@include tablet {
 				display: none;
 			}
 		}

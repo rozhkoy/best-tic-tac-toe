@@ -11,9 +11,10 @@
 	align-items: center;
 	background: var(--color-primary);
 	border-bottom: 1px solid var(--color-gray);
-
+	min-height: 107px;
 	@include tablet {
-		padding: 10px 15px;
+		padding: 5px 15px;
+		min-height: 55px;
 	}
 	&__btns-group {
 		display: grid;
@@ -24,7 +25,7 @@
 	&__settings-btn {
 		display: none;
 		@include tablet {
-			display: block;
+			display: flex;
 		}
 	}
 

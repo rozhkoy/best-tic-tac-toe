@@ -35,7 +35,7 @@
 }
 
 @mixin desktopHover {
-	@media screen and (max-width: 1599px) {
+	@media screen and (min-width: 992px) {
 		@content;
 	}
 }
