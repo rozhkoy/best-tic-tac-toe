@@ -59,7 +59,7 @@ const icons: Record<IconNamesTypes, React.ReactNode> = {
 	friends: <FriendsIcon />,
 };
 
-export function Icon({ name, className }: IconProps) {
-	const classes = classNames('icon', className);
+export function Icon({ name, className, size = 'medium', color = 'default', colorType = 'fill' }: IconProps) {
+	const classes = classNames('icon', className, `icon--${size}`, `icon--${colorType}-${color}`);
 	return <span className={classes}>{icons[name]}</span>;
 }

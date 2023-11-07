@@ -4,7 +4,7 @@
 	position: relative;
 	justify-content: center;
 	align-items: center;
-	@include smallTablet {
+	@include tablet {
 		display: flex;
 	}
 

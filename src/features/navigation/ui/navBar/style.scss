@@ -3,7 +3,7 @@
 	justify-content: flex-start;
 	align-items: center;
 
-	@include smallTablet {
+	@include tablet {
 		display: none;
 	}
 

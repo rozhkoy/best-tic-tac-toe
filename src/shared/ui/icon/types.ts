@@ -1,6 +1,9 @@
 export interface IconProps {
 	name: IconNamesTypes;
+	color?: IconColorTypes;
 	className?: string;
+	size?: 'small' | 'medium' | 'large';
+	colorType?: 'fill' | 'stroke';
 }
 
 // const iconNames = [
@@ -20,6 +23,8 @@ export interface IconProps {
 //     "sound",
 //     "sun",
 // ];
+
+export type IconColorTypes = 'primary' | 'secondary' | 'red' | 'light-gray' | 'gray' | 'inherit' | 'default';
 
 export type IconNamesTypes =
 	| 'back'

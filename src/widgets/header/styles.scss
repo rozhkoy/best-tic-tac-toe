@@ -12,12 +12,20 @@
 	background: var(--color-primary);
 	border-bottom: 1px solid var(--color-gray);
 
-	@include smallTablet {
-		border: none;
+	@include tablet {
+		padding: 10px 15px;
+	}
+	&__btns-group {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 10px;
 	}
 
-	@include smallTablet {
-		padding: 15px 15px;
+	&__settings-btn {
+		display: none;
+		@include tablet {
+			display: block;
+		}
 	}
 
 	&__side-panel {

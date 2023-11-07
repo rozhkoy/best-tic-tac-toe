@@ -11,7 +11,7 @@ export const MobileNotifsBtn = () => {
 	return (
 		<button className='mobile-notifs-btn' onClick={() => dispatch(toggleNotificationsVisible(!isVisible))}>
 			<Icon name='notifications' />
-			<span className={classNames('mobile-notifs-btn__number-of-notifs', { 'mobile-notifs-btn__number-of-notifs--active': !!notifs.length })}>1</span>
+			<span className={classNames('mobile-notifs-btn__number-of-notifs', { 'mobile-notifs-btn__number-of-notifs--active': !!notifs.length })}>{notifs.length}</span>
 		</button>
 	);
 };

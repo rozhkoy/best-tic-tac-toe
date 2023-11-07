@@ -34,6 +34,12 @@
 	}
 }
 
+@mixin desktopHover {
+	@media screen and (max-width: 1599px) {
+		@content;
+	}
+}
+
 @mixin fullhd {
 	@media screen and (min-width: 1600px) {
 		@content;

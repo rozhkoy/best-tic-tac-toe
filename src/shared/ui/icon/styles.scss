@@ -1,11 +1,88 @@
 .icon {
-	width: 24px;
-	height: 24px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
+	&--medium {
+		width: 24px;
+		height: 24px;
+		& svg {
+			width: 24px;
+			height: auto;
+		}
+	}
+
+	&--small {
+		width: 18px;
+		height: 18px;
+		& svg {
+			width: 18px;
+			height: auto;
+		}
+	}
+
+	&--large {
+		width: 32px;
+		height: 32px;
+		& svg {
+			width: 32px;
+			height: auto;
+		}
+	}
+
+	&--fill-secondary > svg,
+	&--fill-default > svg {
+		fill: var(--color-secondary);
+	}
+
+	&--fill-primary > svg {
+		fill: var(--color-primary);
+	}
+
+	&--fill-red > svg {
+		fill: var(--color-red);
+	}
+
+	&--fill-secondary > svg {
+		fill: var(--color-secondary);
+	}
+
+	&--fill-light-gray > svg {
+		fill: var(--color-light-gray);
+	}
+
+	&--fill-inherit > svg,
+	&--stroke-inherit > svg {
+		fill: inherit;
+	}
+
+	&--stroke-secondary > svg,
+	&--stroke-default > svg {
+		stroke: var(--color-secondary);
+	}
+
+	&--stroke-primary > svg {
+		stroke: var(--color-primary);
+	}
+
+	&--stroke-red > svg {
+		stroke: var(--color-red);
+	}
+
+	&--stroke-secondary > svg {
+		stroke: var(--color-secondary);
+	}
+
+	&--stroke-light-gray > svg {
+		stroke: var(--color-light-gray);
+	}
+
+	&--stroke-inherit > svg,
+	&--stroke-inherit > svg {
+		stroke: inherit;
+	}
 }
+
 .icon > svg {
 	transition: fill 0.3s, stroke 0.3s;
-	fill: var(--color-secondary);
 }
