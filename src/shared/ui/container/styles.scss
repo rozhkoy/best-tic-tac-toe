@@ -1,6 +1,6 @@
 .container {
 	margin: 0 auto;
-	padding: 0 15px;
+
 	width: 100%;
 	&--extra-large {
 		max-width: 1700px;
@@ -16,5 +16,8 @@
 	}
 	&--extra-small {
 		max-width: 390px;
+	}
+	&--with-padding {
+		padding: 0 15px;
 	}
 }

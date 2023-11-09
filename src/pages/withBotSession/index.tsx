@@ -2,7 +2,7 @@ import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/featu
 import { useEffect, useState } from 'react';
 import { FieldCell } from '@/shared/ui/fieldCell';
 import { GameStatusMessage, IPlayers } from '@/features/playGround/types';
-import { nanoid } from 'nanoid';
+
 import { Button } from '@/shared/ui/button';
 import { useParams } from 'react-router-dom';
 import { useMiniMax } from '@/features/playGround/lib/useMiniMax';
@@ -95,7 +95,7 @@ export const WithBotSession = () => {
 			<GameInfo playersData={playersData} currentMove={currentMove} gameStatusMessage={gameStatusMessage} />
 			<PlayField>
 				{playFieldState.map((item, index) => {
-					return <FieldCell blockMove={currentMove.player !== 'Player'} key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+					return <FieldCell blockMove={currentMove.player !== 'Player'} key={item.id} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
 				})}
 			</PlayField>
 			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={resetState} icon={'restart'} />

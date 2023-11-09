@@ -1,8 +1,14 @@
 .form-header {
 	padding: 0 0 61px;
+	@include mobile {
+		padding: 0 0 40px;
+	}
 	&__header {
 		padding: 0 0 14px;
 		color: var(--color-secondary);
+		@include mobile {
+			padding: 0 0 10px;
+		}
 	}
 
 	&__sub-heading {

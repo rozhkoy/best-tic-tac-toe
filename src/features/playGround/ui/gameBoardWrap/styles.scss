@@ -4,6 +4,10 @@
 		grid-gap: 42px;
 		max-width: 500px;
 		width: 100%;
-		padding: 0 15px;
+		padding: 15px;
+		grid-template-rows: fit-content(100%) 1fr fit-content(100%);
+		@include mobile {
+			grid-gap: 20px;
+		}
 	}
 }

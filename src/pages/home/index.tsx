@@ -1,4 +1,3 @@
-import { WarningPopup } from '@/shared/ui/warning';
 import './style.scss';
 import { GameSelector } from '@/features/gameSelector';
 

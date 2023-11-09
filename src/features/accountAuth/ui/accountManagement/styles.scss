@@ -1,19 +1,25 @@
 .account-management {
 	display: flex;
-	justify-content: space-between;
-	padding: 0 28px 24px;
+	justify-content: space-around;
+	padding: 28px 0;
+	@include mobile {
+		padding: 12px 5px;
+	}
 	&__link {
 		font-family: 'Poppins';
 		font-style: normal;
 		font-weight: 400;
 		font-size: 16px;
-		line-height: 24px;
+		line-height: 1.3;
 		letter-spacing: 0.04em;
 		text-decoration-line: underline;
 		color: var(--color-red);
 		transition: color var(--transition-duration);
 		&:hover {
-			color: var(--color-secondary)
+			color: var(--color-secondary);
+		}
+		@include mobile {
+			font-size: 14px;
 		}
 	}
 }

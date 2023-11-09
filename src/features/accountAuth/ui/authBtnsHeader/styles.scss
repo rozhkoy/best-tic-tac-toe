@@ -4,5 +4,10 @@
 	gap: 42px;
 	align-items: center;
 	&__btn {
+		&--sign-up {
+			@include tablet {
+				display: none;
+			}
+		}
 	}
 }

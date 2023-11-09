@@ -7,7 +7,7 @@ import { Nothing } from '@/shared/ui/nothing';
 export const ListOfUsers = forwardRef<HTMLLIElement, ListOfUsersProps>(({ list, children }, ref) => {
 	return (
 		<ListWrap>
-			{list.length &&
+			{list.length !== 0 &&
 				(list[0].rows.length ? (
 					list.map((page, pageIndex, pages) => {
 						return (

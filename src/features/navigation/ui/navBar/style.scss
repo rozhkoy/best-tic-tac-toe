@@ -3,6 +3,10 @@
 	justify-content: flex-start;
 	align-items: center;
 
+	@include tablet {
+		display: none;
+	}
+
 	&__logo {
 		margin: 0 64px 0 0;
 	}

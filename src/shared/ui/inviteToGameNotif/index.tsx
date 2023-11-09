@@ -25,11 +25,12 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 	useEffect(() => {
 		const timer: ReturnType<typeof setTimeout> = setTimeout(() => {
 			dispatch(toggleVisible({ id, isVisible: false }));
+			rejectInviteToGame(friendId, userId);
 		}, 60_000);
 		return () => {
 			clearInterval(timer);
 		};
-	}, [dispatch, id]);
+	}, [dispatch, friendId, id, userId]);
 
 	function acceptInviteToGame(friendId: string, userId: string) {
 		const message: IWebSocketMessage<IAcceptInviteToGame> = {

@@ -20,6 +20,11 @@ import {
 	Mark,
 	Reject,
 	CloseIcon,
+	HomeIcon,
+	SettingsIcon,
+	ProfileIcon,
+	NotificationsIcon,
+	FriendsIcon,
 } from './Static';
 import { IconNamesTypes, IconProps } from './types';
 import './styles.scss';
@@ -47,9 +52,14 @@ const icons: Record<IconNamesTypes, React.ReactNode> = {
 	mark: <Mark />,
 	reject: <Reject />,
 	close: <CloseIcon />,
+	home: <HomeIcon />,
+	settings: <SettingsIcon />,
+	profile: <ProfileIcon />,
+	notifications: <NotificationsIcon />,
+	friends: <FriendsIcon />,
 };
 
-export function Icon({ name, className }: IconProps) {
-	const classes = classNames('icon', className);
+export function Icon({ name, className, size = 'medium', color = 'default', colorType = 'fill' }: IconProps) {
+	const classes = classNames('icon', className, `icon--${size}`, `icon--${colorType}-${color}`);
 	return <span className={classes}>{icons[name]}</span>;
 }

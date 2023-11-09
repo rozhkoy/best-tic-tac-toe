@@ -1,0 +1,39 @@
+.mobile-nav {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	display: none;
+	justify-content: space-around;
+	z-index: 999;
+	background: var(--color-primary);
+	padding: 10px 0 10px;
+	border-top: 1px solid var(--color-light-gray);
+
+	@include tablet {
+		display: flex;
+	}
+
+	&__item {
+	}
+
+	&__link {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	&__link-label {
+		color: var(--color-light-gray);
+		text-align: center;
+		font-size: 12px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 1.5;
+		margin: 5px 0 0 0;
+		&--active {
+			color: var(--color-secondary);
+		}
+	}
+}

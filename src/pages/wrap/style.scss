@@ -8,8 +8,11 @@
 	&__container {
 		display: grid;
 		width: 100%;
-		padding: 105px 0 0 0;
+		padding: 107px 0 0 0;
 		position: relative;
 		z-index: 100;
+		@include tablet {
+			padding: 55px 0 68px 0;
+		}
 	}
 }

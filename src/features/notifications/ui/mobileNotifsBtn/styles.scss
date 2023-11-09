@@ -1,0 +1,59 @@
+.mobile-notifs-btn {
+	display: none;
+	padding: 2px;
+	position: relative;
+	justify-content: center;
+	align-items: center;
+	border: 2px solid transparent;
+	border-radius: 4px;
+	@include tablet {
+		display: flex;
+	}
+	@include desktopHover {
+		&:hover {
+			border: 2px solid var(--color-secondary);
+			background: var(--color-secondary);
+		}
+		&:hover svg {
+			fill: var(--color-primary);
+		}
+	}
+	&:active {
+		border: 2px solid var(--color-secondary);
+		background: var(--color-secondary);
+	}
+	&:active svg {
+		fill: var(--color-primary);
+	}
+
+	&__number-of-notifs {
+		width: 14px;
+		height: 14px;
+		position: absolute;
+		top: 0;
+		right: 0;
+		border-radius: 50%;
+		background: var(--color-red);
+		font-size: 10px;
+		color: var(--color-primary);
+		opacity: 0;
+
+		&--active {
+			animation: 1.5s infinite smooth-blink;
+		}
+	}
+}
+
+@keyframes smooth-blink {
+	0% {
+		opacity: 0;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+	}
+}

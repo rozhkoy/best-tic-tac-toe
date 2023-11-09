@@ -11,6 +11,23 @@
 	align-items: center;
 	background: var(--color-primary);
 	border-bottom: 1px solid var(--color-gray);
+	min-height: 107px;
+	@include tablet {
+		padding: 5px 15px;
+		min-height: 55px;
+	}
+	&__btns-group {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 10px;
+	}
+
+	&__settings-btn {
+		display: none;
+		@include tablet {
+			display: flex;
+		}
+	}
 
 	&__side-panel {
 		display: flex;

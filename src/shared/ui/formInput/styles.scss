@@ -19,7 +19,7 @@
 
 		&:hover,
 		&:focus-within {
-			border-color: #fff;
+			border-color: var(--color-secondary);
 		}
 		&::placeholder {
 			color: var(--color-light-gray);

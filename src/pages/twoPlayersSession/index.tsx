@@ -4,9 +4,8 @@ import { useState } from 'react';
 import { FieldCell } from '@/shared/ui/fieldCell';
 import { GameStatusMessage, IPlayers } from '@/features/playGround/types';
 import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
-import { nanoid } from 'nanoid';
 
-export const TwoPlayerSession = () => {
+export const TwoPlayersSession = () => {
 	const [playersData, setPlayersData] = useState<IPlayers>({
 		nought: {
 			nickname: 'Player 1',
@@ -77,7 +76,7 @@ export const TwoPlayerSession = () => {
 			<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
 			<PlayField>
 				{playFieldState.map((item, index) => {
-					return <FieldCell key={nanoid()} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+					return <FieldCell key={item.id} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
 				})}
 			</PlayField>
 			<Button size={'medium'} variant={'primary'} fullWidth={false} title={'Play again'} type={'button'} onClick={resetState} icon={'restart'} />

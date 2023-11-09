@@ -14,6 +14,7 @@ import { Settings } from '@/features/settings/ui';
 import { updateUserRating } from '@/entities/user';
 import { useQuery } from '@tanstack/react-query';
 import { getUserRating } from '@/features/accountAuth/api';
+import { MobileNav } from '@/features/navigation/ui/mobileNavbar';
 
 export const Wrap = () => {
 	const dispatch = useAppDispatch();
@@ -68,6 +69,7 @@ export const Wrap = () => {
 	return (
 		<div className='wrap'>
 			<Header />
+			<MobileNav />
 			<div className='wrap__container'>
 				<Outlet />
 			</div>
