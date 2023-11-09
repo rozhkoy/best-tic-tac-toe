@@ -4,9 +4,8 @@ import { useState } from 'react';
 import { FieldCell } from '@/shared/ui/fieldCell';
 import { GameStatusMessage, IPlayers } from '@/features/playGround/types';
 import { GameBoardWrap, GameInfo, PlayField, usePlayFieldHandler } from '@/features/playGround';
-import { nanoid } from 'nanoid';
 
-export const TwoPlayerSession = () => {
+export const TwoPlayersSession = () => {
 	const [playersData, setPlayersData] = useState<IPlayers>({
 		nought: {
 			nickname: 'Player 1',

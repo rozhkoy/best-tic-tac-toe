@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { SignIn } from '@/pages/signIn';
 import { SignUp } from '@/pages/signUp';
 import { routes } from '@/app/provider/routes';
-import { TwoPlayerSession } from '@/pages/twoPlayerSession';
+import { TwoPlayersSession } from '@/pages/twoPlayersSession';
 import { WithBotSession } from '@/pages/withBotSession';
 import { Home } from '@/pages/home';
 import { OnlineSession } from '@/pages/onlineSession';
@@ -29,7 +29,7 @@ export const AppProvider = () => {
 				},
 				{
 					path: routes.TWO_PLAYERS_SESSION,
-					element: <TwoPlayerSession />,
+					element: <TwoPlayersSession />,
 				},
 				{
 					path: routes.WITH_BOT_SESSION + '/:hardLevel',

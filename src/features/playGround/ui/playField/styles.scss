@@ -4,4 +4,7 @@
 	grid-template-columns: repeat(3, 1fr);
 	grid-template-rows: repeat((3, auto));
 	grid-gap: 16px;
+	@include mobile {
+		grid-gap: 14px;
+	}
 }

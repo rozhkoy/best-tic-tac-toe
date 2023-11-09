@@ -2,11 +2,18 @@
 	position: relative;
 	height: 60px;
 	overflow-y: hidden;
+
+	@include mobile {
+		height: 40px;
+	}
 	&__plate {
 		display: flex;
 		justify-content: space-between;
 		height: 60px;
 		position: relative;
+		@include mobile {
+			height: 40px;
+		}
 	}
 
 	&__wrap {
@@ -25,8 +32,11 @@
 		font-style: normal;
 		font-weight: 500;
 		font-size: 32px;
-		line-height: 60px;
+		line-height: 1.8;
 		text-align: center;
+		@include mobile {
+			font-size: 20px;
+		}
 		&--secondary {
 			color: var(--color-secondary);
 		}
@@ -38,6 +48,9 @@
 	&__symbol-icon {
 		& svg {
 			fill: var(--color-disabled);
+			@include mobile {
+				width: 18px;
+			}
 		}
 		&--active svg {
 			fill: var(--color-secondary);
@@ -58,18 +71,27 @@
 		font-style: normal;
 		font-weight: 500;
 		font-size: 24px;
-		line-height: 36px;
+		line-height: 1.5;
 		color: var(--color-light-gray);
+		@include mobile {
+			font-size: 20px;
+		}
 		&--active {
 			color: var(--color-secondary);
 		}
 
 		&--left {
-			padding: 0 0 0 10px;
+			margin: 0 0 0 10px;
+			@include mobile {
+				margin: 0 0 0 6px;
+			}
 		}
 
 		&--right {
-			padding: 0 10px 0 0;
+			margin: 0 10px 0 0;
+			@include mobile {
+				margin: 0 6px 0 0px;
+			}
 		}
 	}
 
@@ -87,5 +109,8 @@
 		line-height: 1.5;
 		text-align: center;
 		color: var(--color-secondary);
+		@include mobile {
+			font-size: 28px;
+		}
 	}
 }

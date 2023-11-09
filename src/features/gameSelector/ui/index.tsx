@@ -29,7 +29,7 @@ export const GameSelector = () => {
 	return (
 		<div className='game-selector'>
 			<div className='game-option'>
-				<div className='game-option__heading'>Number of players</div>
+				<div className='game-option__heading'>Game mode</div>
 				<CustomRadio onChange={setGameMode} value={gameMode} fields={['bot', '2p', 'online']} />
 			</div>
 			<div className='game-option'>
