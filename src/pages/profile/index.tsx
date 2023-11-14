@@ -222,7 +222,7 @@ export const Profile = () => {
 
 	return (
 		<div className='profile'>
-			<Container size='large' className='profile__container'>
+			<Container size='large' className='profile__container' withPadding={true}>
 				{profileInfoByUserId.isSuccess ? (
 					<>
 						<div className='profile__user-info'>

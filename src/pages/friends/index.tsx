@@ -1,4 +1,4 @@
-import { Button } from '@/shared/ui/button';
+import { Button, CustomButton } from '@/shared/ui/button';
 import { Container } from '@/shared/ui/container';
 import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import './styles.scss';
@@ -19,9 +19,10 @@ import { useFriendsActions } from '@/features/friendSearch/lib/useFriendsActions
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 import { addAlert } from '@/features/alertProvider';
 import { queryClient } from '@/app/App';
+import { Icon } from '@/shared/ui/icon';
 
 export const Friends = () => {
-	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Your friends');
+	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Friends');
 	const [searchBarState, setSearchBarState] = useState('');
 	const { userId } = useAppSelector((state) => state.user);
 	const { sendInviteToFriendShipMutation, acceptFriendshipInviteMutation, rejectFriendshipInviteMutation, sendInviteToGame, sendRejectionInviteToGame } = useFriendsActions();
@@ -36,13 +37,13 @@ export const Friends = () => {
 	function customRadioHandler(value: SearchModeTypes) {
 		setCurrentTab(value);
 		switch (currentTab) {
-			case 'Global Search':
+			case 'Search':
 				globalSearch.remove();
 				break;
-			case 'Friends requests':
+			case 'Requests':
 				friendsRequest.remove();
 				break;
-			case 'Your friends':
+			case 'Friends':
 				yourFriends.remove();
 		}
 		setSearchBarState('');
@@ -57,7 +58,7 @@ export const Friends = () => {
 			setGlobalSearchResult(pages);
 		},
 		getNextPageParam: (lastPage) => lastPage.nextPage,
-		enabled: currentTab === 'Global Search' && !!userId,
+		enabled: currentTab === 'Search' && !!userId,
 		refetchInterval: 30_000,
 	});
 
@@ -70,7 +71,7 @@ export const Friends = () => {
 			setFriendsRequestResponse(pages);
 		},
 		getNextPageParam: (lastPage) => lastPage.nextPage,
-		enabled: currentTab === 'Friends requests' && !!userId,
+		enabled: currentTab === 'Requests' && !!userId,
 		refetchInterval: 30_000,
 	});
 
@@ -83,7 +84,7 @@ export const Friends = () => {
 			setYourFriendsResponse(pages);
 		},
 		getNextPageParam: (lastPage) => lastPage.nextPage,
-		enabled: currentTab === 'Your friends' && !!userId,
+		enabled: currentTab === 'Friends' && !!userId,
 		refetchOnWindowFocus: false,
 		refetchInterval: 30_000,
 	});
@@ -91,34 +92,47 @@ export const Friends = () => {
 	function buttons(btnStatus: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo, userStatus: UserStatusTypes) {
 		switch (btnStatus) {
 			case null:
-				return <Button onClick={() => addToFriends(userId, ids.userId, paginationInfo)} size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Add friend'} />;
+				return (
+					<CustomButton size={'tiny'} onClick={() => addToFriends(userId, ids.userId, paginationInfo)}>
+						<Icon name={'addToFriends'} colorType='fill' color='secondary' size='large' />
+					</CustomButton>
+				);
+
 			case 'invitation':
 				return (
 					<>
-						<Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} onClick={() => acceptFriendshipInvite(ids.invitationId ?? '0', paginationInfo)} title={'Accept'} />
-						<Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? '0', paginationInfo)} title={'Reject'} />
+						<CustomButton size={'tiny'} onClick={() => acceptFriendshipInvite(ids.invitationId ?? '0', paginationInfo)}>
+							<Icon name={'mark'} colorType='fill' color='secondary' size='large' />
+						</CustomButton>
+						<CustomButton size={'tiny'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? '0', paginationInfo)}>
+							<Icon name={'reject'} colorType='fill' color='secondary' size='large' />
+						</CustomButton>
 					</>
 				);
 			case 'friend':
 				return (
-					<Button
-						size={'tiny'}
-						variant={'primary'}
-						fullWidth={false}
-						type={'button'}
-						onClick={() => inviteToGame(ids.userId, paginationInfo)}
-						title={'Invite to game'}
-						disabled={userStatus === 'offline'}
-					/>
+					<CustomButton size={'tiny'} onClick={() => inviteToGame(ids.userId, paginationInfo)} disabled={userStatus === 'offline'}>
+						<Icon name={'inviteToGame'} colorType='fill' color='secondary' size='large' />
+					</CustomButton>
 				);
 			case 'invitedToGame':
-				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectionInviteToGame(ids.userId, paginationInfo)} title={'Invited to game'} />;
+				return (
+					<CustomButton size={'tiny'} onClick={() => rejectionInviteToGame(ids.userId, paginationInfo)}>
+						<Icon name={'invitedToGame'} colorType='fill' color='secondary' size='large' />
+					</CustomButton>
+				);
 			case 'pending':
 				return (
-					<Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? '0', paginationInfo)} title={'Pending'} />
+					<CustomButton size={'tiny'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? '0', paginationInfo)}>
+						<Icon name={'pending'} colorType='fill' color='secondary' size='large' />
+					</CustomButton>
 				);
 			case 'loading':
-				return <div>loading...</div>;
+				return (
+					<CustomButton size={'tiny'}>
+						<Icon name={'spiner'} colorType='fill' color='secondary' size='large' />
+					</CustomButton>
+				);
 			case 'error':
 				return <Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} title={'Error'} />;
 		}
@@ -161,10 +175,10 @@ export const Friends = () => {
 
 	async function acceptFriendshipInvite(inviteId: string, paginationInfo: IPaginationInfo) {
 		switch (currentTab) {
-			case 'Global Search':
+			case 'Search':
 				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
 				break;
-			case 'Friends requests':
+			case 'Requests':
 				replaceBtnsStatus(setFriendsRequestResponse, paginationInfo, 'loading');
 				break;
 		}
@@ -173,10 +187,10 @@ export const Friends = () => {
 		const response = await acceptFriendshipInviteMutation.mutateAsync(formData);
 		if (response) {
 			switch (currentTab) {
-				case 'Global Search':
+				case 'Search':
 					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'friend');
 					break;
-				case 'Friends requests':
+				case 'Requests':
 					setFriendsRequestResponse((state) => {
 						state[paginationInfo.page].rows.splice(paginationInfo.item, 1);
 						return [...state];
@@ -190,10 +204,10 @@ export const Friends = () => {
 
 	async function rejectFriendshipInvite(inviteId: string, paginationInfo: IPaginationInfo) {
 		switch (currentTab) {
-			case 'Global Search':
+			case 'Search':
 				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
 				break;
-			case 'Friends requests':
+			case 'Requests':
 				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
 				break;
 		}
@@ -202,10 +216,10 @@ export const Friends = () => {
 		const response = await rejectFriendshipInviteMutation.mutateAsync(formData);
 		if (response) {
 			switch (currentTab) {
-				case 'Global Search':
+				case 'Search':
 					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, null);
 					break;
-				case 'Friends requests':
+				case 'Requests':
 					setFriendsRequestResponse((state) => {
 						state[paginationInfo.page].rows.splice(paginationInfo.item, 1);
 						return [...state];
@@ -231,13 +245,13 @@ export const Friends = () => {
 	useEffect(() => {
 		if ((globalSearch.hasNextPage || friendsRequest.hasNextPage || yourFriends.hasNextPage) && inView) {
 			switch (currentTab) {
-				case 'Global Search':
+				case 'Search':
 					globalSearch.fetchNextPage();
 					break;
-				case 'Friends requests':
+				case 'Requests':
 					friendsRequest.fetchNextPage();
 					break;
-				case 'Your friends':
+				case 'Friends':
 					yourFriends.fetchNextPage();
 			}
 		}
@@ -251,20 +265,20 @@ export const Friends = () => {
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_REJECTED, () => {
 				switch (currentTab) {
-					case 'Global Search':
+					case 'Search':
 						globalSearch.refetch();
 						break;
-					case 'Your friends':
+					case 'Friends':
 						yourFriends.refetch();
 				}
 			});
 			webSocket.subscribeToOnUpdate(websocketEventNames.USER_IS_NOT_ONLINE, () => {
 				dispatch(addAlert({ heading: 'Oooooopsss!', text: 'User is not currently online' }));
 				switch (currentTab) {
-					case 'Global Search':
+					case 'Search':
 						globalSearch.refetch();
 						break;
-					case 'Your friends':
+					case 'Friends':
 						yourFriends.refetch();
 				}
 			});
@@ -280,16 +294,16 @@ export const Friends = () => {
 	const searchBarDebounce = useMemo(() => {
 		return debounce(() => {
 			switch (currentTab) {
-				case 'Global Search':
+				case 'Search':
 					queryClient.removeQueries({ queryKey: ['globalSearach'] });
 					globalSearch.fetchNextPage();
 					break;
-				case 'Friends requests':
+				case 'Requests':
 					queryClient.removeQueries({ queryKey: ['friendsRequest'] });
 					friendsRequest.fetchNextPage();
 
 					break;
-				case 'Your friends':
+				case 'Friends':
 					queryClient.removeQueries({ queryKey: ['yourFriends'] });
 					yourFriends.fetchNextPage();
 			}
@@ -306,22 +320,22 @@ export const Friends = () => {
 
 	return (
 		<div className='friends'>
-			<Container className='friends__container' size={'large'}>
+			<Container className='friends__container' size={'large'} withPadding={true}>
 				<SearchBar value={searchBarState} onChange={searchBarHandler} />
 
-				<CustomRadio<SearchModeProp, SearchModeTypes> fields={['Your friends', 'Friends requests', 'Global Search']} value={currentTab} onChange={customRadioHandler} />
+				<CustomRadio<SearchModeProp, SearchModeTypes> fields={['Friends', 'Requests', 'Search']} value={currentTab} onChange={customRadioHandler} />
 
-				{currentTab === 'Your friends' && (
+				{currentTab === 'Friends' && (
 					<ListOfUsers list={yourFriendsResponse} ref={ref}>
 						{buttons}
 					</ListOfUsers>
 				)}
-				{currentTab === 'Friends requests' && (
+				{currentTab === 'Requests' && (
 					<ListOfUsers list={friendsRequestResponse} ref={ref}>
 						{buttons}
 					</ListOfUsers>
 				)}
-				{currentTab === 'Global Search' && (
+				{currentTab === 'Search' && (
 					<ListOfUsers list={globalSearchResult} ref={ref}>
 						{buttons}
 					</ListOfUsers>

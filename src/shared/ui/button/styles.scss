@@ -18,7 +18,6 @@
 		width: 100%;
 	}
 	&.default {
-		padding: 0px;
 		border: 2px solid transparent;
 		border-radius: 4px;
 		@include desktopHover {
@@ -62,11 +61,15 @@
 			fill: var(--color-primary);
 		}
 	}
+	&.default {
+		padding: 2px;
+	}
+
 	&.medium {
 		padding: 13px 13px;
 	}
 	&.tiny {
-		padding: 7px 36px;
+		padding: 7px 20px;
 	}
 	&.warning {
 		background: var(--color-red);
@@ -122,5 +125,122 @@
 		grid-template-columns: repeat(2, fit-content(100%));
 		justify-content: center;
 		grid-gap: 16px;
+	}
+}
+
+.custom-button {
+	&--size {
+		&-tiny {
+			padding: 2px;
+		}
+		&-medium {
+			padding: 7px 20px;
+		}
+		&-large {
+			padding: 13px;
+		}
+	}
+
+	&--variant {
+		&-primary {
+			background: transparent;
+			border: 2px solid var(--color-secondary);
+			border-radius: 14px;
+			@include desktopHover {
+				&:hover:not(:disabled) {
+					background: var(--color-secondary);
+					border: 2px solid var(--color-primary);
+					color: var(--color-primary);
+				}
+				&:hover:not(:disabled) svg {
+					fill: var(--color-primary);
+				}
+			}
+
+			&:active:not(:disabled) {
+				background: var(--color-secondary);
+				border: 2px solid var(--color-primary);
+				color: var(--color-primary);
+			}
+			&:active:not(:disabled) svg {
+				fill: var(--color-primary);
+			}
+		}
+		&-secondary {
+			background: var(--color-secondary);
+			border: 2px solid var(--color-secondary);
+			color: var(--color-primary);
+			border-radius: 14px;
+			@include desktopHover {
+				&:hover:not(:disabled) {
+					background: var(--color-primary);
+					border: 2px solid var(--color-secondary);
+					color: var(--color-secondary);
+				}
+				&:hover:not(:disabled) svg {
+					fill: var(--color-primary);
+				}
+			}
+
+			&:active:not(:disabled) {
+				background: var(--color-primary);
+				border: 2px solid var(--color-secondary);
+				color: var(--color-secondary);
+			}
+			&:active:not(:disabled) svg {
+				fill: var(--color-primary);
+			}
+		}
+
+		&-warning {
+			background: var(--color-red);
+			color: var(--color-white);
+			border: 2px solid var(--color-red);
+			border-radius: 14px;
+			@include desktopHover {
+				&:hover:not(:disabled) {
+					background: var(--color-primary);
+					border: 2px solid var(--color-red);
+					color: var(--color-red);
+				}
+				&:hover:not(:disabled) svg {
+					fill: var(--color-primary);
+				}
+			}
+			&:active:not(:disabled) {
+				background: var(--color-primary);
+				border: 2px solid var(--color-red);
+				color: var(--color-red);
+			}
+			&:active:not(:disabled) svg {
+				fill: var(--color-primary);
+			}
+		}
+
+		&-default {
+			border: 2px solid transparent;
+			border-radius: 4px;
+			@include desktopHover {
+				&:hover {
+					border: 2px solid var(--color-secondary);
+					background: var(--color-secondary);
+				}
+				&:hover svg {
+					fill: var(--color-primary);
+				}
+			}
+			&:active {
+				border: 2px solid var(--color-secondary);
+				background: var(--color-secondary);
+			}
+			&:active svg {
+				fill: var(--color-primary);
+			}
+		}
+	}
+
+	&--with-gap {
+		gap: 15px;
+		flex-direction: row;
 	}
 }

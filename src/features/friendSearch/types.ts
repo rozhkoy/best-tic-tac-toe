@@ -20,7 +20,7 @@ export interface IGetAllRequestsForFriendship extends IPagination {
 	userId: string;
 }
 
-export type SearchModeTypes = 'Your friends' | 'Friends requests' | 'Global Search';
+export type SearchModeTypes = 'Friends' | 'Requests' | 'Search';
 
 export type SearchModeProp = Array<SearchModeTypes>;
 

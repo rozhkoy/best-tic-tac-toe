@@ -10,7 +10,7 @@ export const GetTheme: React.FC<PropsWithChildren> = ({ children }) => {
 	useEffect(() => {
 		const { innerWidth } = window;
 
-		if (innerWidth < 767) {
+		if (innerWidth < 991) {
 			dispatch(toggleNotificationsVisible(false));
 		}
 
