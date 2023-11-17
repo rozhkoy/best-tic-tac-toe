@@ -94,7 +94,7 @@ export const Friends = () => {
 			case null:
 				return (
 					<CustomButton size={'tiny'} onClick={() => addToFriends(userId, ids.userId, paginationInfo)}>
-						<Icon name={'addToFriends'} colorType='fill' color='secondary' size='large' />
+						<Icon name={'addToFriends'} size='large' />
 					</CustomButton>
 				);
 
@@ -102,35 +102,35 @@ export const Friends = () => {
 				return (
 					<>
 						<CustomButton size={'tiny'} onClick={() => acceptFriendshipInvite(ids.invitationId ?? '0', paginationInfo)}>
-							<Icon name={'mark'} colorType='fill' color='secondary' size='large' />
+							<Icon name={'mark'} size='large' />
 						</CustomButton>
 						<CustomButton size={'tiny'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? '0', paginationInfo)}>
-							<Icon name={'reject'} colorType='fill' color='secondary' size='large' />
+							<Icon name={'reject'} size='large' />
 						</CustomButton>
 					</>
 				);
 			case 'friend':
 				return (
 					<CustomButton size={'tiny'} onClick={() => inviteToGame(ids.userId, paginationInfo)} disabled={userStatus === 'offline'}>
-						<Icon name={'inviteToGame'} colorType='fill' color='secondary' size='large' />
+						<Icon name={'inviteToGame'} size='large' />
 					</CustomButton>
 				);
 			case 'invitedToGame':
 				return (
 					<CustomButton size={'tiny'} onClick={() => rejectionInviteToGame(ids.userId, paginationInfo)}>
-						<Icon name={'invitedToGame'} colorType='fill' color='secondary' size='large' />
+						<Icon name={'invitedToGame'} size='large' />
 					</CustomButton>
 				);
 			case 'pending':
 				return (
 					<CustomButton size={'tiny'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? '0', paginationInfo)}>
-						<Icon name={'pending'} colorType='fill' color='secondary' size='large' />
+						<Icon name={'pending'} size='large' />
 					</CustomButton>
 				);
 			case 'loading':
 				return (
 					<CustomButton size={'tiny'}>
-						<Icon name={'spiner'} colorType='fill' color='secondary' size='large' />
+						<Icon name={'spiner'} size='large' />
 					</CustomButton>
 				);
 			case 'error':

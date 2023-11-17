@@ -24,17 +24,13 @@
 			&:hover {
 				border: 2px solid var(--color-secondary);
 				background: var(--color-secondary);
-			}
-			&:hover svg {
-				fill: var(--color-primary);
+				color: var(--color-primary);
 			}
 		}
 		&:active {
 			border: 2px solid var(--color-secondary);
 			background: var(--color-secondary);
-		}
-		&:active svg {
-			fill: var(--color-primary);
+			color: var(--color-primary);
 		}
 	}
 	&.primary {
@@ -47,18 +43,12 @@
 				border: 2px solid var(--color-primary);
 				color: var(--color-primary);
 			}
-			&:hover:not(:disabled) svg {
-				fill: var(--color-primary);
-			}
 		}
 
 		&:active:not(:disabled) {
 			background: var(--color-secondary);
 			border: 2px solid var(--color-primary);
 			color: var(--color-primary);
-		}
-		&:active:not(:disabled) svg {
-			fill: var(--color-primary);
 		}
 	}
 	&.default {
@@ -82,17 +72,11 @@
 				border: 2px solid var(--color-red);
 				color: var(--color-red);
 			}
-			&:hover:not(:disabled) svg {
-				fill: var(--color-primary);
-			}
 		}
 		&:active:not(:disabled) {
 			background: var(--color-primary);
 			border: 2px solid var(--color-red);
 			color: var(--color-red);
-		}
-		&:active:not(:disabled) svg {
-			fill: var(--color-primary);
 		}
 	}
 	&.secondary {
@@ -106,18 +90,12 @@
 				border: 2px solid var(--color-secondary);
 				color: var(--color-secondary);
 			}
-			&:hover:not(:disabled) svg {
-				fill: var(--color-primary);
-			}
 		}
 
 		&:active:not(:disabled) {
 			background: var(--color-primary);
 			border: 2px solid var(--color-secondary);
 			color: var(--color-secondary);
-		}
-		&:active:not(:disabled) svg {
-			fill: var(--color-primary);
 		}
 	}
 	&.with-gap {
@@ -141,6 +119,11 @@
 		}
 	}
 
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
 	&--variant {
 		&-primary {
 			background: transparent;
@@ -152,18 +135,12 @@
 					border: 2px solid var(--color-primary);
 					color: var(--color-primary);
 				}
-				&:hover:not(:disabled) svg {
-					fill: var(--color-primary);
-				}
 			}
 
 			&:active:not(:disabled) {
 				background: var(--color-secondary);
 				border: 2px solid var(--color-primary);
 				color: var(--color-primary);
-			}
-			&:active:not(:disabled) svg {
-				fill: var(--color-primary);
 			}
 		}
 		&-secondary {
@@ -177,18 +154,12 @@
 					border: 2px solid var(--color-secondary);
 					color: var(--color-secondary);
 				}
-				&:hover:not(:disabled) svg {
-					fill: var(--color-primary);
-				}
 			}
 
 			&:active:not(:disabled) {
 				background: var(--color-primary);
 				border: 2px solid var(--color-secondary);
 				color: var(--color-secondary);
-			}
-			&:active:not(:disabled) svg {
-				fill: var(--color-primary);
 			}
 		}
 
@@ -203,38 +174,29 @@
 					border: 2px solid var(--color-red);
 					color: var(--color-red);
 				}
-				&:hover:not(:disabled) svg {
-					fill: var(--color-primary);
-				}
 			}
 			&:active:not(:disabled) {
 				background: var(--color-primary);
 				border: 2px solid var(--color-red);
 				color: var(--color-red);
 			}
-			&:active:not(:disabled) svg {
-				fill: var(--color-primary);
-			}
 		}
 
 		&-default {
 			border: 2px solid transparent;
 			border-radius: 4px;
+			color: var(--color-secondary);
 			@include desktopHover {
-				&:hover {
+				&:hover:not(:disabled) {
 					border: 2px solid var(--color-secondary);
 					background: var(--color-secondary);
-				}
-				&:hover svg {
-					fill: var(--color-primary);
+					color: var(--color-primary);
 				}
 			}
-			&:active {
+			&:active:not(:disabled) {
 				border: 2px solid var(--color-secondary);
 				background: var(--color-secondary);
-			}
-			&:active svg {
-				fill: var(--color-primary);
+				color: var(--color-primary);
 			}
 		}
 	}

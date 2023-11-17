@@ -30,9 +30,11 @@
 		}
 	}
 
-	&--fill-secondary > svg,
-	&--fill-default > svg {
+	&--fill-secondary > svg {
 		fill: var(--color-secondary);
+	}
+	&--fill-default > svg {
+		fill: currentColor;
 	}
 
 	&--fill-primary > svg {
@@ -56,8 +58,11 @@
 		fill: inherit;
 	}
 
-	&--stroke-secondary > svg,
 	&--stroke-default > svg {
+		stroke: currentColor;
+	}
+
+	&--stroke-secondary > svg {
 		stroke: var(--color-secondary);
 	}
 
@@ -84,5 +89,5 @@
 }
 
 .icon > svg {
-	transition: fill 0.3s, stroke 0.3s;
+	transition: fill 0.3s, stroke 0.3s, color 0.3s;
 }

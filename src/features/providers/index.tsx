@@ -2,6 +2,8 @@ import { useAppSelector } from '@/shared/hooks/reduxHooks';
 import { WebSocketProvider } from '@/shared/providers/WebSocketProvider';
 import { PropsWithChildren } from 'react';
 import { GetAuthState } from '../accountAuth';
+import { Preloader } from '@/shared/ui/preloader';
+import { CSSTransition } from 'react-transition-group';
 
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
 	const userInfo = useAppSelector((state) => state.user);
@@ -13,6 +15,9 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
 					{children}
 				</WebSocketProvider>
 			</GetAuthState>
+			<CSSTransition in={!userInfo.isloaded} timeout={1000} classNames='opacity' unmountOnExit>
+				<Preloader />
+			</CSSTransition>
 		</>
 	);
 };

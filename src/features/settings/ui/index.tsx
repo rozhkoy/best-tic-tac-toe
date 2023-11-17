@@ -11,6 +11,7 @@ import { themeTypes } from '../types';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
 import { toggleSettingsVisible } from '../store';
 import { useFirebaseAuth } from '@/features/accountAuth';
+import { updateTheme } from '@/features/theme';
 
 export const Settings = () => {
 	const settings = useAppSelector((state) => state.settings);
@@ -21,7 +22,10 @@ export const Settings = () => {
 
 	function changeTheme(newTheme: themeTypes) {
 		setTheme(newTheme);
-		if (newTheme !== 'auto') document.body.className = `${newTheme}-theme`;
+		if (newTheme !== 'auto') {
+			document.body.className = `${newTheme}-theme`;
+			dispatch(updateTheme(newTheme));
+		}
 		localStorage.setItem('theme', newTheme);
 	}
 
