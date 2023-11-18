@@ -3,8 +3,8 @@
 	justify-content: space-between;
 	align-items: center;
 	border: 3px solid var(--color-secondary);
-	padding: 6px;
-	border-radius: 14px;
+	padding: 3px;
+	border-radius: 10px;
 	position: relative;
 	transition: border-color var(--transition-duration);
 	&.disabled {

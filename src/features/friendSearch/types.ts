@@ -50,6 +50,9 @@ export interface IButtonsIds {
 
 export interface ListOfUsersProps {
 	list: Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>;
+	isLoading: boolean;
+	isSuccess: boolean;
+	isError: boolean;
 	children: (status: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo, userStatus: UserStatusTypes) => React.ReactNode;
 }
 

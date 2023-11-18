@@ -2,12 +2,13 @@
 	&__container {
 		display: grid;
 		grid-gap: 42px;
-		max-width: 500px;
+		max-width: 467px;
 		width: 100%;
 		padding: 15px;
 		grid-template-rows: fit-content(100%) 1fr fit-content(100%);
+
 		@include mobile {
-			grid-gap: 20px;
+			grid-gap: 25px;
 		}
 	}
 }

@@ -18,6 +18,9 @@
 	&__text-box {
 		display: flex;
 		flex-direction: column;
+		&--with-gap {
+			grid-gap: 5px;
+		}
 	}
 	&__nickname {
 		font-size: 16px;

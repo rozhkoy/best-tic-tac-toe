@@ -54,7 +54,7 @@ export const Settings = () => {
 					<Devider />
 					<div className='settings__themes'>
 						<div className='settings__theme-heading'>
-							<Icon name={'moon'} className={'settings__theme-heading-icon'} />
+							<Icon name={'moon'} className={'settings__theme-heading-icon'} color={'secondary'} />
 							<span className={'settings__theme-heading-text'}>Themes</span>
 						</div>
 						<CustomRadio fields={['dark', 'light', 'auto'] as Array<themeTypes>} value={theme} onChange={changeTheme} />

@@ -12,6 +12,7 @@ import { Wrap } from '@/pages/wrap';
 import { PrivateRoutes } from '@/features/privateRoutes';
 import { GetAuthState } from '@/features/accountAuth/lib/getAuthState';
 import { Providers } from '@/features/providers';
+import { PageNotFound } from '@/pages/404';
 
 export const AppProvider = () => {
 	const router = createBrowserRouter([
@@ -87,6 +88,7 @@ export const AppProvider = () => {
 				},
 			],
 		},
+		{ path: '*', element: <PageNotFound /> },
 	]);
 
 	return <RouterProvider router={router} />;

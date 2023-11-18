@@ -1,0 +1,10 @@
+.app-wrap {
+	display: grid;
+	width: 100%;
+	min-height: 100vh;
+	min-height: 100dvh;
+	grid-template-rows: 1fr fit-content(100%);
+	@include tablet {
+		grid-template-rows: 1fr;
+	}
+}

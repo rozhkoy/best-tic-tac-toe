@@ -7,10 +7,12 @@
 		height: 40px;
 	}
 	&__plate {
-		display: flex;
+		display: grid;
+		grid-template-columns: minmax(70px, 150px) fit-content(100%) minmax(70px, 150px);
 		justify-content: space-between;
 		height: 60px;
 		position: relative;
+		grid-gap: 10px;
 		@include mobile {
 			height: 40px;
 		}
@@ -35,7 +37,7 @@
 		line-height: 1.8;
 		text-align: center;
 		@include mobile {
-			font-size: 20px;
+			font-size: 30px;
 		}
 		&--secondary {
 			color: var(--color-secondary);
@@ -60,7 +62,7 @@
 	&__player {
 		display: flex;
 		align-items: center;
-		width: 150px;
+		// width: 150px;
 		&--right {
 			justify-content: flex-end;
 		}
@@ -73,8 +75,11 @@
 		font-size: 24px;
 		line-height: 1.5;
 		color: var(--color-light-gray);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		@include mobile {
-			font-size: 20px;
+			font-size: 24px;
 		}
 		&--active {
 			color: var(--color-secondary);
@@ -110,7 +115,7 @@
 		text-align: center;
 		color: var(--color-secondary);
 		@include mobile {
-			font-size: 28px;
+			font-size: 32px;
 		}
 	}
 }

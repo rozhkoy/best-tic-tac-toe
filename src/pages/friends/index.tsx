@@ -326,17 +326,17 @@ export const Friends = () => {
 				<CustomRadio<SearchModeProp, SearchModeTypes> fields={['Friends', 'Requests', 'Search']} value={currentTab} onChange={customRadioHandler} />
 
 				{currentTab === 'Friends' && (
-					<ListOfUsers list={yourFriendsResponse} ref={ref}>
+					<ListOfUsers list={yourFriendsResponse} ref={ref} isLoading={yourFriends.isLoading} isSuccess={yourFriends.isSuccess} isError={yourFriends.isError}>
 						{buttons}
 					</ListOfUsers>
 				)}
 				{currentTab === 'Requests' && (
-					<ListOfUsers list={friendsRequestResponse} ref={ref}>
+					<ListOfUsers list={friendsRequestResponse} ref={ref} isLoading={friendsRequest.isLoading} isSuccess={friendsRequest.isSuccess} isError={friendsRequest.isError}>
 						{buttons}
 					</ListOfUsers>
 				)}
 				{currentTab === 'Search' && (
-					<ListOfUsers list={globalSearchResult} ref={ref}>
+					<ListOfUsers list={globalSearchResult} ref={ref} isLoading={globalSearch.isLoading} isSuccess={globalSearch.isSuccess} isError={globalSearch.isError}>
 						{buttons}
 					</ListOfUsers>
 				)}

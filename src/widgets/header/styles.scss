@@ -4,14 +4,14 @@
 	left: 0;
 	right: 0;
 	width: 100%;
-	padding: 24px 44px;
+	padding: 15px 44px;
 	display: flex;
 	z-index: 900;
 	justify-content: space-between;
 	align-items: center;
 	background: var(--color-primary);
 	border-bottom: 1px solid var(--color-gray);
-	min-height: 107px;
+	min-height: 95px;
 	@include tablet {
 		padding: 5px 15px;
 		min-height: 55px;

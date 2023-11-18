@@ -1,7 +1,7 @@
 .avatar {
 	--size: 100%;
 	display: block;
-	border-radius: 50%;
+	border-radius: 50% !important;
 	object-fit: cover;
 	object-position: center;
 	width: var(--size);

@@ -1,11 +1,12 @@
-import { Avatar } from '../avatar';
+import { Avatar, AvatarSkeleton } from '../avatar';
 import { UserStatus } from '../userStatus';
-import { UserProfileProps } from './types';
+import { UserProfileProps, UserProfileSkeletonProps } from './types';
 import './styles.scss';
 import { Link } from 'react-router-dom';
 import { routes } from '@/app/provider/routes';
 import { Rating } from '../rating';
 import classNames from 'classnames';
+import { SkeletonItem } from '../skeletonItem';
 
 export const UserProfile: React.FC<UserProfileProps> = ({ size, alt, nickname, status, src, userId, rating }) => {
 	return (
@@ -22,6 +23,19 @@ export const UserProfile: React.FC<UserProfileProps> = ({ size, alt, nickname, s
 
 				{rating && <Rating number={rating} />}
 				<UserStatus className='user-profile__status' status={status} />
+			</div>
+		</div>
+	);
+};
+
+export const UserProfileSkeleton: React.FC<UserProfileSkeletonProps> = ({ size, rating = false }) => {
+	return (
+		<div className='user-profile'>
+			<AvatarSkeleton className='user-profile__avatar' size={size} />
+			<div className={classNames('user-profile__info', 'user-profile__info--with-skeleton-gap')}>
+				<SkeletonItem width={100} height={16} />
+				{rating && <SkeletonItem width={70} height={20} />}
+				<SkeletonItem className='user-profile__status' width={50} height={12} />
 			</div>
 		</div>
 	);

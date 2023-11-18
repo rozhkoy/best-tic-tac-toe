@@ -36,3 +36,25 @@
 		}
 	}
 }
+
+.stats-item-skeleton {
+	grid-gap: 25px;
+
+	@include tablet {
+		grid-gap: 15px;
+	}
+
+	&__number {
+		@include tablet {
+			height: 30px !important;
+			width: 50px !important;
+		}
+	}
+
+	&__title {
+		@include tablet {
+			height: 20px !important;
+			width: 80px !important;
+		}
+	}
+}
