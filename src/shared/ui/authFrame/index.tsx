@@ -9,6 +9,7 @@ import { useAppSelector } from '@/shared/hooks/reduxHooks';
 
 export const AuthFrame: React.FC<PropsWithChildren> = ({ children }) => {
 	const theme = useAppSelector((state) => state.theme);
+	console.log(theme.color);
 	return (
 		<div className='auth-frame'>
 			<div className='auth-frame__content-box'>

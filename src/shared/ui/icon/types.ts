@@ -6,24 +6,6 @@ export interface IconProps {
 	colorType?: 'fill' | 'stroke';
 }
 
-// const iconNames = [
-//     "back",
-//     "facebook",
-//     "github",
-//     "google",
-//     "behance",
-//     "linkedin",
-//     "cup",
-//     "logout",
-//     "login",
-//     "moon",
-//     "music",
-//     "restart",
-//     "search",
-//     "sound",
-//     "sun",
-// ];
-
 export type IconColorTypes = 'primary' | 'secondary' | 'red' | 'light-gray' | 'gray' | 'inherit' | 'default';
 
 export type IconNamesTypes =
@@ -52,4 +34,9 @@ export type IconNamesTypes =
 	| 'profile'
 	| 'notifications'
 	| 'friends'
-	| 'settings';
+	| 'settings'
+	| 'spiner'
+	| 'inviteToGame'
+	| 'invitedToGame'
+	| 'addToFriends'
+	| 'pending';

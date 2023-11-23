@@ -1,4 +1,7 @@
 .list-wrap {
 	display: grid;
 	grid-gap: 24px;
+	@include smallTablet {
+		grid-gap: 15px;
+	}
 }

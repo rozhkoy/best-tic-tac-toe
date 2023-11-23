@@ -1,12 +1,12 @@
 import { Button } from '@/shared/ui/button';
 import { Container } from '@/shared/ui/container';
-import { UserProfile } from '@/shared/ui/userProfile';
+import { UserProfile, UserProfileSkeleton } from '@/shared/ui/userProfile';
 import './styles.scss';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Section } from '@/shared/ui/section';
-import { StatsItem } from '@/shared/ui/statsItem';
+import { StatsItem, StatsItemSkeleton } from '@/shared/ui/statsItem';
 import { ListWrap } from '@/shared/ui/listWrap';
-import { HistoryItem } from '@/shared/ui/historyItem';
+import { HistoryItem, HistoryItemSkeleton } from '@/shared/ui/historyItem';
 import { Nothing } from '@/shared/ui/nothing';
 import { useBeforeUnload, useNavigate, useParams } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -20,6 +20,7 @@ import { createFormData } from '@/shared/lib/CreateFormData';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { addAlert } from '@/features/alertProvider';
+import { SkeletonItem } from '@/shared/ui/skeletonItem';
 
 export const Profile = () => {
 	const PER_PAGE = 10;
@@ -222,8 +223,8 @@ export const Profile = () => {
 
 	return (
 		<div className='profile'>
-			<Container size='large' className='profile__container'>
-				{profileInfoByUserId.isSuccess ? (
+			<Container size='large' className='profile__container' withPadding={true}>
+				{profileInfoByUserId.data ? (
 					<>
 						<div className='profile__user-info'>
 							<UserProfile
@@ -231,7 +232,8 @@ export const Profile = () => {
 								status={profileInfoByUserId.data.userInfo.status}
 								src={`https://source.boringavatars.com/beam/100/${profileInfoByUserId.data.userInfo.nickname}`}
 								rating={profileInfoByUserId.data.userInfo.rating}
-								size='large'></UserProfile>
+								size='large'
+							/>
 
 							{userId != userInfo.userId ? <div className='profile__btns'> {btnStatus && buttons(btnStatus, profileInfoByUserId.data.userInfo.status)}</div> : null}
 						</div>
@@ -244,10 +246,32 @@ export const Profile = () => {
 							</div>
 						</Section>
 					</>
-				) : null}
+				) : (
+					<>
+						<div className='profile__user-info'>
+							<UserProfileSkeleton size='large' rating={true} />
+
+							{userId != userInfo.userId ? (
+								<div className='profile__btns'>
+									<SkeletonItem width={120} height={40} />
+								</div>
+							) : null}
+						</div>
+
+						<Section title='Statistics' className='profile__stats'>
+							<div className='profile__stats-wrap'>
+								<StatsItemSkeleton />
+								<StatsItemSkeleton />
+								<StatsItemSkeleton />
+							</div>
+						</Section>
+					</>
+				)}
 				<Section title='History' className='profile__history'>
 					<ListWrap>
-						{history.data && history.data?.pages[0].rows.length > 0 ? (
+						{history.isLoading ? (
+							[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => <HistoryItemSkeleton />)
+						) : history.data && history.data?.pages[0].rows.length > 0 ? (
 							history.data.pages.map((page, pageIndex, pages) => (
 								<React.Fragment key={pageIndex}>
 									{page.rows.map((item, itemIndex, page) => {
@@ -256,7 +280,7 @@ export const Profile = () => {
 											'0' +
 											(date.getMonth() + 1)
 										).slice(-2)}.${date.getFullYear()}`;
-										if (pageIndex === pages.length - 1 && itemIndex === page.length - 1) {
+										if (pageIndex === pages.length - 1 && itemIndex === Math.floor(page.length / 2)) {
 											return (
 												<HistoryItem
 													key={item.gameHistoryId}

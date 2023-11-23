@@ -9,13 +9,12 @@ import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
 import { FieldCell } from '@/shared/ui/fieldCell';
 import { ICellData } from '@/shared/ui/fieldCell/types';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { useBeforeUnload, useNavigate, useParams } from 'react-router-dom';
+import { useBeforeUnload, useBlocker, useNavigate, useParams } from 'react-router-dom';
 import { IInfoAboutOpponent, IPartialPlayerData } from './types';
 import { GameOverPopup } from '@/shared/ui/gameOverPopup';
 import { CSSTransition } from 'react-transition-group';
 import { updateIsPlayingStatus } from '@/entities/user';
 import { WarningPopup } from '@/shared/ui/warning';
-import { toggleVisible } from '@/features/warningPopupProvider';
 
 export const OnlineSession = () => {
 	const NUMBER_OF_GAMES = 3;
@@ -23,7 +22,8 @@ export const OnlineSession = () => {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const userInfo = useAppSelector((state) => state.user);
-	const warningPopup = useAppSelector((state) => state.warnignPopup);
+	const blocker = useBlocker(({ currentLocation, nextLocation }) => userInfo.isPlaying && currentLocation.pathname !== nextLocation.pathname);
+	const [isVisibleWarningPopup, setIsVisibleWarningPopup] = useState<boolean>(false);
 
 	const webSocket = useContext(WebSocketContext);
 
@@ -336,12 +336,13 @@ export const OnlineSession = () => {
 			factor: 2,
 		});
 		dispatch(updateIsPlayingStatus(false));
-		dispatch(toggleVisible(false));
-		navigate(warningPopup.redirectPath, { replace: true });
+		setIsVisibleWarningPopup(false);
+		if (blocker.state === 'blocked') blocker.proceed();
 	}
 
 	function onNo() {
-		dispatch(toggleVisible(false));
+		setIsVisibleWarningPopup(false);
+		if (blocker.state === 'blocked') blocker.reset();
 	}
 
 	useBeforeUnload(
@@ -349,6 +350,12 @@ export const OnlineSession = () => {
 			return (e.returnValue = 'Leave a Match?');
 		}, [])
 	);
+
+	useEffect(() => {
+		if (blocker.state === 'blocked') {
+			setIsVisibleWarningPopup(true);
+		}
+	}, [blocker.state]);
 
 	return (
 		<>
@@ -363,7 +370,7 @@ export const OnlineSession = () => {
 			<CSSTransition in={gameOverMessage.isShow} timeout={300} classNames='opacity' unmountOnExit>
 				<GameOverPopup message={gameOverMessage.message} color={gameOverMessage.color} />
 			</CSSTransition>
-			<CSSTransition in={warningPopup.isVisible} timeout={300} classNames='opacity' unmountOnExit>
+			<CSSTransition in={isVisibleWarningPopup} timeout={300} classNames='opacity' unmountOnExit>
 				<WarningPopup heading={'Leave a Match?'} text={'If you leave this match, it will count as a lost. Are you sure you want to exit?'} onYes={onYes} onNo={onNo} />
 			</CSSTransition>
 		</>

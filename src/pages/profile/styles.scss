@@ -1,10 +1,17 @@
 .profile {
 	background: var(--color-background);
 	padding: 42px 0;
+
+	@include smallTablet {
+		padding: 20px 0;
+	}
 	&__container {
 		display: flex;
 		flex-direction: column;
 		grid-gap: 42px;
+		@include mobile {
+			grid-gap: 20px;
+		}
 	}
 
 	&__user-info {
@@ -13,18 +20,35 @@
 		align-items: center;
 		border-radius: 10px;
 		background: var(--color-primary);
-		padding: 20px 20px;
+		padding: 15px;
 		width: 100%;
+
+		@include mobile {
+			align-items: flex-start;
+			flex-direction: column;
+			grid-gap: 20px;
+		}
 	}
 
 	&__btns {
 		display: flex;
 		gap: 20px;
+
+		@include mobile {
+			width: 100%;
+			justify-content: center;
+		}
 	}
 
 	&__stats-wrap {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		grid-gap: 24px;
+		@include smallTablet {
+			grid-gap: 15px;
+		}
+		@include mobile {
+			grid-gap: 10px;
+		}
 	}
 }

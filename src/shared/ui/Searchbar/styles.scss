@@ -7,6 +7,9 @@
 	position: relative;
 	color: var(--color-secondary);
 	line-height: 1.5;
+	@include mobile {
+		padding: 15px 20px;
+	}
 
 	&__input {
 		width: 100%;

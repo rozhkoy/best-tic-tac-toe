@@ -4,6 +4,9 @@
 	justify-content: flex-start;
 	&__avatar {
 		margin: 0 24px 0 0;
+		@include mobile {
+			margin: 0 15px 0 0;
+		}
 	}
 
 	&__info {
@@ -11,6 +14,12 @@
 			display: grid;
 			justify-items: start;
 			grid-gap: 5px;
+		}
+
+		&--with-skeleton-gap {
+			display: grid;
+			justify-items: start;
+			grid-gap: 10px;
 		}
 	}
 

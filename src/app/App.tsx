@@ -8,6 +8,8 @@ import store from './store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { GetTheme } from '@/features/theme/lib/GetTheme';
+import { Footer } from '@/shared/ui/footer';
+import { AppWrap } from '@/shared/ui/appWrap';
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -23,7 +25,10 @@ function App() {
 		<QueryClientProvider client={queryClient}>
 			<Provider store={store}>
 				<GetTheme>
-					<AppProvider />
+					<AppWrap>
+						<AppProvider />
+						<Footer />
+					</AppWrap>
 				</GetTheme>
 			</Provider>
 			{/* <ReactQueryDevtools initialIsOpen={false} /> */}

@@ -1,7 +1,10 @@
 .friends {
-	padding: 25px 0 64px 0;
+	padding: 25px 0;
 	&__container {
 		display: grid;
 		grid-gap: 42px;
+		@include smallTablet {
+			grid-gap: 20px;
+		}
 	}
 }

@@ -7,6 +7,9 @@
 	justify-content: space-between;
 	color: var(--color-secondary);
 	line-height: 1.5;
+	@include mobile {
+		padding: 10px;
+	}
 	&--primary {
 		background: var(--color-primary);
 	}

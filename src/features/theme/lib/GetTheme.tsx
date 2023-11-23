@@ -10,10 +10,12 @@ export const GetTheme: React.FC<PropsWithChildren> = ({ children }) => {
 	useEffect(() => {
 		const { innerWidth } = window;
 
-		if (innerWidth < 767) {
+		if (innerWidth <= 991) {
 			dispatch(toggleNotificationsVisible(false));
 		}
+	}, [innerWidth, dispatch]);
 
+	useEffect(() => {
 		const theme = localStorage.getItem('theme');
 		if (theme && theme !== 'auto') {
 			document.body.className = `${theme}-theme`;

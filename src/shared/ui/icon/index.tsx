@@ -25,6 +25,11 @@ import {
 	ProfileIcon,
 	NotificationsIcon,
 	FriendsIcon,
+	InviteToGameIcon,
+	InvitedToGameIcon,
+	SpinerIcon,
+	AddToFriendsIcon,
+	PendingIcon,
 } from './Static';
 import { IconNamesTypes, IconProps } from './types';
 import './styles.scss';
@@ -57,6 +62,11 @@ const icons: Record<IconNamesTypes, React.ReactNode> = {
 	profile: <ProfileIcon />,
 	notifications: <NotificationsIcon />,
 	friends: <FriendsIcon />,
+	inviteToGame: <InviteToGameIcon />,
+	invitedToGame: <InvitedToGameIcon />,
+	spiner: <SpinerIcon />,
+	addToFriends: <AddToFriendsIcon />,
+	pending: <PendingIcon />,
 };
 
 export function Icon({ name, className, size = 'medium', color = 'default', colorType = 'fill' }: IconProps) {

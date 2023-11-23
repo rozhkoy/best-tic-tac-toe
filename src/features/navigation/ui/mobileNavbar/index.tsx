@@ -43,7 +43,7 @@ export const MobileNav = () => {
 			</li>
 			<li className='mobile-nav__item'>
 				<NavLink
-					to={`/user/${userInfo.userId ?? 0}`}
+					to={`/user/${userInfo.userId || '0'}`}
 					className={({ isActive }) => {
 						return `mobile-nav__link ${isActive ? 'mobile-nav__link--active' : ''}`;
 					}}>

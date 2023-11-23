@@ -1,14 +1,12 @@
 .wrap {
 	position: relative;
 	width: 100%;
-	min-height: 100vh;
-	min-height: 100dvh;
 	z-index: 1;
 	display: flex;
 	&__container {
 		display: grid;
 		width: 100%;
-		padding: 107px 0 0 0;
+		padding: 95px 0 0 0;
 		position: relative;
 		z-index: 100;
 		@include tablet {

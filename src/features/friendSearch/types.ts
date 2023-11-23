@@ -20,7 +20,7 @@ export interface IGetAllRequestsForFriendship extends IPagination {
 	userId: string;
 }
 
-export type SearchModeTypes = 'Your friends' | 'Friends requests' | 'Global Search';
+export type SearchModeTypes = 'Friends' | 'Requests' | 'Search';
 
 export type SearchModeProp = Array<SearchModeTypes>;
 
@@ -50,6 +50,9 @@ export interface IButtonsIds {
 
 export interface ListOfUsersProps {
 	list: Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>;
+	isLoading: boolean;
+	isSuccess: boolean;
+	isError: boolean;
 	children: (status: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo, userStatus: UserStatusTypes) => React.ReactNode;
 }
 

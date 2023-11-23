@@ -2,7 +2,11 @@
 	width: 100%;
 	background: var(--color-primary);
 	border-radius: 10px;
-	padding: 20px;
+	padding: 15px;
+
+	@include smallTablet {
+		padding: 10px;
+	}
 
 	display: flex;
 	align-items: center;
@@ -14,6 +18,9 @@
 	&__text-box {
 		display: flex;
 		flex-direction: column;
+		&--with-gap {
+			grid-gap: 5px;
+		}
 	}
 	&__nickname {
 		font-size: 16px;

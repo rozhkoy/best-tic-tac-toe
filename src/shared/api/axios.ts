@@ -3,6 +3,7 @@ import { getUserIdToken } from '../lib/getUserIdToken';
 
 export const server = axios.create({
 	withCredentials: true,
+	// baseURL: 'https://h9trjjj9-5000.euw.devtunnels.ms/',
 	baseURL: 'http://localhost:5000',
 });
 
