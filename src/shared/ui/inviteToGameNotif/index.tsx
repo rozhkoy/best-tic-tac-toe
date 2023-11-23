@@ -4,7 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 import './styles.scss';
 import { IAcceptInviteToGame, InviteToGameNotifsProps } from './types';
 import { useAppDispatch } from '@/shared/hooks/reduxHooks';
-import { removeNotif, toggleVisible } from '@/features/notifications/store';
+import { removeNotif, toggleNotificationsVisible, toggleVisible } from '@/features/notifications/store';
 import { useContext, useEffect } from 'react';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
@@ -33,6 +33,12 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 	}, [dispatch, friendId, id, userId]);
 
 	function acceptInviteToGame(friendId: string, userId: string) {
+		const { innerWidth } = window;
+
+		if (innerWidth <= 991) {
+			dispatch(toggleNotificationsVisible(false));
+		}
+
 		const message: IWebSocketMessage<IAcceptInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME_IS_ACCEPTED,
 			userId: userId,
