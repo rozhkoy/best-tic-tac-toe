@@ -1,0 +1,37 @@
+{
+    "name": "server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "nodemonConfig": {
+        "ignore": [
+            "swagger-output.json"
+        ]
+    },
+    "scripts": {
+        "dev": "nodemon index.js",
+        "debug": "nodemon --inspect-brk index.js",
+        "swagger": "nodemon ./swagger.js"
+    },
+    "dependencies": {
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "dotenv": "^16.1.4",
+        "express": "^4.18.2",
+        "express-fileupload": "^1.4.0",
+        "firebase-admin": "^11.9.0",
+        "morgan": "^1.10.0",
+        "pg": "^8.11.0",
+        "pg-hstore": "^2.3.4",
+        "randomstring": "^1.3.0",
+        "sequelize": "^6.32.0",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.0",
+        "uuid": "^9.0.0",
+        "ws": "^8.13.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.22",
+        "swagger-autogen": "^2.23.7"
+    }
+}

@@ -49,7 +49,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 		};
 
 		webSocket?.send(JSON.stringify(message));
-		dispatch(toggleVisible({ id, isVisible: false }));
+		dispatch(removeNotif(id));
 	}
 
 	function rejectInviteToGame(friendId: string, userId: string) {

@@ -1,0 +1,821 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "My API",
+    "description": "Description",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/api/v1/users/registration": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "sadf4sdf4x46ds85sg65df4g"
+            }
+          },
+          {
+            "name": "nickname",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "nickname"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/RegistrationNewUserResponse"
+            },
+            "description": "User registered successfully."
+          },
+          "400": {
+            "description": "Missing required query parameters",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/users/info/{userId}": {
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "params",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/GetUserInfoByUidResponse"
+            },
+            "description": "User info by uid"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Error!. Missing required query parameters"
+          },
+          "404": {
+            "description": "Error!. User not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/users/all/{userId}": {
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "params",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "query"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/getUsersByNicknameResponse"
+            },
+            "description": "Search response"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/users/profile/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "params",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "invitationUserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/GetProfileInfoByUserIdResponse"
+            },
+            "description": "User profile info"
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/users/history/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "params",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/GetGameHistoryByUserIdResponse"
+            },
+            "description": "User game history"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/users/rating/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "params",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "string",
+              "example": "number",
+              "xml": {
+                "name": "main"
+              }
+            },
+            "description": "User game history"
+          },
+          "404": {
+            "description": "Error!. Failed to get user rating",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/friends/request/send/{userId}": {
+      "post": {
+        "tags": [
+          "Friends"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "params",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "invitationUserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "string",
+              "example": "11",
+              "xml": {
+                "name": "main"
+              }
+            },
+            "description": "Invitation id"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Error!. Missing required query parameters"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/friends/request/accept/": {
+      "patch": {
+        "tags": [
+          "Friends"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "invitationId",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/acceptFriendshipInvite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "boolean",
+              "example": true,
+              "xml": {
+                "name": "main"
+              }
+            },
+            "description": "Update status"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Error!. Missing required query parameters"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/friends/request/reject": {
+      "delete": {
+        "tags": [
+          "Friends"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "invitationId",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/acceptFriendshipInvite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "boolean",
+              "example": true,
+              "xml": {
+                "name": "main"
+              }
+            },
+            "description": "Destruction status"
+          },
+          "404": {
+            "description": "Error!. Failed to get friendship record",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/friends/all/{userId}": {
+      "get": {
+        "tags": [
+          "Friends"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "params",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "query"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/getUsersByNicknameResponse"
+            },
+            "description": "OK"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/friends/request/all/{userId}": {
+      "get": {
+        "tags": [
+          "Friends"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "params",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "query"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/getUsersByNicknameResponse"
+            },
+            "description": "OK"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "RegistrationNewUser": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "example": "string"
+        },
+        "nickname": {
+          "type": "string",
+          "example": "nickname"
+        }
+      }
+    },
+    "RegistrationNewUserResponse": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "example": "18"
+        },
+        "uid": {
+          "type": "string",
+          "example": "sadf4sdf4x46ds85sg65df4g"
+        },
+        "nickname": {
+          "type": "string",
+          "example": "nickname"
+        },
+        "rating": {
+          "type": "number",
+          "example": 1000
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "admin",
+            "user"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "online",
+            "offline",
+            "playing"
+          ]
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "string"
+        }
+      }
+    },
+    "GetUserInfoByUid": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "example": "sadf4sdf4x46ds85sg65df4g"
+        }
+      }
+    },
+    "GetUserInfoByUidResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "4"
+        },
+        "uid": {
+          "type": "string",
+          "example": "sadf4sdf4x46ds85sg65df4g"
+        },
+        "nickname": {
+          "type": "string",
+          "example": "nickname"
+        },
+        "rating": {
+          "type": "number",
+          "example": 1000
+        },
+        "role": {
+          "type": "string",
+          "example": "user"
+        },
+        "status": {
+          "type": "string",
+          "example": "online"
+        },
+        "isActive": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "GetProfileInfoByUserId": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "example": "1"
+        },
+        "targetUserId": {
+          "type": "string",
+          "example": "2"
+        }
+      }
+    },
+    "GetProfileInfoByUserIdResponse": {
+      "type": "object",
+      "properties": {
+        "userInfo": {
+          "type": "object",
+          "properties": {
+            "nickname": {
+              "type": "string",
+              "example": "nickname"
+            },
+            "status": {
+              "type": "string",
+              "example": "offline"
+            },
+            "rating": {
+              "type": "number",
+              "example": 1000
+            }
+          }
+        },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "wins": {
+              "type": "number",
+              "example": 0
+            },
+            "draws": {
+              "type": "number",
+              "example": 0
+            },
+            "losses": {
+              "type": "number",
+              "example": 0
+            }
+          }
+        },
+        "friendshipResponse": {
+          "type": "object",
+          "properties": {
+            "status": {}
+          }
+        }
+      }
+    },
+    "GetGameHistoryByUserIdResponse": {
+      "type": "object",
+      "properties": {
+        "nextPage": {
+          "type": "number",
+          "example": 1
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userInfo": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "example": "32"
+                  },
+                  "nickname": {
+                    "type": "string",
+                    "example": "nickname"
+                  }
+                }
+              },
+              "gameStatus": {
+                "type": "string",
+                "example": "lost"
+              },
+              "winnerPlayerId": {
+                "type": "string",
+                "example": "32"
+              },
+              "gameHistoryId": {
+                "type": "string",
+                "example": "166"
+              },
+              "timestamp": {
+                "type": "string",
+                "example": "1700734491876"
+              }
+            }
+          }
+        }
+      }
+    },
+    "getUsersByNicknameResponse": {
+      "type": "object",
+      "properties": {
+        "nextPage": {
+          "type": "number",
+          "example": 1
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string",
+                "example": "1"
+              },
+              "nickname": {
+                "type": "string",
+                "example": "nickname"
+              },
+              "status": {
+                "type": "string",
+                "example": "online"
+              },
+              "btnsStatus": {
+                "type": "string",
+                "enum": [
+                  null,
+                  "string"
+                ]
+              }
+            }
+          }
+        },
+        "query": {
+          "type": "string",
+          "example": ""
+        }
+      }
+    },
+    "acceptFriendshipInvite": {
+      "type": "object",
+      "properties": {
+        "invitationId": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    }
+  }
+}
