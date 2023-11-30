@@ -32,14 +32,14 @@ const userFriends = sequelize.define(
 	{
 		friend_id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
 		user_id: { type: DataTypes.BIGINT, allowNull: false },
-		friend_user_Id: { type: DataTypes.BIGINT, allowNull: false },
+		user_friend_id: { type: DataTypes.BIGINT, allowNull: false },
 		status: { type: DataTypes.STRING, allowNull: false },
 		couple_id: { type: DataTypes.STRING },
 	},
 	{ timestamps: false }
 );
 
-users.hasOne(userFriends, { foreignKey: 'friend_user_id' });
+users.hasOne(userFriends, { foreignKey: 'user_friend_id' });
 userFriends.belongsTo(users, { foreignKey: 'user_id' });
 
 gameHistories.belongsTo(users, { foreignKey: 'first_player_id', targetKey: 'user_id', as: 'first_player' });

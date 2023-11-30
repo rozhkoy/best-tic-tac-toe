@@ -11,7 +11,7 @@ const cors = require('cors');
 const path = require('path');
 const ws = require('ws');
 const cookieParser = require('cookie-parser');
-const routerV1 = require('./routes/v1/index');
+const routerV1 = require('./routes/v1/rest/index');
 const logger = require('morgan');
 const swaggerFile = require('./swagger-output.json');
 
@@ -70,15 +70,15 @@ const start = async () => {
 		await sequelize.authenticate();
 		await sequelize.sync({ alter: true });
 		const server = app.listen(PORT, () => console.log(`Port: ${PORT}`));
-
 		app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile, { explorer: true }));
 
-		// const webSocketServer = new ws.Server({ noServer: true });
-		// webSocketServer.on('connection', (socket, req) => webSocketListener(webSocketServer, socket, req));
-		// server.on('upgrade', (request, socket, head) => {
-		// 	webSocketServer.handleUpgrade(request, socket, head, (socket) => {
-		// 		webSocketServer.emit('connection', socket, request);
-		// });
+		const webSocketServer = new ws.Server({ noServer: true });
+		webSocketServer.on('connection', (socket, req) => webSocketListener(webSocketServer, socket, req));
+		server.on('upgrade', (request, socket, head) => {
+			webSocketServer.handleUpgrade(request, socket, head, (socket) => {
+				webSocketServer.emit('connection', socket, request);
+			});
+		});
 	} catch (e) {
 		console.log(e);
 	}

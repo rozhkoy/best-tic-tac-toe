@@ -1,6 +1,6 @@
 const Router = require('express');
 const router = new Router();
-const FriendController = require('../../controllers/v1/friendsController');
+const FriendController = require('../../../controllers/v1/friendsController');
 
 router.post('/request/send/:userId', FriendController.sendInviteToFriendship);
 router.patch('/request/accept/', FriendController.acceptFriendshipInvite);

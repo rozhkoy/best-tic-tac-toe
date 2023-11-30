@@ -259,7 +259,7 @@ class UserController {
 			const friendshiptResponse = await userFriends.findOne({
 				where: {
 					user_Id: userId,
-					friend_user_id: targetUserId,
+					user_friend_id: targetUserId,
 				},
 			});
 

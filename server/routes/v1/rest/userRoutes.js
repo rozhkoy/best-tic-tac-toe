@@ -1,6 +1,6 @@
 const Router = require('express');
 const router = new Router();
-const UserController = require('../../controllers/v1/userContorller');
+const UserController = require('../../../controllers/v1/userContorller');
 
 router.post('/registration', UserController.registrationNewUser);
 router.patch('/info/:userId', UserController.getUserInfoByUid);
