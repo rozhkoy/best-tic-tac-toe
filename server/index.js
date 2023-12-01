@@ -14,6 +14,7 @@ const cookieParser = require('cookie-parser');
 const routerV1 = require('./routes/v1/rest/index');
 const logger = require('morgan');
 const swaggerFile = require('./swagger-output.json');
+const webSocketListener = require('./webSocket/index');
 
 const PORT = process.env.PORT || 5000;
 

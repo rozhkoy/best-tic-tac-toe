@@ -273,7 +273,7 @@ class FriendController {
 				include: {
 					model: userFriends,
 					where: {
-						userId: userId,
+						user_id: userId,
 						status: {
 							[Op.or]: ['friend', 'invitedToGame'],
 						},

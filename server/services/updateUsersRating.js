@@ -12,16 +12,16 @@ module.exports = async function updateUsersRating({ firstPlayerId, secondPlayerI
 
 	const firstPlayerInfo = await user.findOne({
 		where: {
-			userId: firstPlayerId,
+			user_id: firstPlayerId,
 		},
-		attributes: ['rating', 'userId'],
+		attributes: ['rating', 'user_id'],
 	});
 
 	const secondPlayerInfo = await user.findOne({
 		where: {
-			userId: secondPlayerId,
+			user_id: secondPlayerId,
 		},
-		attributes: ['rating', 'userId'],
+		attributes: ['rating', 'user_id'],
 	});
 
 	const newFirstPlayerRating = elo(firstPlayerInfo.rating, secondPlayerInfo.rating, winnerPlayerId == 0 ? 0.5 : winnerPlayerId == firstPlayerId ? 1 : 0, factor);
@@ -34,7 +34,7 @@ module.exports = async function updateUsersRating({ firstPlayerId, secondPlayerI
 		},
 		{
 			where: {
-				userId: firstPlayerId,
+				user_id: firstPlayerId,
 			},
 		}
 	);
@@ -49,7 +49,7 @@ module.exports = async function updateUsersRating({ firstPlayerId, secondPlayerI
 		},
 		{
 			where: {
-				userId: secondPlayerId,
+				user_id: secondPlayerId,
 			},
 		}
 	);

@@ -1,4 +1,4 @@
-const { userFriends } = require('../../database/models');
+const { userFriends, users } = require('../../database/models');
 const friendsBtnStatuses = require('../../constants/friendBtnStatuses');
 const webSocketStatuses = require('../../constants/webSocketStatuses');
 const sendMessage = require('../../services/sendMessage');
@@ -8,7 +8,7 @@ const sendPrivateMessage = require('../../services/sendPrivateMessage');
 const updateUsersRating = require('../../services/updateUsersRating');
 
 class GameController {
-	async inviteToGame({ client, usersId, message }) {
+	async inviteToGame({ usersId, message }) {
 		try {
 			const { friendId } = message.data;
 			const { userId } = message;
@@ -17,7 +17,7 @@ class GameController {
 				throw new Error('Error!. Missing required query parameters');
 			}
 
-			const senderInfo = await user.findOne({
+			const senderInfo = await users.findOne({
 				where: {
 					user_id: userId,
 				},
@@ -72,7 +72,7 @@ class GameController {
 		}
 	}
 
-	async acceptInviteToGame({ client, usersId, message, sessions }) {
+	async acceptInviteToGame({ usersId, message, sessions }) {
 		try {
 			const { friendId } = message.data;
 			const { userId } = message;
@@ -83,7 +83,7 @@ class GameController {
 
 			message.data.sessionId = randomstring.generate();
 
-			const updateStatusFirstUser = await user.update(
+			const updateStatusFirstUser = await users.update(
 				{
 					status: userStatuses.PLAYING,
 				},
@@ -98,7 +98,7 @@ class GameController {
 				throw new Error('Error!. Failed to update user status');
 			}
 
-			const updateStatusSecondUser = await user.update(
+			const updateStatusSecondUser = await users.update(
 				{
 					status: userStatuses.PLAYING,
 				},
@@ -143,9 +143,9 @@ class GameController {
 				throw new Error('Error!. Failed to update status');
 			}
 
-			const firstPlayerInfo = await user.findOne({
+			const firstPlayerInfo = await users.findOne({
 				where: {
-					userId: userId,
+					user_id: userId,
 				},
 				attributes: ['nickname', 'userId'],
 			});
@@ -154,9 +154,9 @@ class GameController {
 				throw new Error('Error!. Failed to get user info');
 			}
 
-			const secondPlayerInfo = await user.findOne({
+			const secondPlayerInfo = await users.findOne({
 				where: {
-					userId: friendId,
+					user_id: friendId,
 				},
 				attributes: ['nickname', 'userId'],
 			});
@@ -197,7 +197,7 @@ class GameController {
 		}
 	}
 
-	async rejectInviteToGame({ message, usersId, client }) {
+	async rejectInviteToGame({ message, usersId }) {
 		try {
 			const { friendId } = message.data;
 			const { userId } = message;
@@ -294,7 +294,7 @@ class GameController {
 		}
 	}
 
-	handleReadyState({ message, sessions, client }) {
+	handleReadyState({ message, sessions, usersId }) {
 		try {
 			const { sessionId } = message.data;
 			const { userId } = message;
@@ -317,13 +317,13 @@ class GameController {
 						if (player.friendId.role === 'cross') {
 							isSuccessfully = sendMessageToUser({ client: usersId.get(player.friendId), message });
 						} else {
-							isSuccessfully = sendMessageToUser({ client: client, message });
+							isSuccessfully = sendMessageToUser({ client: usersId.get(userId), message });
 						}
 
 						if (!isSuccessfully) {
 							message.event = webSocketEventNames.ERROR;
 							message.data = {};
-							isSuccessfully = sendMessageToUser({ client: client, message });
+							isSuccessfully = sendMessageToUser({ client: usersId.get(userId), message });
 						}
 					}
 				}
@@ -348,13 +348,13 @@ class GameController {
 
 			updateUsersRating({ firstPlayerId, secondPlayerId, winnerPlayerId, sessionId, factor, sessions });
 
-			const updateFirstPlayerStatusResponse = await user.update(
+			const updateFirstPlayerStatusResponse = await users.update(
 				{
 					rating: newFirstPlayerRating,
 				},
 				{
 					where: {
-						userId: firstPlayerId,
+						user_id: firstPlayerId,
 					},
 				}
 			);
@@ -363,13 +363,13 @@ class GameController {
 				throw new Error('Error!. Faild to update user status');
 			}
 
-			const updateSecondPlayerStatusResponse = await user.update(
+			const updateSecondPlayerStatusResponse = await users.update(
 				{
 					rating: newSecondPlayerRating,
 				},
 				{
 					where: {
-						userId: secondPlayerId,
+						user_id: secondPlayerId,
 					},
 				}
 			);
