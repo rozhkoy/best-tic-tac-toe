@@ -33,9 +33,10 @@ class FriendController {
 				return res.status(400).json({ message: 'Error!. Missing required query parameters' });
 			}
 
+			// need to fix this method
 			const firstFriendshipRecordResponse = await userFriends.create({
 				user_id,
-				user_friend_id: invitationUserId,
+				friend_user_id: invitationUserId,
 				status: 'pending',
 				coupleId: null,
 			});
@@ -46,7 +47,7 @@ class FriendController {
 
 			const secondFriendshipRecordResponse = await userFriends.create({
 				user_id: invitationUserId,
-				user_friend_id: userId,
+				friend_user_id: userId,
 				status: 'invitation',
 				couple_id: firstFriendshipRecordResponse.friend_id,
 			});
@@ -130,7 +131,7 @@ class FriendController {
 			}
 
 			const updateFriendshipRecordResponse = await userFriend.update(
-				{ status: secondFriendshipRecordResponse.status, user_id: secondFriendshipRecordResponse.user_friend_id, user_friend_id: secondFriendshipRecordResponse.user_id },
+				{ status: secondFriendshipRecordResponse.status, user_id: secondFriendshipRecordResponse.friend_user_id, friend_user_id: secondFriendshipRecordResponse.user_id },
 				{ where: { friend_id: secondFriendshipRecordResponse.couple_id } }
 			);
 
