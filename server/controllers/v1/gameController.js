@@ -147,7 +147,7 @@ class GameController {
 				where: {
 					user_id: userId,
 				},
-				attributes: ['nickname', 'userId'],
+				attributes: ['nickname', 'user_id'],
 			});
 
 			if (!firstPlayerInfo) {
@@ -158,7 +158,7 @@ class GameController {
 				where: {
 					user_id: friendId,
 				},
-				attributes: ['nickname', 'userId'],
+				attributes: ['nickname', 'user_id'],
 			});
 
 			if (!secondPlayerInfo) {
