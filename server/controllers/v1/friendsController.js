@@ -33,6 +33,7 @@ class FriendController {
 				return res.status(400).json({ message: 'Error!. Missing required query parameters' });
 			}
 
+			// need to fix this method
 			const firstFriendshipRecordResponse = await userFriends.create({
 				user_id,
 				friend_user_id: invitationUserId,
@@ -272,7 +273,7 @@ class FriendController {
 				include: {
 					model: userFriends,
 					where: {
-						userId: userId,
+						user_id: userId,
 						status: {
 							[Op.or]: ['friend', 'invitedToGame'],
 						},

@@ -1,0 +1,5 @@
+module.exports = Object.freeze({
+	INVITED_TO_GAME: 'INVITED_TO_GAME',
+	FRIEND: 'FRIEND',
+	INVITED_TO_FRIENDS: 'INVITED_TO_FRIENDS',
+});

@@ -256,10 +256,10 @@ class UserController {
 				return res.status(404).send({ message: 'User not found' });
 			}
 
-			const friendshiptResponse = await userFriends.findOne({
+			const friendshipResponse = await userFriends.findOne({
 				where: {
 					user_Id: userId,
-					friend_user_id: targetUserId,
+					user_friend_id: targetUserId,
 				},
 			});
 
@@ -296,7 +296,7 @@ class UserController {
 					draws: draws,
 					losses: losses,
 				},
-				friendshipResponse: friendshiptResponse ? { status: friendshiptResponse.status, invitationId: friendshiptResponse.friend_id } : { status: null },
+				friendshipResponse: friendshipResponse ? { status: friendshipResponse.status, invitationId: friendshipResponse.friend_id } : { status: null },
 			};
 
 			/* 
