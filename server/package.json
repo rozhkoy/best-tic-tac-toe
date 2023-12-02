@@ -10,7 +10,7 @@
     },
     "scripts": {
         "dev": "nodemon index.js",
-        "debug": "nodemon --inspect-brk index.js",
+        "debug": "nodemon --inspect index.js",
         "swagger": "nodemon ./swagger.js"
     },
     "dependencies": {

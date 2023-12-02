@@ -7,7 +7,6 @@ const usersId = new Map();
 const sessions = new Map();
 
 const elo = require('../services/elo');
-const { users } = require('../database/models');
 
 module.exports = (webSocketServer, socket, req) => {
 	try {

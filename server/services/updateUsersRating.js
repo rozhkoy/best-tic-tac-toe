@@ -1,8 +1,11 @@
+const { gameHistories, users } = require('../database/models');
+const elo = require('./elo');
+
 module.exports = async function updateUsersRating({ firstPlayerId, secondPlayerId, winnerPlayerId, sessionId, factor, sessions }) {
-	const createGameHistoryRecordResponse = await gameHistory.create({
-		firstPlayerId,
-		secondPlayerId,
-		winnerPlayerId,
+	const createGameHistoryRecordResponse = await gameHistories.create({
+		first_player_id: firstPlayerId,
+		second_player_id: secondPlayerId,
+		winner_player_id: winnerPlayerId,
 		timestamp: Date.now(),
 	});
 
@@ -10,14 +13,14 @@ module.exports = async function updateUsersRating({ firstPlayerId, secondPlayerI
 		throw new Error('Error!. Faild to create game history record');
 	}
 
-	const firstPlayerInfo = await user.findOne({
+	const firstPlayerInfo = await users.findOne({
 		where: {
 			user_id: firstPlayerId,
 		},
 		attributes: ['rating', 'user_id'],
 	});
 
-	const secondPlayerInfo = await user.findOne({
+	const secondPlayerInfo = await users.findOne({
 		where: {
 			user_id: secondPlayerId,
 		},
@@ -28,7 +31,7 @@ module.exports = async function updateUsersRating({ firstPlayerId, secondPlayerI
 
 	const newSecondPlayerRating = elo(secondPlayerInfo.rating, firstPlayerInfo.rating, winnerPlayerId == 0 ? 0.5 : winnerPlayerId == secondPlayerId ? 1 : 0, factor);
 
-	const updateFirstPlayerRatingResponse = await user.update(
+	const updateFirstPlayerRatingResponse = await users.update(
 		{
 			rating: newFirstPlayerRating,
 		},
@@ -43,7 +46,7 @@ module.exports = async function updateUsersRating({ firstPlayerId, secondPlayerI
 		throw new Error('Error!. Faild to update user rating');
 	}
 
-	const updateSecondPlayerRatingResponse = await user.update(
+	const updateSecondPlayerRatingResponse = await users.update(
 		{
 			rating: newSecondPlayerRating,
 		},
@@ -59,6 +62,4 @@ module.exports = async function updateUsersRating({ firstPlayerId, secondPlayerI
 	}
 
 	sessions.delete(sessionId);
-
-	return {};
 };
