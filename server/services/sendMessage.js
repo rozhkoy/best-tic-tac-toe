@@ -1,4 +1,4 @@
-module.export = function ({ recipient, message }) {
+module.exports = (recipient, message) => {
 	try {
 		if (recipient) {
 			recipient.send(JSON.stringify(message));

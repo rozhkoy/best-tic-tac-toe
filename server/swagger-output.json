@@ -59,7 +59,7 @@
         }
       }
     },
-    "/api/v1/users/info/{userId}": {
+    "/api/v1/users/info/{uid}": {
       "patch": {
         "tags": [
           "User"
@@ -105,7 +105,7 @@
       }
     },
     "/api/v1/users/all/{userId}": {
-      "patch": {
+      "get": {
         "tags": [
           "User"
         ],
@@ -164,7 +164,7 @@
         }
       }
     },
-    "/api/v1/users/profile/{userId}": {
+    "/api/v1/users/profile/{targetUserId}": {
       "get": {
         "tags": [
           "User"
@@ -181,8 +181,8 @@
             }
           },
           {
-            "name": "invitationUserId",
-            "in": "query",
+            "name": "targetUserId",
+            "in": "params",
             "required": true,
             "schema": {
               "type": "string",
@@ -212,7 +212,7 @@
         }
       }
     },
-    "/api/v1/users/history/{userId}": {
+    "/api/v1/users/histories/{userId}": {
       "get": {
         "tags": [
           "User"
@@ -306,7 +306,7 @@
         }
       }
     },
-    "/api/v1/friends/request/send/{userId}": {
+    "/api/v1/friends/requests/send/{userId}": {
       "post": {
         "tags": [
           "Friends"
@@ -324,7 +324,7 @@
           },
           {
             "name": "invitationUserId",
-            "in": "query",
+            "in": "formData",
             "required": true,
             "schema": {
               "type": "string",
@@ -358,7 +358,7 @@
         }
       }
     },
-    "/api/v1/friends/request/accept/": {
+    "/api/v1/friends/requests/accept/{invitationId}": {
       "patch": {
         "tags": [
           "Friends"
@@ -367,10 +367,11 @@
         "parameters": [
           {
             "name": "invitationId",
-            "in": "body",
+            "in": "params",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/acceptFriendshipInvite"
+              "type": "string",
+              "example": "1"
             }
           }
         ],
@@ -400,7 +401,7 @@
         }
       }
     },
-    "/api/v1/friends/request/reject": {
+    "/api/v1/friends/requests/reject/{invitationId}": {
       "delete": {
         "tags": [
           "Friends"
@@ -409,10 +410,11 @@
         "parameters": [
           {
             "name": "invitationId",
-            "in": "body",
+            "in": "params",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/acceptFriendshipInvite"
+              "type": "string",
+              "example": "1"
             }
           }
         ],
@@ -502,7 +504,7 @@
         }
       }
     },
-    "/api/v1/friends/request/all/{userId}": {
+    "/api/v1/friends/requests/all/{userId}": {
       "get": {
         "tags": [
           "Friends"
@@ -634,7 +636,7 @@
     "GetUserInfoByUidResponse": {
       "type": "object",
       "properties": {
-        "user_id": {
+        "userId": {
           "type": "string",
           "example": "4"
         },

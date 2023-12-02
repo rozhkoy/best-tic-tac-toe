@@ -1,6 +1,7 @@
 const { userFriends, users } = require('../../database/models');
 const friendsBtnStatuses = require('../../constants/friendBtnStatuses');
 const webSocketStatuses = require('../../constants/webSocketStatuses');
+const webSocketEventNames = require('../../constants/webSocketEventNames');
 const sendMessage = require('../../services/sendMessage');
 const userStatuses = require('../../constants/userStatuses');
 const randomstring = require('randomstring');
@@ -24,14 +25,9 @@ class GameController {
 				attributes: ['nickname', 'user_id'],
 			});
 
-			if (!updateStatusResponse) {
-				throw new Error('Error!. Failed to update status');
-			}
-
 			message.data.senderInfo = senderInfo;
 
-			const isSuccessfully = sendPrivateMessage(usersId.get(userId), usersId.get(friendId), message);
-
+			const isSuccessfully = sendPrivateMessage(usersId.get(userId), usersId.get(friendId), message, webSocketEventNames.INVITATION_TO_GAME_HAS_BEEN_SENT);
 			if (isSuccessfully) {
 				const updateStatusResponse = await userFriends.update(
 					{
@@ -39,7 +35,7 @@ class GameController {
 					},
 					{
 						where: {
-							user_friend_id: response.user_id,
+							user_friend_id: senderInfo.user_id,
 						},
 					}
 				);
@@ -50,11 +46,11 @@ class GameController {
 			} else {
 				const updateStatusResponse = await users.update(
 					{
-						status: friendsBtnStatuses.FRIEND,
+						status: userStatuses.OFFLINE,
 					},
 					{
 						where: {
-							user_id: friend_id,
+							user_id: friendId,
 						},
 					}
 				);
@@ -68,7 +64,7 @@ class GameController {
 			message.data = {};
 			message.status = webSocketStatuses.ERROR;
 			message.event = webSocketEventNames.INTERNEL_SERVER_ERROR;
-			sendMessage(usersId.get(userId), message);
+			sendMessage(usersId.get(message.userId), message);
 		}
 	}
 
@@ -113,7 +109,7 @@ class GameController {
 				throw new Error('Error!. Failed to update user status');
 			}
 
-			const updateFirstFriendshipRecordResponse = await userFriends.updates(
+			const updateFirstFriendshipRecordResponse = await userFriends.update(
 				{
 					status: friendsBtnStatuses.FRIEND,
 				},
@@ -193,7 +189,7 @@ class GameController {
 			message.data = {};
 			message.status = webSocketStatuses.ERROR;
 			message.event = webSocketEventNames.INTERNEL_SERVER_ERROR;
-			sendMessage(usersId.get(userId), message);
+			sendMessage(usersId.get(message.userId), message);
 		}
 	}
 
@@ -242,11 +238,11 @@ class GameController {
 			message.data = {};
 			message.status = webSocketStatuses.ERROR;
 			message.event = webSocketEventNames.INTERNEL_SERVER_ERROR;
-			sendMessage(usersId.get(userId), message);
+			sendMessage(usersId.get(message.userId), message);
 		}
 	}
 
-	getDataAboutOpponent({ message, sessions }) {
+	getDataAboutOpponent({ message, sessions, usersId }) {
 		try {
 			const { sessionId } = message.data;
 			const { userId } = message;
@@ -260,7 +256,7 @@ class GameController {
 			if (!sessionData) {
 				message.data = {};
 				message.error = 'Session is closed';
-				message.event = websocketEventNames.SESSIONS_IS_CLOSED;
+				message.event = webSocketEventNames.SESSIONS_IS_CLOSED;
 			} else {
 				message.data = sessionData;
 			}
@@ -271,7 +267,7 @@ class GameController {
 			message.data = {};
 			message.status = webSocketStatuses.ERROR;
 			message.event = webSocketEventNames.INTERNEL_SERVER_ERROR;
-			sendMessage(usersId.get(userId), message);
+			sendMessage(usersId.get(message.userId), message);
 		}
 	}
 
@@ -280,7 +276,7 @@ class GameController {
 			const { friendId } = message.data;
 			const { userId } = message;
 
-			if (!sessionId || !userId) {
+			if (!friendId || !userId) {
 				throw new Error('Error!. Missing required query parameters');
 			}
 
@@ -290,7 +286,7 @@ class GameController {
 			message.data = {};
 			message.status = webSocketStatuses.ERROR;
 			message.event = webSocketEventNames.INTERNEL_SERVER_ERROR;
-			sendMessage(usersId.get(userId), message);
+			sendMessage(usersId.get(message.userId), message);
 		}
 	}
 
@@ -315,15 +311,15 @@ class GameController {
 					if (player.isReady) {
 						let isSuccessfully;
 						if (player.friendId.role === 'cross') {
-							isSuccessfully = sendMessageToUser({ client: usersId.get(player.friendId), message });
+							isSuccessfully = sendMessage(usersId.get(player.friendId), message);
 						} else {
-							isSuccessfully = sendMessageToUser({ client: usersId.get(userId), message });
+							isSuccessfully = sendMessage(usersId.get(userId), message);
 						}
 
 						if (!isSuccessfully) {
 							message.event = webSocketEventNames.ERROR;
 							message.data = {};
-							isSuccessfully = sendMessageToUser({ client: usersId.get(userId), message });
+							isSuccessfully = sendMessage(usersId.get(userId), message);
 						}
 					}
 				}
@@ -333,7 +329,7 @@ class GameController {
 			message.data = {};
 			message.status = webSocketStatuses.ERROR;
 			message.event = webSocketEventNames.INTERNEL_SERVER_ERROR;
-			sendMessage(usersId.get(userId), message);
+			sendMessage(usersId.get(message.userId), message);
 		}
 	}
 
@@ -350,7 +346,7 @@ class GameController {
 
 			const updateFirstPlayerStatusResponse = await users.update(
 				{
-					rating: newFirstPlayerRating,
+					status: userStatuses.ONLINE,
 				},
 				{
 					where: {
@@ -365,7 +361,7 @@ class GameController {
 
 			const updateSecondPlayerStatusResponse = await users.update(
 				{
-					rating: newSecondPlayerRating,
+					status: userStatuses.ONLINE,
 				},
 				{
 					where: {
@@ -384,7 +380,7 @@ class GameController {
 			message.data = {};
 			message.status = webSocketStatuses.ERROR;
 			message.event = webSocketEventNames.INTERNEL_SERVER_ERROR;
-			sendMessage(usersId.get(userId), message);
+			sendMessage(usersId.get(message.userId), message);
 		}
 	}
 }

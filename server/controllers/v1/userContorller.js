@@ -1,4 +1,6 @@
 const { users, gameHistories, userFriends } = require('../../database/models');
+const { Op } = require('sequelize');
+const { Sequelize } = require('../../database/databaseConection');
 
 class UserController {
 	async registrationNewUser(req, res) {
@@ -18,7 +20,7 @@ class UserController {
 				in: 'query',
 				required: true,
 				schema: 'nickname',
-		
+
 			}
  			*/
 
@@ -34,7 +36,7 @@ class UserController {
 
 			const registrationResponse = await users.create({
 				uid: uid,
-				nickname: nickname,
+				nickname: nickname.length > 12 ? nickname.slice(0, 12) : nickname,
 				rating: 1000,
 				role: 'user',
 				status: 'online',
@@ -94,7 +96,11 @@ class UserController {
 				return res.status(400).json({ message: 'Error!. Missing required query parameters' });
 			}
 
-			const userResponse = await users.findOne({ where: { uid: uid } });
+			const userResponse = await users.findOne({
+				where: {
+					uid: uid,
+				},
+			});
 
 			if (!userResponse) {
 				/*
@@ -116,7 +122,7 @@ class UserController {
                 schema: { "$ref": "#/definitions/GetUserInfoByUidResponse" },
                 description: "User info by uid" }
             */
-			return res.status(200).json(userResponse);
+			return res.status(200).json({ nickname: userResponse.nickname, role: userResponse.role, status: userResponse.status, rating: userResponse.rating, userId: userResponse.user_id });
 		} catch (e) {
 			console.log(e);
 			/* 
@@ -179,7 +185,7 @@ class UserController {
 					},
 				},
 				attributes: ['user_id', 'nickname', 'status'],
-				order: [[Sequelize.literal('CASE WHEN "user"."status" = \'online\' THEN 1 WHEN "user"."status" = \'playing\' THEN 2 ELSE 3 END')], ['user_id', 'ASC']],
+				order: [[Sequelize.literal(`CASE WHEN "user"."status" = \'online\' THEN 1 WHEN "user"."status" = \'playing\' THEN 2 ELSE 3 END`)], ['user_id', 'ASC']],
 				include: {
 					model: userFriends,
 					required: false,
@@ -197,11 +203,11 @@ class UserController {
 				response.nextPage = page;
 			}
 
-			response.rows = listOfUser.rows.map(({ user_id, nickname, status, userFriends }) => {
-				let prepdata = { userId: user_id, nickname, status, btnsStatus: userFriends ? userFriends.status : null };
+			response.rows = listOfUser.rows.map(({ user_id, nickname, status, user_friend }) => {
+				let prepdata = { userId: user_id, nickname, status, btnsStatus: user_friend ? user_friend.status : null };
 
-				if (userFriends) {
-					prepdata.invitationId = userFriends.friend_id;
+				if (user_friend) {
+					prepdata.invitationId = user_friend.friend_id;
 				}
 
 				return prepdata;
@@ -226,8 +232,8 @@ class UserController {
 
 	async getProfileInfoByUserId(req, res) {
 		try {
-			const { userId } = req.params;
-			const { targetUserId } = req.query;
+			const { targetUserId } = req.params;
+			const { userId } = req.query;
 			/*
             #swagger.auto = false
             #swagger.tags = ['User']
@@ -236,15 +242,14 @@ class UserController {
 				required: true,
 				schema: '1',
 			}
-			#swagger.parameters['invitationUserId'] = {
-				in: 'query',
+			#swagger.parameters['targetUserId'] = {
+				in: 'params',
 				required: true,
 				schema: '1',
-		
 			}
  			*/
 
-			const userResponse = await user.findOne({ where: { user_Id: targetUserId } });
+			const userResponse = await users.findOne({ where: { user_id: targetUserId } });
 
 			if (!userResponse) {
 				/*
@@ -258,20 +263,20 @@ class UserController {
 
 			const friendshipResponse = await userFriends.findOne({
 				where: {
-					user_Id: userId,
+					user_id: userId,
 					user_friend_id: targetUserId,
 				},
 			});
 
 			const wins = await gameHistories.count({
 				where: {
-					winner_player_Id: targetUserId,
+					winner_player_id: targetUserId,
 				},
 			});
 
 			const losses = await gameHistories.count({
 				where: {
-					winner_Player_Id: {
+					winner_player_id: {
 						[Op.ne]: targetUserId,
 					},
 					[Op.or]: [{ first_player_id: targetUserId }, { second_player_id: targetUserId }],
@@ -280,7 +285,7 @@ class UserController {
 
 			const draws = await gameHistories.count({
 				where: {
-					winner_player_Id: 0,
+					winner_player_id: 0,
 					[Op.or]: [{ first_player_id: targetUserId }, { second_player_id: targetUserId }],
 				},
 			});
@@ -359,13 +364,13 @@ class UserController {
 				},
 				include: [
 					{
-						model: user,
-						as: 'firstPlayer',
+						model: users,
+						as: 'first_player',
 						attributes: ['user_id', 'nickname'],
 					},
 					{
-						model: user,
-						as: 'secondPlayer',
+						model: users,
+						as: 'second_player',
 						attributes: ['user_id', 'nickname'],
 					},
 				],

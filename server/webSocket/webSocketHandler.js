@@ -1,6 +1,11 @@
-const { userFriends, users } = require('../database/models');
+const { userFriends, users, gameHistories } = require('../database/models');
 const gameController = require('../controllers/v1/gameController');
+const webSocketEventNames = require('../constants/webSocketEventNames');
 const { Op } = require('sequelize');
+const friendsBtnStatuses = require('../constants/friendBtnStatuses');
+const userStatuses = require('../constants/userStatuses');
+const updateUsersRating = require('../services/updateUsersRating');
+const sendMessage = require('../services/sendMessage');
 
 class WebSocketHandler {
 	async message({ webSocketServer, client, usersId, message, req, sessions }) {
@@ -22,13 +27,13 @@ class WebSocketHandler {
 			case webSocketEventNames.SYNC_PLAYGROUND:
 				gameController.syncState({ usersId, message });
 				break;
-			case websocketEventNames.DATA_ABOUT_OPONENT:
-				gameController.getDataAboutOpponent({ message, sessions });
+			case webSocketEventNames.DATA_ABOUT_OPONENT:
+				gameController.getDataAboutOpponent({ message, sessions, usersId });
 				break;
-			case websocketEventNames.START_GAME:
+			case webSocketEventNames.START_GAME:
 				gameController.handleReadyState({ usersId, message, sessions });
 				break;
-			case websocketEventNames.WINNER_FIND:
+			case webSocketEventNames.WINNER_FIND:
 				gameController.syncState({ usersId, message });
 				break;
 			case webSocketEventNames.RESET_GAME_STATE:
@@ -45,7 +50,7 @@ class WebSocketHandler {
 
 			const updateUserStatus = await users.update(
 				{
-					status: 'offline',
+					status: userStatuses.OFFLINE,
 				},
 				{
 					where: {
@@ -60,12 +65,12 @@ class WebSocketHandler {
 
 			const updateFriendshipStatus = await userFriends.update(
 				{
-					status: 'friend',
+					status: friendsBtnStatuses.FRIEND,
 				},
 				{
 					where: {
-						[Op.or]: [{ user_id: userId }, { friend_user_id: userId }],
-						status: 'invitedToGame',
+						[Op.or]: [{ user_id: userId }, { user_friend_id: userId }],
+						status: friendsBtnStatuses.INVITED_TO_GAME,
 					},
 				}
 			);
@@ -76,23 +81,23 @@ class WebSocketHandler {
 
 			sessions.forEach(async ({ players: { firstPlayer, secondPlayer }, sessionId }, index, map) => {
 				if (firstPlayer.userId == userId || secondPlayer.userId == userId) {
-					const response = await gameHistory.create({
+					updateUsersRating({
 						firstPlayerId: firstPlayer.userId,
 						secondPlayerId: secondPlayer.userId,
 						winnerPlayerId: firstPlayer.userId == userId ? firstPlayer.friendId : firstPlayer.userId,
-						timestamp: Date.now(),
+						sessionId,
+						factor: 2,
+						sessions,
 					});
-
-					updateUsersRating({ firstPlayerId: firstPlayer.userId, secondPlayerId: secondPlayer.userId, winnerPlayerId: response.winnerPlayerId, sessionId, factor: 2, sessions });
 
 					const message = {
 						data: {
-							winnerPlayerId: response.winnerPlayerId,
+							winnerPlayerId: firstPlayer.userId == userId ? firstPlayer.friendId : firstPlayer.userId,
 						},
-						event: websocketEventNames.GAME_OVER,
+						event: webSocketEventNames.GAME_OVER,
 					};
 
-					sendMessageToUser({ client: usersId.get(message.data.winnerPlayerId), message });
+					sendMessage(usersId.get(message.data.winnerPlayerId), message);
 
 					return;
 				}

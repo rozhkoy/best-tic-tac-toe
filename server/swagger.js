@@ -28,7 +28,7 @@ const doc = {
 			uid: 'sadf4sdf4x46ds85sg65df4g',
 		},
 		GetUserInfoByUidResponse: {
-			user_id: '4',
+			userId: '4',
 			uid: 'sadf4sdf4x46ds85sg65df4g',
 			nickname: 'nickname',
 			rating: 1000,

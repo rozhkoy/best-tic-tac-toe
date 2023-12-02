@@ -1,6 +1,7 @@
 const { users, userFriends } = require('../../database/models');
 const { Op } = require('sequelize');
 const { Sequelize } = require('../../database/databaseConection');
+const friendsBtnStatuses = require('../../constants/friendBtnStatuses');
 
 class FriendController {
 	async sendInviteToFriendship(req, res) {
@@ -13,17 +14,16 @@ class FriendController {
 			#swagger.parameters['userId'] = {
 				in: 'params',
 				required: true,
-				schema: '1',
+				schema: '1'
 			}
 			#swagger.parameters['invitationUserId'] = {
-				in: 'query',
+				in: 'formData',
 				required: true,
-				schema: '1',
-		
+				schema: '1'
 			}
  			*/
 
-			if (!invitationUserId) {
+			if (!invitationUserId || !userId) {
 				/*
                 #swagger.responses[400] = { 
                     schema: { "$ref": "#/definitions/Error" },
@@ -35,9 +35,9 @@ class FriendController {
 
 			// need to fix this method
 			const firstFriendshipRecordResponse = await userFriends.create({
-				user_id,
-				friend_user_id: invitationUserId,
-				status: 'pending',
+				user_id: userId,
+				user_friend_id: invitationUserId,
+				status: friendsBtnStatuses.PENDING,
 				coupleId: null,
 			});
 
@@ -47,8 +47,8 @@ class FriendController {
 
 			const secondFriendshipRecordResponse = await userFriends.create({
 				user_id: invitationUserId,
-				friend_user_id: userId,
-				status: 'invitation',
+				user_friend_id: userId,
+				status: friendsBtnStatuses.INVITATION_TO_FRIENDS,
 				couple_id: firstFriendshipRecordResponse.friend_id,
 			});
 
@@ -87,14 +87,14 @@ class FriendController {
 
 	async acceptFriendshipInvite(req, res) {
 		try {
-			const { invitationId } = req.body;
+			const { invitationId } = req.params;
 			/*
 			#swagger.auto = false
 			#swagger.tags = ['Friends']
 			#swagger.parameters['invitationId'] = {
-				in: 'body',
+				in: 'params',
 				required: true,
-				schema: { "$ref": "#/definitions/acceptFriendshipInvite" },
+				schema: '1'
 			}
  			*/
 			if (!invitationId) {
@@ -107,8 +107,8 @@ class FriendController {
 				return res.status(400).json({ message: 'Error!. Missing required query parameters' });
 			}
 
-			const status = await userFriend.update(
-				{ status: 'friend' },
+			const status = await userFriends.update(
+				{ status: friendsBtnStatuses.FRIEND },
 				{
 					where: {
 						friend_id: invitationId,
@@ -120,9 +120,9 @@ class FriendController {
 				throw new Error('Error!. Failed to update friendship record');
 			}
 
-			const secondFriendshipRecordResponse = await userFriend.findOne({
+			const secondFriendshipRecordResponse = await userFriends.findOne({
 				where: {
-					friend_id: inviteId,
+					friend_id: invitationId,
 				},
 			});
 
@@ -130,8 +130,8 @@ class FriendController {
 				throw new Error('Error!. Failed to get friendship record');
 			}
 
-			const updateFriendshipRecordResponse = await userFriend.update(
-				{ status: secondFriendshipRecordResponse.status, user_id: secondFriendshipRecordResponse.friend_user_id, friend_user_id: secondFriendshipRecordResponse.user_id },
+			const updateFriendshipRecordResponse = await userFriends.update(
+				{ status: secondFriendshipRecordResponse.status, user_id: secondFriendshipRecordResponse.user_friend_id, user_friend_id: secondFriendshipRecordResponse.user_id },
 				{ where: { friend_id: secondFriendshipRecordResponse.couple_id } }
 			);
 
@@ -157,14 +157,14 @@ class FriendController {
 
 	async rejectFriendshipInvite(req, res) {
 		try {
-			const { invitationId } = req.body;
+			const { invitationId } = req.params;
 			/*
 			#swagger.auto = false
 			#swagger.tags = ['Friends']
 			#swagger.parameters['invitationId'] = {
-				in: 'body',
+				in: 'params',
 				required: true,
-				schema: { "$ref": "#/definitions/acceptFriendshipInvite" },
+				schema: '1'
 			}
 			
  			*/
@@ -197,7 +197,7 @@ class FriendController {
 
 			const secondFriendshipRecordDeletion = await userFriends.destroy({
 				where: {
-					friend_id: response.couple_id,
+					friend_id: firstFriendshipRecordResponse.couple_id,
 				},
 			});
 
@@ -269,13 +269,13 @@ class FriendController {
 						[Op.iLike]: `%${query}%`,
 					},
 				},
-				order: [[Sequelize.literal('CASE WHEN "user"."status" = \'online\' THEN 1 WHEN "user"."status" = \'playing\' THEN 2 ELSE 3 END')], ['userId', 'ASC']],
+				order: [[Sequelize.literal('CASE WHEN "user"."status" = \'online\' THEN 1 WHEN "user"."status" = \'playing\' THEN 2 ELSE 3 END')], ['user_id', 'ASC']],
 				include: {
 					model: userFriends,
 					where: {
 						user_id: userId,
 						status: {
-							[Op.or]: ['friend', 'invitedToGame'],
+							[Op.or]: [friendsBtnStatuses.FRIEND, friendsBtnStatuses.INVITED_TO_GAME],
 						},
 					},
 				},
@@ -289,8 +289,8 @@ class FriendController {
 				response.nextPage = page;
 			}
 
-			response.rows = listOfFriends.rows.map(({ user_id, nickname, status, user_friends }) => {
-				return { userId: user_id, nickname, status, btnsStatus: user_friends ? user_friends.status : null };
+			response.rows = listOfFriends.rows.map(({ user_id, nickname, status, user_friend }) => {
+				return { userId: user_id, nickname, status, btnsStatus: user_friend ? user_friend.status : null };
 			});
 			/* 
             #swagger.responses[200] = { 
@@ -348,6 +348,8 @@ class FriendController {
 				perPage = 10;
 			}
 
+			const offset = page * perPage;
+
 			const listOfRequests = await users.findAndCountAll({
 				where: {
 					nickname: {
@@ -355,15 +357,15 @@ class FriendController {
 					},
 				},
 				include: {
-					model: userFriend,
+					model: userFriends,
 					where: {
-						userId,
+						user_id: userId,
 						status: {
-							[Op.eq]: 'invitation',
+							[Op.eq]: friendsBtnStatuses.INVITATION_TO_FRIENDS,
 						},
 					},
 				},
-				attributes: ['userId', 'nickname', 'status'],
+				attributes: ['user_id', 'nickname', 'status'],
 				limit: perPage,
 				offset,
 			});
@@ -374,8 +376,8 @@ class FriendController {
 				response.nextPage = page;
 			}
 
-			response.rows = listOfRequests.rows.map(({ user_id, nickname, status, user_friends }) => {
-				return { userId: user_id, nickname, status, btnsStatus: user_friends ? user_friends.status : null };
+			response.rows = listOfRequests.rows.map(({ user_id, nickname, status, user_friend }) => {
+				return { userId: user_id, nickname, status, btnsStatus: user_friend ? user_friend.status : null, invitationId: user_friend.friend_id };
 			});
 			/* 
             #swagger.responses[200] = { 
