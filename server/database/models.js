@@ -9,7 +9,7 @@ const users = sequelize.define(
 		nickname: { type: DataTypes.STRING, allowNull: false },
 		rating: { type: DataTypes.INTEGER, allowNull: false },
 		role: { type: DataTypes.ENUM('admin', 'user'), allowNull: false },
-		status: { type: DataTypes.ENUM('online', 'offline', 'playing'), allowNull: false },
+		status: { type: DataTypes.ENUM('ONLINE', 'OFFLINE', 'PLAYING'), allowNull: false },
 		isActive: { type: DataTypes.BOOLEAN, allowNull: false },
 	},
 	{ timestamps: false }

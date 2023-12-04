@@ -21,5 +21,5 @@ export interface IUserState {
 	userId: string;
 	url: string;
 	isloaded?: boolean;
-	isPlaying: boolean;
+	isPlaying?: boolean;
 }

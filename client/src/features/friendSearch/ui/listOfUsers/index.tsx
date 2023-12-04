@@ -8,7 +8,7 @@ export const ListOfUsers = forwardRef<HTMLLIElement, ListOfUsersProps>(({ list, 
 	return (
 		<ListWrap>
 			{isLoading ? (
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => <FriendItemSkeleton variant={'secondary'} size='small' />)
+				[0, 1, 2, 3, 4].map((item) => <FriendItemSkeleton key={item} variant={'secondary'} size='small' />)
 			) : list.length !== 0 && list[0].rows.length ? (
 				list.map((page, pageIndex, pages) => {
 					return (

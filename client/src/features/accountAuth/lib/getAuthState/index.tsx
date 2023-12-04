@@ -10,7 +10,7 @@ export const GetAuthState: React.FC<PropsWithChildren> = ({ children }) => {
 		if (!userInfo.isAuth) {
 			getAuthState();
 		}
-	}, []);
+	}, [userInfo.isAuth]);
 
 	return <>{children}</>;
 };

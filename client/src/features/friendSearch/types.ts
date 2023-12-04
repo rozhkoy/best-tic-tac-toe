@@ -34,9 +34,9 @@ export interface ListOfUserResponse extends IPartialUserInfo {
 	invitationId?: string | null;
 }
 
-export type FrienshipStatusTypes = null | 'friend' | 'invitation' | 'pending';
+export type FrienshipStatusTypes = null | 'FRIEND' | 'INVITATION_TO_FRIENDS' | 'PENDING';
 
-export type FrindshipBtnsStatusTypes = FrienshipStatusTypes | 'loading' | 'error' | 'invitedToGame';
+export type FrindshipBtnsStatusTypes = FrienshipStatusTypes | 'LOADING' | 'ERROR' | 'INVITED_TO_GAME';
 
 export interface IPaginationInfo {
 	page: number;
@@ -61,9 +61,9 @@ interface sendInviteToFriendShipMutationData {
 }
 
 export interface IUseFriendsActionsResponse {
-	sendInviteToFriendShipMutation: UseMutationResult<sendInviteToFriendShipMutationData, unknown, FormData, unknown>;
-	acceptFriendshipInviteMutation: UseMutationResult<boolean, unknown, FormData, unknown>;
-	rejectFriendshipInviteMutation: UseMutationResult<boolean, unknown, FormData, unknown>;
+	sendInviteToFriendShipMutation: UseMutationResult<sendInviteToFriendShipMutationData, unknown, { userId: string; formData: FormData }, unknown>;
+	acceptFriendshipInviteMutation: UseMutationResult<boolean, unknown, string, unknown>;
+	rejectFriendshipInviteMutation: UseMutationResult<boolean, unknown, string, unknown>;
 	sendInviteToGame: (friendId: string, userId: string, paginationInfo?: IPaginationInfo) => boolean;
 	sendRejectionInviteToGame: (friendId: string, userId: string) => boolean;
 }

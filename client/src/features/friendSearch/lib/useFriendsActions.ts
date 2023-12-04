@@ -10,15 +10,15 @@ export function useFriendsActions(): IUseFriendsActionsResponse {
 	const webSocket = useContext(WebSocketContext);
 
 	const sendInviteToFriendShipMutation = useMutation({
-		mutationFn: async (formData: FormData) => await sendInviteToFriendship(formData),
+		mutationFn: async ({ userId, formData }: { userId: string; formData: FormData }) => await sendInviteToFriendship(userId, formData),
 	});
 
 	const acceptFriendshipInviteMutation = useMutation({
-		mutationFn: async (formData: FormData) => await sendAcceptFriendshipInvite(formData),
+		mutationFn: async (invitationId: string) => await sendAcceptFriendshipInvite(invitationId),
 	});
 
 	const rejectFriendshipInviteMutation = useMutation({
-		mutationFn: async (formData: FormData) => await sendRejectFriendshipInvite(formData),
+		mutationFn: async (invitationId: string) => await sendRejectFriendshipInvite(invitationId),
 	});
 
 	function sendInviteToGame(friendId: string, userId: string, paginationInfo?: IPaginationInfo) {

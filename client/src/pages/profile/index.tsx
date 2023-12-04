@@ -2,13 +2,13 @@ import { Button } from '@/shared/ui/button';
 import { Container } from '@/shared/ui/container';
 import { UserProfile, UserProfileSkeleton } from '@/shared/ui/userProfile';
 import './styles.scss';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Section } from '@/shared/ui/section';
 import { StatsItem, StatsItemSkeleton } from '@/shared/ui/statsItem';
 import { ListWrap } from '@/shared/ui/listWrap';
 import { HistoryItem, HistoryItemSkeleton } from '@/shared/ui/historyItem';
 import { Nothing } from '@/shared/ui/nothing';
-import { useBeforeUnload, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { getGameHistoryByUserId, getProfileInfoByUserId } from './api';
 import { useInView } from 'react-intersection-observer';
@@ -21,11 +21,13 @@ import { websocketEventNames } from '@/features/webSocketConnection/lib/websocke
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { addAlert } from '@/features/alertProvider';
 import { SkeletonItem } from '@/shared/ui/skeletonItem';
+import { friendBtnStatuses } from '@/features/friendSearch/friendBtnStatuses';
+import { userStatuses } from '@/shared/ui/userStatus/userStatuses';
 
 export const Profile = () => {
 	const PER_PAGE = 10;
 	const userInfo = useAppSelector((state) => state.user);
-	const { userId } = useParams();
+	const { targetUser } = useParams();
 	const [btnStatus, setBtnStatus] = useState<IProfileFriendshipBtns>({
 		status: null,
 	});
@@ -35,8 +37,8 @@ export const Profile = () => {
 	const [ref, inView] = useInView();
 	const dispatch = useAppDispatch();
 	const profileInfoByUserId = useQuery({
-		queryKey: ['userInfoByUserId', userId],
-		queryFn: () => getProfileInfoByUserId({ userId: userId ?? '0', currentUserId: userInfo.userId }),
+		queryKey: ['userInfoByUserId', targetUser],
+		queryFn: () => getProfileInfoByUserId({ targetUser: targetUser ?? '0', userId: userInfo.userId }),
 		onSuccess: (data) => setBtnStatus(data.friendshipResponse),
 		enabled: !!userInfo.isAuth,
 	});
@@ -44,7 +46,7 @@ export const Profile = () => {
 	const history = useInfiniteQuery({
 		queryKey: ['gameHistory'],
 		queryFn: ({ pageParam }) => {
-			return getGameHistoryByUserId({ userId: userId ?? '0', page: pageParam ?? 0, perPage: PER_PAGE });
+			return getGameHistoryByUserId({ userId: targetUser ?? '0', page: pageParam ?? 0, perPage: PER_PAGE });
 		},
 		getNextPageParam: (lastPage) => lastPage.nextPage,
 		enabled: !!userInfo.isAuth,
@@ -58,24 +60,24 @@ export const Profile = () => {
 	}, [inView, history.hasNextPage]);
 
 	useEffect(() => {
-		if (profileInfoByUserId.isError || !userId) {
+		if (profileInfoByUserId.isError || !targetUser) {
 			navigation('/', { replace: true });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [profileInfoByUserId.isError, userId]);
+	}, [profileInfoByUserId.isError, targetUser]);
 
 	function buttons(btnStatus: IProfileFriendshipBtns, userStatus: UserStatusTypes) {
 		switch (btnStatus.status) {
 			case null:
-				return <Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Add friend'} onClick={() => addToFriends(userInfo.userId, userId ?? '0')} />;
-			case 'invitation':
+				return <Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Add friend'} onClick={() => addToFriends(userInfo.userId, targetUser ?? '0')} />;
+			case friendBtnStatuses.INVITATION_TO_FRIENDS:
 				return (
 					<>
 						<Button size={'tiny'} variant={'primary'} fullWidth={false} type={'button'} title={'Accept'} onClick={() => acceptFriendshipInvite(btnStatus.invitationId ?? '0')} />
 						<Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} title={'Reject'} onClick={() => rejectFriendshipInvite(btnStatus.invitationId ?? '0')} />
 					</>
 				);
-			case 'friend':
+			case friendBtnStatuses.FRIEND:
 				return (
 					<Button
 						size={'tiny'}
@@ -83,74 +85,71 @@ export const Profile = () => {
 						fullWidth={false}
 						type={'button'}
 						title={'Invite to game'}
-						disabled={userStatus === 'offline'}
-						onClick={() => inviteToGame(userId ?? '0', userInfo.userId)}
+						disabled={userStatus === userStatuses.OFFLINE}
+						onClick={() => inviteToGame(targetUser ?? '0', userInfo.userId)}
 					/>
 				);
-			case 'invitedToGame':
-				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Invited to game'} onClick={() => rejectionInviteToGame(userId ?? '0', userInfo.userId)} />;
-			case 'pending':
+			case friendBtnStatuses.INVITED_TO_GAME:
+				return (
+					<Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Invited to game'} onClick={() => rejectionInviteToGame(targetUser ?? '0', userInfo.userId)} />
+				);
+			case friendBtnStatuses.PENDING:
 				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Pending'} onClick={() => rejectFriendshipInvite(btnStatus.invitationId ?? '0')} />;
-			case 'loading':
+			case friendBtnStatuses.LOADING:
 				return <div>loading...</div>;
-			case 'error':
+			case friendBtnStatuses.ERROR:
 				return <Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} title={'Error'} />;
 		}
 	}
 
 	async function addToFriends(userId: string, invitationUserId: string) {
 		setBtnStatus((state) => {
-			state.status = 'loading';
+			state.status = friendBtnStatuses.LOADING;
 			return { ...state };
 		});
-		const formData: FormData = createFormData([
-			{ key: 'userId', value: String(userId) },
-			{ key: 'invitationUserId', value: String(invitationUserId) },
-		]);
-		const response = await sendInviteToFriendShipMutation.mutateAsync(formData);
+		const formData: FormData = createFormData([{ key: 'invitationUserId', value: String(invitationUserId) }]);
+		const response = await sendInviteToFriendShipMutation.mutateAsync({ userId, formData });
 		if (response) {
 			setBtnStatus((state) => {
-				state.status = 'pending';
+				state.status = friendBtnStatuses.PEDING;
 				state.invitationId = response.invitationId;
 				return { ...state };
 			});
 		} else {
 			setBtnStatus((state) => {
-				state.status = 'error';
+				state.status = friendBtnStatuses.ERROR;
 				return { ...state };
 			});
 		}
 	}
 
-	async function acceptFriendshipInvite(inviteId: string) {
+	async function acceptFriendshipInvite(invitationId: string) {
 		setBtnStatus((state) => {
-			state.status = 'loading';
+			state.status = friendBtnStatuses.LOADING;
 			return { ...state };
 		});
 
-		const formData: FormData = createFormData([{ key: 'inviteId', value: String(inviteId) }]);
-		const response = await acceptFriendshipInviteMutation.mutateAsync(formData);
+		const response = await acceptFriendshipInviteMutation.mutateAsync(invitationId);
 		if (response) {
 			setBtnStatus((state) => {
-				state.status = 'friend';
+				state.status = friendBtnStatuses.FRIEND;
 				return { ...state };
 			});
 		} else {
 			setBtnStatus((state) => {
-				state.status = 'error';
+				state.status = friendBtnStatuses.ERROR;
 				return { ...state };
 			});
 		}
 	}
 
-	async function rejectFriendshipInvite(inviteId: string) {
+	async function rejectFriendshipInvite(invitationId: string) {
 		setBtnStatus((state) => {
-			state.status = 'loading';
+			state.status = friendBtnStatuses.LOADING;
 			return { ...state };
 		});
 
-		const formData: FormData = createFormData([{ key: 'inviteId', value: String(inviteId) }]);
-		const response = await rejectFriendshipInviteMutation.mutateAsync(formData);
+		const response = await rejectFriendshipInviteMutation.mutateAsync(invitationId);
 		if (response) {
 			setBtnStatus((state) => {
 				state.status = null;
@@ -158,7 +157,7 @@ export const Profile = () => {
 			});
 		} else {
 			setBtnStatus((state) => {
-				state.status = 'error';
+				state.status = friendBtnStatuses.ERROR;
 				return { ...state };
 			});
 		}
@@ -167,12 +166,12 @@ export const Profile = () => {
 	function inviteToGame(friendId: string, userId: string) {
 		if (sendInviteToGame(friendId, userId)) {
 			setBtnStatus((state) => {
-				state.status = 'loading';
+				state.status = friendBtnStatuses.LOADING;
 				return { ...state };
 			});
 		} else {
 			setBtnStatus((state) => {
-				state.status = 'error';
+				state.status = friendBtnStatuses.ERROR;
 				return { ...state };
 			});
 		}
@@ -181,12 +180,12 @@ export const Profile = () => {
 	function rejectionInviteToGame(friendId: string, userId: string) {
 		if (sendRejectionInviteToGame(friendId, userId)) {
 			setBtnStatus((state) => {
-				state.status = 'loading';
+				state.status = friendBtnStatuses.LOADING;
 				return { ...state };
 			});
 		} else {
 			setBtnStatus((state) => {
-				state.status = 'error';
+				state.status = friendBtnStatuses.ERROR;
 				return { ...state };
 			});
 		}
@@ -196,14 +195,14 @@ export const Profile = () => {
 		if (webSocket) {
 			webSocket.subscribeToOnUpdate(websocketEventNames.INVITATION_TO_GAME_HAS_BEEN_SENT, () => {
 				setBtnStatus((state) => {
-					state.status = 'invitedToGame';
+					state.status = state.status = friendBtnStatuses.INVITED_TO_GAME;
 					return { ...state };
 				});
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_REJECTED, () => {
 				setBtnStatus((state) => {
-					state.status = 'friend';
+					state.status = friendBtnStatuses.FRIEND;
 					return { ...state };
 				});
 				profileInfoByUserId.refetch();
@@ -235,7 +234,7 @@ export const Profile = () => {
 								size='large'
 							/>
 
-							{userId != userInfo.userId ? <div className='profile__btns'> {btnStatus && buttons(btnStatus, profileInfoByUserId.data.userInfo.status)}</div> : null}
+							{targetUser != userInfo.userId ? <div className='profile__btns'> {btnStatus && buttons(btnStatus, profileInfoByUserId.data.userInfo.status)}</div> : null}
 						</div>
 
 						<Section title='Statistics' className='profile__stats'>
@@ -251,7 +250,7 @@ export const Profile = () => {
 						<div className='profile__user-info'>
 							<UserProfileSkeleton size='large' rating={true} />
 
-							{userId != userInfo.userId ? (
+							{targetUser != userInfo.userId ? (
 								<div className='profile__btns'>
 									<SkeletonItem width={120} height={40} />
 								</div>

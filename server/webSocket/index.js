@@ -1,6 +1,7 @@
 const webSocketHandler = require('./webSocketHandler');
 const url = require('url');
 const { Op } = require('sequelize');
+const websocketAuthCheck = require('../services/websocketAuthCheck');
 
 const parseCookie = require('../services/parseCookie');
 const usersId = new Map();
@@ -16,12 +17,13 @@ module.exports = (webSocketServer, socket, req) => {
 			throw new Error('Error!. Missing required userId');
 		}
 
-		// const cookies = parseCookie(req.headers.cookie);
+		const cookies = parseCookie(req.headers.cookie);
 
-		// if (!websocketAuthCheck(cookies.firebase_token)) {
-		// 	socket.send({ event: 'CANT_ACCESS_THE_SERVER', error: "Can't access the server" });
-		// 	socket.close();
-		// }
+		if (!websocketAuthCheck(cookies.firebase_token)) {
+			socket.send({ event: 'CANT_ACCESS_THE_SERVER', error: "Can't access the server" });
+			socket.close();
+		}
+
 		usersId.set(query.userId, socket);
 
 		socket.on('message', (message) => {

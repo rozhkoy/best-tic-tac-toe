@@ -1,6 +1,7 @@
 const { users, gameHistories, userFriends } = require('../../database/models');
 const { Op } = require('sequelize');
 const { Sequelize } = require('../../database/databaseConection');
+const { userStatuses } = require('../../constants/userStatuses');
 
 class UserController {
 	async registrationNewUser(req, res) {
@@ -39,7 +40,7 @@ class UserController {
 				nickname: nickname.length > 12 ? nickname.slice(0, 12) : nickname,
 				rating: 1000,
 				role: 'user',
-				status: 'online',
+				status: userStatuses.ONLINE,
 				isActive: true,
 			});
 

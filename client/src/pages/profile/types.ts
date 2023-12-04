@@ -4,8 +4,8 @@ import { IPagination } from '@/shared/types/IPagination';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 
 export interface IGetProfileInfoByUserId {
+	targetUser: string;
 	userId: string;
-	currentUserId: string;
 }
 
 export interface IGetGameHistoryByUserId extends IPagination {

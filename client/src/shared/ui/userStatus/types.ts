@@ -1,7 +1,7 @@
-import { PropsWithClassName } from "@/shared/types/propsWithClassName"
+import { PropsWithClassName } from '@/shared/types/propsWithClassName';
 
 export interface UserStatusProps extends PropsWithClassName {
-    status: UserStatusTypes
+	status: UserStatusTypes;
 }
 
-export type UserStatusTypes = "online" | "offline" | "playing"
+export type UserStatusTypes = 'ONLINE' | 'OFFLINE' | 'PLAYING';

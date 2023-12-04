@@ -608,9 +608,9 @@
         "status": {
           "type": "string",
           "enum": [
-            "online",
-            "offline",
-            "playing"
+            "ONLINE",
+            "OFFLINE",
+            "PLAYING"
           ]
         }
       }
