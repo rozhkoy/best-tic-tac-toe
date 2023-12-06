@@ -45,19 +45,24 @@ class WebSocketHandler {
 		}
 	}
 	async close({ userId, usersId, sessions }) {
+		console.log('close');
 		try {
 			usersId.delete(userId);
 
+			console.log({ userId, usersId, sessions });
+
 			const updateUserStatus = await users.update(
 				{
-					status: userStatuses.OFFLINE,
+					status: 'OFFLINE',
 				},
 				{
 					where: {
 						user_id: userId,
 					},
+					returning: false,
 				}
 			);
+			console.log(updateUserStatus);
 
 			if (!updateUserStatus) {
 				throw new Error('Error!. Failed to update user status');

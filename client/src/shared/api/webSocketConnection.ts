@@ -1,5 +1,5 @@
 class WebSocketConnection {
-	private readyState = 3;
+	public readyState = 3;
 	private websocketInstance!: WebSocket;
 
 	public getConnectionInstance(url: string) {
@@ -17,6 +17,10 @@ class WebSocketConnection {
 
 	public getReadState() {
 		return this.readyState;
+	}
+
+	public updateReadyState() {
+		this.readyState = this.websocketInstance.readyState;
 	}
 }
 

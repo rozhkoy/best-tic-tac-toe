@@ -34,7 +34,6 @@ export const Wrap = () => {
 	});
 
 	useEffect(() => {
-		console.log(!userInfo.isPlaying, userInfo.isloaded);
 		if (!userInfo.isPlaying && userInfo.isloaded && !isFetchUserRating) {
 			setIsFetchUserRating(true);
 		}
@@ -47,8 +46,8 @@ export const Wrap = () => {
 					addNotif({
 						userId: message.data.friendId,
 						friendId: message.userId,
-						src: `https://source.boringavatars.com/beam/100/${message.data.userInfo.nickname}`,
-						nickname: message.data.userInfo.nickname,
+						src: `https://source.boringavatars.com/beam/100/${message.data.senderInfo.nickname}`,
+						nickname: message.data.senderInfo.nickname,
 						isVisible: true,
 						id: nanoid(),
 					})

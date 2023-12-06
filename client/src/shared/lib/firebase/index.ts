@@ -2,13 +2,13 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-	apiKey: 'AIzaSyDsgttm4Wu9CKUujREsyrYP6TXIZh4MU7I',
-	authDomain: 'photogallery-823c6.firebaseapp.com',
-	projectId: 'photogallery-823c6',
-	storageBucket: 'photogallery-823c6.appspot.com',
-	messagingSenderId: '551103906843',
-	appId: '1:551103906843:web:5de0ae290c6bd0f54a24be',
-	measurementId: 'G-1JX1YKRJJT',
+	apiKey: import.meta.env.VITE_API_KEY,
+	authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+	projectId: import.meta.env.VITE_PROJECT_ID,
+	storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+	messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+	appId: import.meta.env.VITE_APP_ID,
+	measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 const firebaseApplication = initializeApp(firebaseConfig);

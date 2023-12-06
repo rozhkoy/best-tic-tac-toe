@@ -17,12 +17,14 @@ import { updateIsPlayingStatus } from '@/entities/user';
 import { WarningPopup } from '@/shared/ui/warning';
 
 export const OnlineSession = () => {
-	const NUMBER_OF_GAMES = 3;
+	const NUMBER_OF_GAMES = 1;
 	const { sessionId } = useParams();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const userInfo = useAppSelector((state) => state.user);
-	const blocker = useBlocker(({ currentLocation, nextLocation }) => userInfo.isPlaying && currentLocation.pathname !== nextLocation.pathname);
+	const blocker = useBlocker(({ currentLocation, nextLocation }) => {
+		return !!(userInfo.isPlaying && currentLocation.pathname !== nextLocation.pathname);
+	});
 	const [isVisibleWarningPopup, setIsVisibleWarningPopup] = useState<boolean>(false);
 
 	const webSocket = useContext(WebSocketContext);
@@ -107,7 +109,9 @@ export const OnlineSession = () => {
 	);
 
 	useEffect(() => {
-		getDataAboutOpponent(sessionId as string);
+		if (userInfo.userId) {
+			getDataAboutOpponent(sessionId as string);
+		}
 
 		if (webSocket) {
 			webSocket.subscribeToOnUpdate(websocketEventNames.DATA_ABOUT_OPONENT, (message: IWebSocketMessage<IInfoAboutOpponent>) => {
@@ -160,7 +164,7 @@ export const OnlineSession = () => {
 			webSocket?.unSubscribeToOnUpdate(websocketEventNames.SYNC_PLAYGROUND);
 			webSocket?.unSubscribeToOnUpdate(websocketEventNames.WINNER_FIND);
 		};
-	}, []);
+	}, [userInfo.userId]);
 
 	useEffect(() => {
 		if (playersData.cross.nickname && playersData.cross.userId === userInfo.userId) {
@@ -194,7 +198,7 @@ export const OnlineSession = () => {
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isWinnerFound]);
-	console.log(userInfo);
+
 	function getDataAboutOpponent(sessionId: string) {
 		const message: IWebSocketMessage<IGetDataAboutOpponent> = {
 			event: websocketEventNames.DATA_ABOUT_OPONENT,

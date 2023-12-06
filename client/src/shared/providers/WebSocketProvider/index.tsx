@@ -4,7 +4,7 @@ import { IWebSocketProvider, WebsoketProviderProps } from './types';
 
 export const WebSocketContext = createContext<IWebSocketProvider | null>(null);
 
-export const WebSocketProvider: React.FC<WebsoketProviderProps> = ({ children, url, connect }) => {
+export const WebSocketProvider: React.FC<WebsoketProviderProps> = ({ children, url, useWebSocket }) => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const subscribers = useRef(new Map<string, (message: any) => void>());
 	const webSocketInstance = useRef<WebSocket>();
@@ -21,11 +21,12 @@ export const WebSocketProvider: React.FC<WebsoketProviderProps> = ({ children, u
 	const buffer = useRef(new Set<any>());
 
 	useEffect(() => {
-		if (connect) {
+		if (useWebSocket) {
 			webSocketInstance.current = webSocketConnection.getConnectionInstance(url);
 
 			webSocketInstance.current.onerror = (error) => {
-				alert(error);
+				webSocketConnection.updateReadyState();
+				console.log(error);
 			};
 
 			webSocketInstance.current.onopen = () => {
@@ -38,7 +39,6 @@ export const WebSocketProvider: React.FC<WebsoketProviderProps> = ({ children, u
 			};
 
 			webSocketInstance.current.onmessage = (event) => {
-				console.log(subscribers);
 				const message = JSON.parse(event.data);
 				const subscription = subscribers.current.get(message.event);
 
@@ -49,7 +49,21 @@ export const WebSocketProvider: React.FC<WebsoketProviderProps> = ({ children, u
 				subscription(message);
 			};
 		}
-	}, [connect, url]);
+	}, [useWebSocket, url]);
+
+	useEffect(() => {
+		let timer: ReturnType<typeof setTimeout>;
+		if (webSocketConnection.readyState === WebSocket.CLOSED && useWebSocket) {
+			setTimeout(() => {
+				console.log('connection');
+				webSocketInstance.current = webSocketConnection.getConnectionInstance(url);
+			}, 1000);
+		}
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [useWebSocket, webSocketConnection.readyState]);
 
 	function send(message: any) {
 		if (webSocketConnection.getReadState() === WebSocket.OPEN) {

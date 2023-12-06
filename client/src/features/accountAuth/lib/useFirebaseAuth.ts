@@ -11,7 +11,7 @@ import { useAppDispatch } from '@/shared/hooks/reduxHooks';
 import { updateUserInfo } from '@/entities/user';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '@/shared/lib/firebase';
-import { updateIsloadedStatus } from '@/entities/user/store';
+import { togglePreloaderVisible } from '@/features/preloader';
 
 export function useFirebaseAuth(): {
 	googleAuth: () => void;
@@ -28,7 +28,7 @@ export function useFirebaseAuth(): {
 
 	const registrationNewUserMutation = useMutation({
 		mutationFn: (formData: FormData) => registrationNewUser(formData),
-		onSuccess: ({ userResponse: { nickname, userId, rating } }) => {
+		onSuccess: ({ nickname, userId, rating }) => {
 			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true, url: '' }));
 			navigation('/', { replace: true });
 		},
@@ -38,32 +38,37 @@ export function useFirebaseAuth(): {
 
 	const signInMutation = useMutation({
 		mutationFn: (params: IGetUserInfoByUid) => getUserInfoByUid(params),
-
 		onSuccess: ({ nickname, userId, rating }) => {
 			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true, url: '' }));
 			navigation('/', { replace: true });
 		},
-		onError: (err) => {
+		onError: () => {
 			const registrationInfo: Array<IFormDataObject> = [];
 			for (const item of Object.keys(registrationUserInfo)) {
+				console.log(registrationUserInfo);
 				registrationInfo.push({
 					key: item,
 					value: registrationUserInfo[item as RegistrationInfoFieldsTypes],
 				});
 			}
-			console.log(registrationInfo);
+
 			const formData = createFormData(registrationInfo);
 			registrationNewUserMutation.mutate(formData);
 		},
-		retry: 3,
+		retry: 1,
 	});
 
 	const userInfoByUidMutation = useMutation({
 		mutationFn: (params: IGetUserInfoByUid) => getUserInfoByUid(params),
 		onSuccess: ({ nickname, userId, rating }) => {
 			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true, url: '' }));
+			dispatch(togglePreloaderVisible(false));
 		},
-		retry: 3,
+		onError: () => {
+			signOutAccount();
+			dispatch(togglePreloaderVisible(false));
+		},
+		retry: 1,
 	});
 
 	function googleAuth() {
@@ -112,7 +117,8 @@ export function useFirebaseAuth(): {
 				registrationNewUserMutation.mutate(formData);
 			})
 			.catch((error) => {
-				alert(error.message);
+				console.log(error);
+				alert('upsss');
 			});
 	}
 
@@ -123,7 +129,8 @@ export function useFirebaseAuth(): {
 				signInMutation.mutate({ uid: user.uid });
 			})
 			.catch((error) => {
-				alert(error.message);
+				console.log(error);
+				alert('upsss');
 			});
 	}
 
@@ -140,11 +147,12 @@ export function useFirebaseAuth(): {
 
 	function getAuthState() {
 		onAuthStateChanged(auth, async (user) => {
+			console.log(user);
 			if (user) {
 				document.cookie = 'firebase_token=' + (await user.getIdToken());
 				userInfoByUidMutation.mutate({ uid: user.uid });
 			} else {
-				dispatch(updateIsloadedStatus(true));
+				dispatch(togglePreloaderVisible(false));
 			}
 		});
 

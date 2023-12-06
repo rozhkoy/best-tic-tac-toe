@@ -1,17 +1,17 @@
 import { server } from '@/shared/api/axios';
-import { IGetUserInfoByUid, IRegistrationRespone, IUserResponse } from './types';
+import { IGetUserInfoByUid, IUserResponse } from './types';
 
-export async function getUserInfoByUid(params: IGetUserInfoByUid) {
-	const { data } = await server.get<IUserResponse>('/v1/api/user/getUserInfoByUid', { params });
+export async function getUserInfoByUid({ uid }: IGetUserInfoByUid) {
+	const { data } = await server.patch<IUserResponse>(`/api/v1/users/info/${uid}`);
 	return data;
 }
 
 export async function registrationNewUser(formData: FormData) {
-	const { data } = await server.post<IRegistrationRespone>('/v1/api/user/registration', formData);
+	const { data } = await server.post<IUserResponse>('/api/v1/users/registration', formData);
 	return data;
 }
 
-export async function getUserRating(params: { userId: string }) {
-	const { data } = await server.get<number>('/v1/api/user/getUserRating', { params });
+export async function getUserRating({ userId }: { userId: string }) {
+	const { data } = await server.get<number>(`/api/v1/users/rating/${userId}`);
 	return data;
 }

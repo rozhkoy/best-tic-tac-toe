@@ -53,7 +53,7 @@ export const AppProvider = () => {
 					),
 				},
 				{
-					path: routes.USER + '/:userId',
+					path: routes.USER + '/:targetUser',
 					element: (
 						<PrivateRoutes redirectPath={`${routes.ACCOUNTS}/${routes.SIGN_IN}`} isAllow={true}>
 							<Profile />

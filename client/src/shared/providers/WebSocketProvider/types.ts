@@ -8,5 +8,5 @@ export interface IWebSocketProvider {
 
 export interface WebsoketProviderProps extends PropsWithChildren {
 	url: string;
-	connect: boolean;
+	useWebSocket: boolean;
 }

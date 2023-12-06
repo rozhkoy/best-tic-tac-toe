@@ -20,6 +20,8 @@ import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 import { addAlert } from '@/features/alertProvider';
 import { queryClient } from '@/app/App';
 import { Icon } from '@/shared/ui/icon';
+import { friendBtnStatuses } from '@/features/friendSearch/friendBtnStatuses';
+import { userStatuses } from '@/shared/ui/userStatus/userStatuses';
 
 export const Friends = () => {
 	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Friends');
@@ -98,7 +100,7 @@ export const Friends = () => {
 					</CustomButton>
 				);
 
-			case 'invitation':
+			case friendBtnStatuses.INVITATION_TO_FRIENDS:
 				return (
 					<>
 						<CustomButton size={'tiny'} onClick={() => acceptFriendshipInvite(ids.invitationId ?? '0', paginationInfo)}>
@@ -109,86 +111,82 @@ export const Friends = () => {
 						</CustomButton>
 					</>
 				);
-			case 'friend':
+			case friendBtnStatuses.FRIEND:
 				return (
-					<CustomButton size={'tiny'} onClick={() => inviteToGame(ids.userId, paginationInfo)} disabled={userStatus === 'offline'}>
+					<CustomButton size={'tiny'} onClick={() => inviteToGame(ids.userId, paginationInfo)} disabled={userStatus === userStatuses.OFFLINE}>
 						<Icon name={'inviteToGame'} size='large' />
 					</CustomButton>
 				);
-			case 'invitedToGame':
+			case friendBtnStatuses.INVITED_TO_GAME:
 				return (
 					<CustomButton size={'tiny'} onClick={() => rejectionInviteToGame(ids.userId, paginationInfo)}>
 						<Icon name={'invitedToGame'} size='large' />
 					</CustomButton>
 				);
-			case 'pending':
+			case friendBtnStatuses.PENDING:
 				return (
 					<CustomButton size={'tiny'} onClick={() => rejectFriendshipInvite(ids.invitationId ?? '0', paginationInfo)}>
 						<Icon name={'pending'} size='large' />
 					</CustomButton>
 				);
-			case 'loading':
+			case friendBtnStatuses.LOADING:
 				return (
 					<CustomButton size={'tiny'}>
 						<Icon name={'spiner'} size='large' />
 					</CustomButton>
 				);
-			case 'error':
+			case friendBtnStatuses.ERROR:
 				return <Button size={'tiny'} variant={'warning'} fullWidth={false} type={'button'} title={'Error'} />;
 		}
 	}
 
 	function inviteToGame(friendId: string, paginationInfo: IPaginationInfo) {
 		if (sendInviteToGame(friendId, userId, paginationInfo)) {
-			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'loading');
+			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.LOADING);
 		} else {
-			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'error');
+			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.ERROR);
 		}
 	}
 
 	function rejectionInviteToGame(friendId: string, paginationInfo: IPaginationInfo) {
-		replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'loading');
+		replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.LOADING);
 		if (sendRejectionInviteToGame(friendId, userId)) {
-			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'friend');
+			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.FRIEND);
 		} else {
-			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, 'error');
+			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.ERROR);
 		}
 	}
 
 	async function addToFriends(userId: string, invitationUserId: string, paginationInfo: IPaginationInfo) {
-		replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
-		const formData: FormData = createFormData([
-			{ key: 'userId', value: String(userId) },
-			{ key: 'invitationUserId', value: String(invitationUserId) },
-		]);
-		const response = await sendInviteToFriendShipMutation.mutateAsync(formData);
+		replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
+		const formData: FormData = createFormData([{ key: 'invitationUserId', value: String(invitationUserId) }]);
+		const response = await sendInviteToFriendShipMutation.mutateAsync({ userId, formData });
 		if (response) {
 			setGlobalSearchResult((state) => {
-				state[paginationInfo.page].rows[paginationInfo.item].btnsStatus = 'pending';
+				state[paginationInfo.page].rows[paginationInfo.item].btnsStatus = friendBtnStatuses.PENDING;
 				state[paginationInfo.page].rows[paginationInfo.item].invitationId = response.invitationId;
 				return [...state];
 			});
 		} else {
-			replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'error');
+			replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.ERROR);
 		}
 	}
 
-	async function acceptFriendshipInvite(inviteId: string, paginationInfo: IPaginationInfo) {
+	async function acceptFriendshipInvite(invitationId: string, paginationInfo: IPaginationInfo) {
 		switch (currentTab) {
 			case 'Search':
-				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
+				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
 				break;
 			case 'Requests':
-				replaceBtnsStatus(setFriendsRequestResponse, paginationInfo, 'loading');
+				replaceBtnsStatus(setFriendsRequestResponse, paginationInfo, friendBtnStatuses.LOADING);
 				break;
 		}
 
-		const formData: FormData = createFormData([{ key: 'inviteId', value: String(inviteId) }]);
-		const response = await acceptFriendshipInviteMutation.mutateAsync(formData);
+		const response = await acceptFriendshipInviteMutation.mutateAsync(invitationId);
 		if (response) {
 			switch (currentTab) {
 				case 'Search':
-					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'friend');
+					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.FRIEND);
 					break;
 				case 'Requests':
 					setFriendsRequestResponse((state) => {
@@ -198,22 +196,21 @@ export const Friends = () => {
 					break;
 			}
 		} else {
-			replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'error');
+			replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.ERROR);
 		}
 	}
 
-	async function rejectFriendshipInvite(inviteId: string, paginationInfo: IPaginationInfo) {
+	async function rejectFriendshipInvite(invitationId: string, paginationInfo: IPaginationInfo) {
 		switch (currentTab) {
 			case 'Search':
-				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
+				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
 				break;
 			case 'Requests':
-				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'loading');
+				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
 				break;
 		}
 
-		const formData: FormData = createFormData([{ key: 'inviteId', value: String(inviteId) }]);
-		const response = await rejectFriendshipInviteMutation.mutateAsync(formData);
+		const response = await rejectFriendshipInviteMutation.mutateAsync(invitationId);
 		if (response) {
 			switch (currentTab) {
 				case 'Search':
@@ -227,7 +224,7 @@ export const Friends = () => {
 					break;
 			}
 		} else {
-			replaceBtnsStatus(setGlobalSearchResult, paginationInfo, 'error');
+			replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
 		}
 	}
 
@@ -260,7 +257,7 @@ export const Friends = () => {
 	useEffect(() => {
 		if (webSocket) {
 			webSocket.subscribeToOnUpdate(websocketEventNames.INVITATION_TO_GAME_HAS_BEEN_SENT, (message) => {
-				replaceBtnsStatus(setYourFriendsResponse, message.data.paginationInfo, 'invitedToGame');
+				replaceBtnsStatus(setYourFriendsResponse, message.data.paginationInfo, friendBtnStatuses.INVITED_TO_GAME);
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_REJECTED, () => {
