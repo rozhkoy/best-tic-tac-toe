@@ -49,7 +49,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 		};
 
 		webSocket?.send(JSON.stringify(message));
-		dispatch(removeNotif(id));
+		dispatch(dispatch(toggleVisible({ id, isVisible: false })));
 	}
 
 	function rejectInviteToGame(friendId: string, userId: string) {
@@ -63,17 +63,17 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 		};
 
 		webSocket?.send(JSON.stringify(message));
-		dispatch(toggleVisible({ id, isVisible: false }));
+		dispatch(dispatch(toggleVisible({ id, isVisible: false })));
 	}
 
 	return (
-		<CSSTransition onEnter={onEnter} in={isVisible} timeout={1000} classNames='fade' onExited={onExited} unmountOnExit>
+		<CSSTransition onEnter={onEnter} in={isVisible} timeout={500} classNames='fade' onExited={onExited} unmountOnExit>
 			<div className='invite-to-game-notif'>
 				<div className='user-info'>
 					<Avatar size='small' className='user-info__logo' src={src} />
 					<div className='user-info__info'>
 						<div className='user-info__nickname'>{nickname}</div>
-						<div className='user-info__action'>Invite to game</div>
+						<div className='user-info__action'>Invites in game</div>
 					</div>
 				</div>
 				<div className='invite-to-game-notif__btns'>

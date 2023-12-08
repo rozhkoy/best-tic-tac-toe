@@ -12,15 +12,12 @@ export const NotificationsProvider = () => {
 		<CSSTransition timeout={300} in={isVisible} classNames='opacity' unmountOnExit>
 			<div className='notifs-provider'>
 				<div className='notifs-provider__box'>
-					{notifs.length !== 0 ? (
-						<TransitionGroup className='notifs-provider__scroll-box'>
-							{notifs.map((itemProps) => {
-								return <InviteToGameNotifs key={itemProps.id} {...itemProps} />;
-							})}
-						</TransitionGroup>
-					) : (
-						<Nothing hideForDesktop={true} />
-					)}
+					<TransitionGroup className='notifs-provider__scroll-box'>
+						{notifs.map((itemProps) => {
+							return <InviteToGameNotifs key={itemProps.id} {...itemProps} />;
+						})}
+					</TransitionGroup>
+					{notifs.length !== 0 && <Nothing hideForDesktop={true} />}
 				</div>
 			</div>
 		</CSSTransition>

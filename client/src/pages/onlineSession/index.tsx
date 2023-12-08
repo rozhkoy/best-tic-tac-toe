@@ -17,7 +17,7 @@ import { updateIsPlayingStatus } from '@/entities/user';
 import { WarningPopup } from '@/shared/ui/warning';
 
 export const OnlineSession = () => {
-	const NUMBER_OF_GAMES = 1;
+	const NUMBER_OF_GAMES = 3;
 	const { sessionId } = useParams();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();

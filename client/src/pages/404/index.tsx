@@ -1,7 +1,6 @@
 import { Container } from '@/shared/ui/container';
 import { Link } from 'react-router-dom';
 import './styles.scss';
-import { Icon } from '@/shared/ui/icon';
 
 export const PageNotFound = () => {
 	return (
