@@ -4,7 +4,7 @@ import React, { forwardRef } from 'react';
 import { FriendItem, FriendItemSkeleton } from '@/shared/ui/friendItem';
 import { Nothing } from '@/shared/ui/nothing';
 
-export const ListOfUsers = forwardRef<HTMLLIElement, ListOfUsersProps>(({ list, children, isLoading, isSuccess, isError }, ref) => {
+export const ListOfUsers = forwardRef<HTMLLIElement, ListOfUsersProps>(({ list, children, isLoading }, ref) => {
 	return (
 		<ListWrap>
 			{isLoading ? (
