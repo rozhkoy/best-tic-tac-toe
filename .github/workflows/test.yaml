@@ -1,0 +1,23 @@
+name: test code
+on: [push, pull_request]
+jobs:
+    test_build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '20'
+
+            - name: Checkout repository
+              uses: actions/checkout@v2
+
+            - name: Install dependencies
+              run: |
+                  cd client/
+                  npm install
+
+            - name: Build Projects
+              run: |
+                  cd client/
+                  npm run build
