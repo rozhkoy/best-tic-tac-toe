@@ -65,7 +65,6 @@ export function useFirebaseAuth(): {
 			dispatch(togglePreloaderVisible(false));
 		},
 		onError: () => {
-			signOutAccount();
 			dispatch(togglePreloaderVisible(false));
 		},
 		retry: 1,
