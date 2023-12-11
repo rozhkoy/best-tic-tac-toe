@@ -186,7 +186,7 @@ class UserController {
 					},
 				},
 				attributes: ['user_id', 'nickname', 'status'],
-				order: [[Sequelize.literal(`CASE WHEN "user"."status" = \'online\' THEN 1 WHEN "user"."status" = \'playing\' THEN 2 ELSE 3 END`)], ['user_id', 'ASC']],
+				order: [[Sequelize.literal('CASE WHEN "user"."status" = \'ONLINE\' THEN 1 WHEN "user"."status" = \'PLAYING\' THEN 2 ELSE 3 END')], ['user_id', 'ASC']],
 				include: {
 					model: userFriends,
 					required: false,
