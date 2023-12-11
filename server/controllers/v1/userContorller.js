@@ -1,7 +1,7 @@
 const { users, gameHistories, userFriends } = require('../../database/models');
 const { Op } = require('sequelize');
 const { Sequelize } = require('../../database/databaseConection');
-const { userStatuses } = require('../../constants/userStatuses');
+const userStatuses = require('../../constants/userStatuses');
 
 class UserController {
 	async registrationNewUser(req, res) {
