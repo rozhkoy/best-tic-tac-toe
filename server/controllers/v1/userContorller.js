@@ -326,6 +326,7 @@ class UserController {
 		try {
 			const { userId } = req.params;
 			let { page, perPage } = req.query;
+			console.log(userId, page, perPage);
 			/*
             #swagger.auto = false
             #swagger.tags = ['User']
