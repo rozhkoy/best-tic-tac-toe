@@ -279,8 +279,12 @@ class GameController {
 			if (!friendId || !userId) {
 				throw new Error('Error!. Missing required query parameters');
 			}
-
-			sendPrivateMessage(usersId.get(userId), usersId.get(friendId), message);
+			const isSuccessfullySendToRecipient = sendMessage(usersId.get(friendId), message);
+			if (!isSuccessfullySendToRecipient) {
+				message.event = webSocketStatuses.USER_IS_NOT_ONLINE;
+				message.data = {};
+				return sendMessage(usersId.get(userId, message)) && isSuccessfullySendToRecipient;
+			}
 		} catch (e) {
 			console.log(e);
 			message.data = {};

@@ -27,6 +27,7 @@ module.exports = (webSocketServer, socket, req) => {
 		usersId.set(query.userId, socket);
 
 		socket.on('message', (message) => {
+			console.log(JSON.parse(message));
 			webSocketHandler.message({ webSocketServer, socket, usersId, message, req, sessions });
 		});
 
