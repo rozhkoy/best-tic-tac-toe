@@ -34,10 +34,10 @@ export const Wrap = () => {
 	});
 
 	useEffect(() => {
-		if (!userInfo.isPlaying && userInfo.isloaded && !isFetchUserRating) {
+		if (!userInfo.isPlaying && userInfo.isloaded && !isFetchUserRating && userInfo.isAuth) {
 			setIsFetchUserRating(true);
 		}
-	}, [userInfo.isPlaying, userInfo.isloaded]);
+	}, [userInfo.isPlaying, userInfo.isloaded, userInfo.isAuth]);
 
 	useEffect(() => {
 		if (webSocket) {

@@ -7,12 +7,11 @@ export const PrivateRoutes: React.FC<PrivateRoutesProps> = ({ children, redirect
 	const userInfo = useAppSelector((state) => state.user);
 	const navigation = useNavigate();
 	const location = useLocation();
-
 	useEffect(() => {
 		if (userInfo.isloaded && !userInfo.isAuth && isAllow) {
 			navigation(redirectPath, { replace: true });
 		}
-	}, [isAllow, location, navigation, redirectPath, userInfo.isAuth]);
+	}, [isAllow, location, navigation, redirectPath, userInfo.isAuth, userInfo.isloaded]);
 
-	return <>{children}</>;
+	return <>{!(userInfo.isloaded && !userInfo.isAuth && isAllow) && children}</>;
 };

@@ -55,7 +55,6 @@ export const WebSocketProvider: React.FC<WebsoketProviderProps> = ({ children, u
 		let timer: ReturnType<typeof setTimeout>;
 		if (webSocketConnection.readyState === WebSocket.CLOSED && useWebSocket) {
 			setTimeout(() => {
-				console.log('connection');
 				webSocketInstance.current = webSocketConnection.getConnectionInstance(url);
 			}, 1000);
 		}

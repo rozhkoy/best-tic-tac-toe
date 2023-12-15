@@ -269,7 +269,7 @@ export const Profile = () => {
 				<Section title='History' className='profile__history'>
 					<ListWrap>
 						{history.isLoading ? (
-							[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => <HistoryItemSkeleton />)
+							[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((item) => <HistoryItemSkeleton key={item} />)
 						) : history.data && history.data?.pages[0].rows.length > 0 ? (
 							history.data.pages.map((page, pageIndex, pages) => (
 								<React.Fragment key={pageIndex}>

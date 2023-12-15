@@ -53,7 +53,7 @@ class WebSocketHandler {
 
 			const updateUserStatus = await users.update(
 				{
-					status: 'OFFLINE',
+					status: userStatuses.OFFLINE,
 				},
 				{
 					where: {
@@ -62,7 +62,6 @@ class WebSocketHandler {
 					returning: false,
 				}
 			);
-			console.log(updateUserStatus);
 
 			if (!updateUserStatus) {
 				throw new Error('Error!. Failed to update user status');
@@ -94,6 +93,22 @@ class WebSocketHandler {
 						factor: 2,
 						sessions,
 					});
+
+					const updateOpponentStatus = await users.update(
+						{
+							status: userStatuses.ONLINE,
+						},
+						{
+							where: {
+								user_id: firstPlayer.userId == userId ? firstPlayer.friendId : firstPlayer.userId,
+							},
+							returning: false,
+						}
+					);
+
+					if (!updateOpponentStatus) {
+						throw new Error('Error!. Failed to update user status');
+					}
 
 					const message = {
 						data: {

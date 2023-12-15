@@ -19,6 +19,7 @@ export const notifsSlice = createSlice({
 			state.notifs.push({ ...payload });
 		},
 		removeNotif: (state, { payload }: PayloadAction<string>) => {
+			console.log(payload);
 			state.notifs = state.notifs.filter((item) => item.id !== payload);
 		},
 		toggleVisible: (state, { payload: { id, isVisible } }: PayloadAction<{ id: string; isVisible: boolean }>) => {
