@@ -1,5 +1,5 @@
 module.exports = Object.freeze({
 	ONLINE: 'ONLINE',
-	OFFLINE: 'OFFLiNE',
+	OFFLINE: 'OFFLINE',
 	PLAYING: 'PLAYING',
 });

@@ -16,13 +16,19 @@ module.exports = (webSocketServer, socket, req) => {
 		if (!query.userId) {
 			throw new Error('Error!. Missing required userId');
 		}
-		console.log(req.headers.cookie);
-		const cookies = parseCookie(req.headers.cookie);
 
-		// if (!websocketAuthCheck(cookies.firebase_token)) {
-		// 	socket.send({ event: 'CANT_ACCESS_THE_SERVER', error: "Can't access the server" });
-		// 	socket.close();
-		// }
+		const cookies = parseCookie(req.headers.cookie ?? '');
+
+		if (!websocketAuthCheck(cookies.firebase_token)) {
+			socket.send(JSON.stringify({ event: 'CANT_ACCESS_THE_SERVER', error: "Can't access the server" }));
+			socket.close();
+		}
+
+		if (usersId.get(query.userId)) {
+			console.log('already');
+			socket.send(JSON.stringify({ event: 'APP_IS_ALREADY_OPEN', error: 'Please close the current application window to proceed.' }));
+			socket.close();
+		}
 
 		usersId.set(query.userId, socket);
 
