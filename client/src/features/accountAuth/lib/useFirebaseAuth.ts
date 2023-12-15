@@ -8,7 +8,7 @@ import { nanoid } from 'nanoid';
 import { IFormDataObject } from '@/shared/lib/CreateFormData/types';
 import { RegistrationInfoFieldsTypes } from './../types';
 import { useAppDispatch } from '@/shared/hooks/reduxHooks';
-import { updateUserInfo } from '@/entities/user';
+import { updateIsloadedStatus, updateUserInfo } from '@/entities/user';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '@/shared/lib/firebase';
 import { togglePreloaderVisible } from '@/features/preloader';
@@ -29,7 +29,7 @@ export function useFirebaseAuth(): {
 	const registrationNewUserMutation = useMutation({
 		mutationFn: (formData: FormData) => registrationNewUser(formData),
 		onSuccess: ({ nickname, userId, rating }) => {
-			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true, url: '' }));
+			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true, url: '', isloaded: true }));
 			navigation('/', { replace: true });
 		},
 		onError: (res) => console.log(res),
@@ -39,13 +39,12 @@ export function useFirebaseAuth(): {
 	const signInMutation = useMutation({
 		mutationFn: (params: IGetUserInfoByUid) => getUserInfoByUid(params),
 		onSuccess: ({ nickname, userId, rating }) => {
-			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true, url: '' }));
+			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true, url: '', isloaded: true }));
 			navigation('/', { replace: true });
 		},
 		onError: () => {
 			const registrationInfo: Array<IFormDataObject> = [];
 			for (const item of Object.keys(registrationUserInfo)) {
-				console.log(registrationUserInfo);
 				registrationInfo.push({
 					key: item,
 					value: registrationUserInfo[item as RegistrationInfoFieldsTypes],
@@ -61,7 +60,7 @@ export function useFirebaseAuth(): {
 	const userInfoByUidMutation = useMutation({
 		mutationFn: (params: IGetUserInfoByUid) => getUserInfoByUid(params),
 		onSuccess: ({ nickname, userId, rating }) => {
-			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true, url: '' }));
+			dispatch(updateUserInfo({ nickname, userId, rating, isAuth: true, url: '', isloaded: true }));
 			dispatch(togglePreloaderVisible(false));
 		},
 		onError: () => {
@@ -146,11 +145,11 @@ export function useFirebaseAuth(): {
 
 	function getAuthState() {
 		onAuthStateChanged(auth, async (user) => {
-			console.log(user);
 			if (user) {
 				document.cookie = 'firebase_token=' + (await user.getIdToken());
 				userInfoByUidMutation.mutate({ uid: user.uid });
 			} else {
+				dispatch(updateIsloadedStatus(true));
 				dispatch(togglePreloaderVisible(false));
 			}
 		});

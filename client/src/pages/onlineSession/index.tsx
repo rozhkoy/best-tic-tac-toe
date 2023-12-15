@@ -244,7 +244,7 @@ export const OnlineSession = () => {
 		const objectKeys = Object.keys(data.players);
 		for (const key of objectKeys) {
 			const player = data.players[key as IPartialPlayerData];
-			console.log(player.nickname);
+
 			if (player.userId === userInfo.userId) {
 				setFriendId(player.friendId);
 			}

@@ -16,8 +16,8 @@ module.exports = (webSocketServer, socket, req) => {
 		if (!query.userId) {
 			throw new Error('Error!. Missing required userId');
 		}
-
-		// const cookies = parseCookie(req.headers.cookie);
+		console.log(req.headers.cookie);
+		const cookies = parseCookie(req.headers.cookie);
 
 		// if (!websocketAuthCheck(cookies.firebase_token)) {
 		// 	socket.send({ event: 'CANT_ACCESS_THE_SERVER', error: "Can't access the server" });

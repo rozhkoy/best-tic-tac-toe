@@ -9,7 +9,6 @@ export const settingsSlice = createSlice({
 	initialState,
 	reducers: {
 		toggleSettingsVisible: (state) => {
-			console.log(state);
 			state.isVisible = !state.isVisible;
 		},
 	},

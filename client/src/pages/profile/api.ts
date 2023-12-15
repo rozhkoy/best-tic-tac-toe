@@ -7,7 +7,7 @@ export async function getProfileInfoByUserId({ targetUser, userId }: IGetProfile
 	return data;
 }
 
-export async function getGameHistoryByUserId({ userId }: IGetGameHistoryByUserId) {
-	const { data } = await server.get<IPaginationResponse<Array<IGameHistoryItemResponse>>>(`/api/v1/users/histories/${userId}`);
+export async function getGameHistoryByUserId({ userId, page, perPage }: IGetGameHistoryByUserId) {
+	const { data } = await server.get<IPaginationResponse<Array<IGameHistoryItemResponse>>>(`/api/v1/users/histories/${userId}`, { params: { page, perPage } });
 	return data;
 }

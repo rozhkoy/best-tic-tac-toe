@@ -20,6 +20,10 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 
 	function onExited() {
 		dispatch(removeNotif(id));
+		const { innerWidth } = window;
+		if (innerWidth <= 991) {
+			dispatch(toggleNotificationsVisible(false));
+		}
 	}
 
 	useEffect(() => {
@@ -33,12 +37,6 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 	}, [dispatch, friendId, id, userId]);
 
 	function acceptInviteToGame(friendId: string, userId: string) {
-		const { innerWidth } = window;
-
-		if (innerWidth <= 991) {
-			dispatch(toggleNotificationsVisible(false));
-		}
-
 		const message: IWebSocketMessage<IAcceptInviteToGame> = {
 			event: websocketEventNames.INVITE_TO_GAME_IS_ACCEPTED,
 			userId: userId,
@@ -67,7 +65,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 	}
 
 	return (
-		<CSSTransition onEnter={onEnter} in={isVisible} timeout={500} classNames='fade' onExited={onExited} unmountOnExit>
+		<CSSTransition onEnter={onEnter} in={isVisible} timeout={500} classNames='fade' onExited={onExited} unmountOnExit={true}>
 			<div className='invite-to-game-notif'>
 				<div className='user-info'>
 					<Avatar size='small' className='user-info__logo' src={src} />
