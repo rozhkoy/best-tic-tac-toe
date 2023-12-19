@@ -33,7 +33,17 @@ class FriendController {
 				return res.status(400).json({ message: 'Error!. Missing required query parameters' });
 			}
 
-			// need to fix this method
+			const checkIfCoupleExist = await userFriends.findOne({
+				where: {
+					user_id: userId,
+					// user_friend_id: invitationUserId,
+				},
+			});
+
+			if (checkIfCoupleExist) {
+				return res.status(409).json({ message: 'Error!. Couple already exist' });
+			}
+
 			const firstFriendshipRecordResponse = await userFriends.create({
 				user_id: userId,
 				user_friend_id: invitationUserId,
