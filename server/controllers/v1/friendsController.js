@@ -36,7 +36,7 @@ class FriendController {
 			const checkIfCoupleExist = await userFriends.findOne({
 				where: {
 					user_id: userId,
-					// user_friend_id: invitationUserId,
+					user_friend_id: invitationUserId,
 				},
 			});
 

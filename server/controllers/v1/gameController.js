@@ -35,7 +35,7 @@ class GameController {
 					},
 					{
 						where: {
-							user_friend_id: senderInfo.user_id,
+							user_friend_id: friendId,
 						},
 					}
 				);
@@ -202,7 +202,7 @@ class GameController {
 				throw new Error('Error!. Missing required query parameters');
 			}
 
-			const updateFirstFriendshipRecordResponse = await userFriends.updates(
+			const updateFirstFriendshipRecordResponse = await userFriends.update(
 				{
 					status: friendsBtnStatuses.FRIEND,
 				},

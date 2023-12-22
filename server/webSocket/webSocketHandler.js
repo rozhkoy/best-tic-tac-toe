@@ -42,6 +42,9 @@ class WebSocketHandler {
 			case webSocketEventNames.GAME_OVER:
 				gameController.onGameOver({ usersId, message, sessions });
 				break;
+			case webSocketEventNames.INVITE_TO_GAME_IS_DECLINE:
+				gameController.syncState({ usersId, message });
+				break;
 		}
 	}
 	async close({ userId, usersId, sessions }) {
