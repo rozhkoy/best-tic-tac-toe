@@ -2,7 +2,6 @@ import { IPagination } from '@/shared/types/IPagination';
 import { UserStatusTypes } from '@/shared/ui/userStatus/types';
 import { IPartialUserInfo } from '../accountAuth/types';
 import { IPaginationResponse } from '@/shared/types/findAndCount';
-import { UseMutationResult } from '@tanstack/react-query';
 
 export interface IFriend {
 	nickname: string;
