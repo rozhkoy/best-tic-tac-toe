@@ -29,7 +29,15 @@ export const notifsSlice = createSlice({
 		toggleNotificationsVisible: (state, { payload }: PayloadAction<boolean>) => {
 			state.isVisible = payload;
 		},
+		removeNotifByUserId: (state, { payload }: PayloadAction<string>) => {
+			if (state.isVisible) {
+				const index = state.notifs.findIndex((item) => item.friendId === payload);
+				state.notifs[index].isVisible = false;
+			} else {
+				state.notifs = state.notifs.filter((item) => item.friendId !== payload);
+			}
+		},
 	},
 });
 
-export const { addNotif, toggleVisible, removeNotif, toggleNotificationsVisible } = notifsSlice.actions;
+export const { addNotif, toggleVisible, removeNotif, toggleNotificationsVisible, removeNotifByUserId } = notifsSlice.actions;

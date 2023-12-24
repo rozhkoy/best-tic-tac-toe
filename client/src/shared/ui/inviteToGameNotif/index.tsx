@@ -3,7 +3,7 @@ import { Button } from '../button';
 import { CSSTransition } from 'react-transition-group';
 import './styles.scss';
 import { IAcceptInviteToGame, InviteToGameNotifsProps } from './types';
-import { useAppDispatch } from '@/shared/hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
 import { removeNotif, toggleNotificationsVisible, toggleVisible } from '@/features/notifications/store';
 import { useContext, useEffect } from 'react';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
@@ -13,7 +13,7 @@ import { websocketEventNames } from '@/features/webSocketConnection/lib/websocke
 export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, friendId, userId, nickname, isVisible, id }) => {
 	const dispatch = useAppDispatch();
 	const webSocket = useContext(WebSocketContext);
-
+	const notifs = useAppSelector((state) => state.notifs.notifs);
 	function onEnter() {
 		dispatch(toggleVisible({ id, isVisible: true }));
 	}
@@ -21,7 +21,7 @@ export const InviteToGameNotifs: React.FC<InviteToGameNotifsProps> = ({ src, fri
 	function onExited() {
 		dispatch(removeNotif(id));
 		const { innerWidth } = window;
-		if (innerWidth <= 991) {
+		if (innerWidth <= 991 && notifs.length === 1) {
 			dispatch(toggleNotificationsVisible(false));
 		}
 	}

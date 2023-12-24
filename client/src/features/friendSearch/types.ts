@@ -56,16 +56,10 @@ export interface ListOfUsersProps {
 	children: (status: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo, userStatus: UserStatusTypes) => React.ReactNode;
 }
 
-interface sendInviteToFriendShipMutationData {
-	invitationId: string;
-}
-
 export interface IUseFriendsActionsResponse {
-	sendInviteToFriendShipMutation: UseMutationResult<sendInviteToFriendShipMutationData, unknown, { userId: string; formData: FormData }, unknown>;
-	acceptFriendshipInviteMutation: UseMutationResult<boolean, unknown, string, unknown>;
-	rejectFriendshipInviteMutation: UseMutationResult<boolean, unknown, string, unknown>;
 	sendInviteToGame: (friendId: string, userId: string, paginationInfo?: IPaginationInfo) => boolean;
 	sendRejectionInviteToGame: (friendId: string, userId: string) => boolean;
+	sendDeclineInviteToGame: (friendId: string, userId: string) => boolean;
 }
 
 export interface IRejectionInviteToGame {

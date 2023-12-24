@@ -8,8 +8,8 @@ import { SearchBar } from '@/shared/ui/Searchbar';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { getAllFriends, getAllRequestsForFriendship, searchUsersByNickname } from '@/features/friendSearch/api';
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
+import { getAllFriends, getAllRequestsForFriendship, searchUsersByNickname, sendAcceptFriendshipInvite, sendInviteToFriendship, sendRejectFriendshipInvite } from '@/features/friendSearch/api';
 import { IPaginationResponse } from '@/shared/types/findAndCount';
 import { useInView } from 'react-intersection-observer';
 import debounce from 'lodash/debounce';
@@ -27,7 +27,7 @@ export const Friends = () => {
 	const [currentTab, setCurrentTab] = useState<SearchModeTypes>('Friends');
 	const [searchBarState, setSearchBarState] = useState('');
 	const { userId } = useAppSelector((state) => state.user);
-	const { sendInviteToFriendShipMutation, acceptFriendshipInviteMutation, rejectFriendshipInviteMutation, sendInviteToGame, sendRejectionInviteToGame } = useFriendsActions();
+	const { sendInviteToGame, sendDeclineInviteToGame } = useFriendsActions();
 	const webSocket = useContext(WebSocketContext);
 	const PER_PAGE = 10;
 	const [globalSearchResult, setGlobalSearchResult] = useState<Array<IPaginationResponse<Array<IPartialUserInfoWithBtnsStatus>>>>([]);
@@ -91,6 +91,41 @@ export const Friends = () => {
 		refetchInterval: 30_000,
 	});
 
+	const sendInviteToFriendShipMutation = useMutation({
+		mutationFn: async ({ userId, formData }: { userId: string; formData: FormData }) => await sendInviteToFriendship(userId, formData),
+		onError: () => {
+			globalSearch.refetch();
+		},
+	});
+
+	const acceptFriendshipInviteMutation = useMutation({
+		mutationFn: async (invitationId: string) => await sendAcceptFriendshipInvite(invitationId),
+		onError: () => {
+			switch (currentTab) {
+				case 'Search':
+					globalSearch.refetch();
+					break;
+				case 'Requests':
+					friendsRequest.refetch();
+					break;
+			}
+		},
+	});
+
+	const rejectFriendshipInviteMutation = useMutation({
+		mutationFn: async (invitationId: string) => await sendRejectFriendshipInvite(invitationId),
+		onError: () => {
+			switch (currentTab) {
+				case 'Search':
+					globalSearch.refetch();
+					break;
+				case 'Requests':
+					friendsRequest.refetch();
+					break;
+			}
+		},
+	});
+
 	function buttons(btnStatus: string | null, ids: IButtonsIds, paginationInfo: IPaginationInfo, userStatus: UserStatusTypes) {
 		switch (btnStatus) {
 			case null:
@@ -119,7 +154,7 @@ export const Friends = () => {
 				);
 			case friendBtnStatuses.INVITED_TO_GAME:
 				return (
-					<CustomButton size={'tiny'} onClick={() => rejectionInviteToGame(ids.userId, paginationInfo)}>
+					<CustomButton size={'tiny'} onClick={() => declineInviteToGame(ids.userId, paginationInfo)}>
 						<Icon name={'invitedToGame'} size='large' />
 					</CustomButton>
 				);
@@ -142,29 +177,64 @@ export const Friends = () => {
 
 	function inviteToGame(friendId: string, paginationInfo: IPaginationInfo) {
 		if (sendInviteToGame(friendId, userId, paginationInfo)) {
-			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.LOADING);
+			switch (currentTab) {
+				case 'Search':
+					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
+					break;
+				case 'Friends':
+					replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.LOADING);
+					break;
+			}
 		} else {
-			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.ERROR);
+			switch (currentTab) {
+				case 'Search':
+					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.ERROR);
+					break;
+				case 'Friends':
+					replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.ERROR);
+					break;
+			}
 		}
 	}
 
-	function rejectionInviteToGame(friendId: string, paginationInfo: IPaginationInfo) {
-		replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.LOADING);
-		if (sendRejectionInviteToGame(friendId, userId)) {
-			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.FRIEND);
+	function declineInviteToGame(friendId: string, paginationInfo: IPaginationInfo) {
+		switch (currentTab) {
+			case 'Search':
+				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
+				break;
+			case 'Friends':
+				replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.LOADING);
+				break;
+		}
+		if (sendDeclineInviteToGame(friendId, userId)) {
+			switch (currentTab) {
+				case 'Search':
+					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.FRIEND);
+					break;
+				case 'Friends':
+					replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.FRIEND);
+					break;
+			}
 		} else {
-			replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.ERROR);
+			switch (currentTab) {
+				case 'Search':
+					replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.ERROR);
+					break;
+				case 'Friends':
+					replaceBtnsStatus(setYourFriendsResponse, paginationInfo, friendBtnStatuses.ERROR);
+					break;
+			}
 		}
 	}
 
 	async function addToFriends(userId: string, invitationUserId: string, paginationInfo: IPaginationInfo) {
 		replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
-		const formData: FormData = createFormData([{ key: 'invitationUserId', value: String(invitationUserId) }]);
+		const formData: FormData = createFormData([{ key: 'invitationUserId', value: invitationUserId }]);
 		const response = await sendInviteToFriendShipMutation.mutateAsync({ userId, formData });
 		if (response) {
 			setGlobalSearchResult((state) => {
 				state[paginationInfo.page].rows[paginationInfo.item].btnsStatus = friendBtnStatuses.PENDING;
-				state[paginationInfo.page].rows[paginationInfo.item].invitationId = response.invitationId;
+				state[paginationInfo.page].rows[paginationInfo.item].invitationId = response;
 				return [...state];
 			});
 		} else {
@@ -206,11 +276,12 @@ export const Friends = () => {
 				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
 				break;
 			case 'Requests':
-				replaceBtnsStatus(setGlobalSearchResult, paginationInfo, friendBtnStatuses.LOADING);
+				replaceBtnsStatus(setFriendsRequestResponse, paginationInfo, friendBtnStatuses.LOADING);
 				break;
 		}
 
 		const response = await rejectFriendshipInviteMutation.mutateAsync(invitationId);
+
 		if (response) {
 			switch (currentTab) {
 				case 'Search':
@@ -234,8 +305,11 @@ export const Friends = () => {
 		friendshipStatus: FrindshipBtnsStatusTypes
 	) {
 		setState((state) => {
-			state[page].rows[item].btnsStatus = friendshipStatus;
-			return [...state];
+			if (state[page].rows.length) {
+				state[page].rows[item].btnsStatus = friendshipStatus;
+				return [...state];
+			}
+			return state;
 		});
 	}
 
@@ -256,8 +330,14 @@ export const Friends = () => {
 
 	useEffect(() => {
 		if (webSocket) {
-			webSocket.subscribeToOnUpdate(websocketEventNames.INVITATION_TO_GAME_HAS_BEEN_SENT, (message) => {
-				replaceBtnsStatus(setYourFriendsResponse, message.data.paginationInfo, friendBtnStatuses.INVITED_TO_GAME);
+			webSocket.subscribeToOnUpdate(websocketEventNames.INVITATION_TO_GAME_HAS_BEEN_SENT, () => {
+				switch (currentTab) {
+					case 'Search':
+						globalSearch.refetch();
+						break;
+					case 'Friends':
+						yourFriends.refetch();
+				}
 			});
 
 			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_REJECTED, () => {
@@ -269,6 +349,7 @@ export const Friends = () => {
 						yourFriends.refetch();
 				}
 			});
+
 			webSocket.subscribeToOnUpdate(websocketEventNames.USER_IS_NOT_ONLINE, () => {
 				dispatch(addAlert({ heading: 'Oooooopsss!', text: 'User is not currently online' }));
 				switch (currentTab) {

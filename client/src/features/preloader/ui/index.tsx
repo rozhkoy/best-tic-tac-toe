@@ -6,7 +6,7 @@ export const PreloaderProvider = () => {
 	const preloader = useAppSelector((state) => state.preloader);
 
 	return (
-		<CSSTransition in={preloader.isVisible} timeout={1000} classNames='opacity' unmountOnExit>
+		<CSSTransition in={preloader.isVisible} timeout={300} classNames='opacity' unmountOnExit>
 			<Preloader />
 		</CSSTransition>
 	);

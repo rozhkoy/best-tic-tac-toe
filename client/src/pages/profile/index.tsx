@@ -9,7 +9,7 @@ import { ListWrap } from '@/shared/ui/listWrap';
 import { HistoryItem, HistoryItemSkeleton } from '@/shared/ui/historyItem';
 import { Nothing } from '@/shared/ui/nothing';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { getGameHistoryByUserId, getProfileInfoByUserId } from './api';
 import { useInView } from 'react-intersection-observer';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
@@ -23,6 +23,7 @@ import { addAlert } from '@/features/alertProvider';
 import { SkeletonItem } from '@/shared/ui/skeletonItem';
 import { friendBtnStatuses } from '@/features/friendSearch/friendBtnStatuses';
 import { userStatuses } from '@/shared/ui/userStatus/userStatuses';
+import { sendAcceptFriendshipInvite, sendInviteToFriendship, sendRejectFriendshipInvite } from '@/features/friendSearch/api';
 
 export const Profile = () => {
 	const PER_PAGE = 10;
@@ -33,14 +34,36 @@ export const Profile = () => {
 	});
 	const webSocket = useContext(WebSocketContext);
 	const navigation = useNavigate();
-	const { sendInviteToFriendShipMutation, acceptFriendshipInviteMutation, rejectFriendshipInviteMutation, sendInviteToGame, sendRejectionInviteToGame } = useFriendsActions();
+	const { sendInviteToGame, sendDeclineInviteToGame } = useFriendsActions();
 	const [ref, inView] = useInView();
 	const dispatch = useAppDispatch();
+
 	const profileInfoByUserId = useQuery({
 		queryKey: ['userInfoByUserId', targetUser],
 		queryFn: () => getProfileInfoByUserId({ targetUser: targetUser ?? '0', userId: userInfo.userId }),
 		onSuccess: (data) => setBtnStatus(data.friendshipResponse),
 		enabled: !!userInfo.isAuth,
+	});
+
+	const sendInviteToFriendShipMutation = useMutation({
+		mutationFn: async ({ userId, formData }: { userId: string; formData: FormData }) => await sendInviteToFriendship(userId, formData),
+		onError: () => {
+			profileInfoByUserId.refetch();
+		},
+	});
+
+	const acceptFriendshipInviteMutation = useMutation({
+		mutationFn: async (invitationId: string) => await sendAcceptFriendshipInvite(invitationId),
+		onError: () => {
+			profileInfoByUserId.refetch();
+		},
+	});
+
+	const rejectFriendshipInviteMutation = useMutation({
+		mutationFn: async (invitationId: string) => await sendRejectFriendshipInvite(invitationId),
+		onError: () => {
+			profileInfoByUserId.refetch();
+		},
 	});
 
 	const history = useInfiniteQuery({
@@ -91,7 +114,7 @@ export const Profile = () => {
 				);
 			case friendBtnStatuses.INVITED_TO_GAME:
 				return (
-					<Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Invited to game'} onClick={() => rejectionInviteToGame(targetUser ?? '0', userInfo.userId)} />
+					<Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Invited to game'} onClick={() => declineInviteToGame(targetUser ?? '0', userInfo.userId)} />
 				);
 			case friendBtnStatuses.PENDING:
 				return <Button size={'tiny'} variant={'secondary'} fullWidth={false} type={'button'} title={'Pending'} onClick={() => rejectFriendshipInvite(btnStatus.invitationId ?? '0')} />;
@@ -112,7 +135,7 @@ export const Profile = () => {
 		if (response) {
 			setBtnStatus((state) => {
 				state.status = friendBtnStatuses.PEDING;
-				state.invitationId = response.invitationId;
+				state.invitationId = response;
 				return { ...state };
 			});
 		} else {
@@ -164,9 +187,13 @@ export const Profile = () => {
 	}
 
 	function inviteToGame(friendId: string, userId: string) {
+		setBtnStatus((state) => {
+			state.status = friendBtnStatuses.LOADING;
+			return { ...state };
+		});
 		if (sendInviteToGame(friendId, userId)) {
 			setBtnStatus((state) => {
-				state.status = friendBtnStatuses.LOADING;
+				state.status = friendBtnStatuses.FRIEND;
 				return { ...state };
 			});
 		} else {
@@ -177,10 +204,14 @@ export const Profile = () => {
 		}
 	}
 
-	function rejectionInviteToGame(friendId: string, userId: string) {
-		if (sendRejectionInviteToGame(friendId, userId)) {
+	function declineInviteToGame(friendId: string, userId: string) {
+		setBtnStatus((state) => {
+			state.status = friendBtnStatuses.LOADING;
+			return { ...state };
+		});
+		if (sendDeclineInviteToGame(friendId, userId)) {
 			setBtnStatus((state) => {
-				state.status = friendBtnStatuses.LOADING;
+				state.status = friendBtnStatuses.FRIEND;
 				return { ...state };
 			});
 		} else {
@@ -269,7 +300,7 @@ export const Profile = () => {
 				<Section title='History' className='profile__history'>
 					<ListWrap>
 						{history.isLoading ? (
-							[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((item) => <HistoryItemSkeleton key={item} />)
+							[0, 1, 2, 3, 4, 5].map((item) => <HistoryItemSkeleton key={item} />)
 						) : history.data && history.data?.pages[0].rows.length > 0 ? (
 							history.data.pages.map((page, pageIndex, pages) => (
 								<React.Fragment key={pageIndex}>
