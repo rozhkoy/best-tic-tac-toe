@@ -64,6 +64,7 @@ export function useFirebaseAuth(): {
 			dispatch(togglePreloaderVisible(false));
 		},
 		onError: () => {
+			dispatch(updateIsloadedStatus(true));
 			dispatch(togglePreloaderVisible(false));
 		},
 		retry: 1,
