@@ -12,8 +12,8 @@ export async function getAllRequestsForFriendship({ userId, page, perPage, query
 	return response.data;
 }
 
-export async function sendInviteToFriendship(userId: string, formData: FormData): Promise<{ invitationId: string }> {
-	const response = await server.post<{ invitationId: string }>(`api/v1/friends/requests/send/${userId}`, formData);
+export async function sendInviteToFriendship(userId: string, formData: FormData): Promise<string> {
+	const response = await server.post<string>(`api/v1/friends/requests/send/${userId}`, formData);
 	return response.data;
 }
 

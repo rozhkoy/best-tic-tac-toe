@@ -146,7 +146,7 @@ export function useFirebaseAuth(): {
 	function getAuthState() {
 		onAuthStateChanged(auth, async (user) => {
 			if (user) {
-				document.cookie = 'firebase_token=' + (await user.getIdToken());
+				document.cookie = `firebase_token=${await user.getIdToken()}; SameSite=None; Secure`;
 				userInfoByUidMutation.mutate({ uid: user.uid });
 			} else {
 				dispatch(updateIsloadedStatus(true));

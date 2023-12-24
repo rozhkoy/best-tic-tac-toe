@@ -6,9 +6,9 @@ import { useAppDispatch, useAppSelector } from '@/shared/hooks/reduxHooks';
 import { WebSocketContext } from '@/shared/providers/WebSocketProvider';
 import { websocketEventNames } from '@/features/webSocketConnection/lib/websocketEventNames';
 import { NotificationsProvider } from '@/features/notifications';
-import { addNotif } from '@/features/notifications/store';
+import { addNotif, removeNotifByUserId } from '@/features/notifications/store';
 import { nanoid } from 'nanoid';
-import { AlertProvider } from '@/features/alertProvider';
+import { AlertProvider, addAlert } from '@/features/alertProvider';
 import { Settings } from '@/features/settings/ui';
 
 import { updateUserRating } from '@/entities/user';
@@ -54,13 +54,23 @@ export const Wrap = () => {
 				);
 			});
 
+			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_DECLINE, ({ userId }) => {
+				dispatch(removeNotifByUserId(userId));
+			});
+
 			webSocket.subscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_ACCEPTED, ({ data }) => {
 				navigation(`/online-session/${data.sessionId}`);
 			});
 
+			webSocket.subscribeToOnUpdate(websocketEventNames.APP_IS_ALREADY_OPEN, ({ error }) => {
+				dispatch(addAlert({ heading: 'Application Already Running!', text: error }));
+			});
+
 			return () => {
 				webSocket.unSubscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME);
+				webSocket.unSubscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_DECLINE);
 				webSocket.unSubscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_ACCEPTED);
+				webSocket.unSubscribeToOnUpdate(websocketEventNames.APP_IS_ALREADY_OPEN);
 			};
 		}
 	}, []);

@@ -8,10 +8,10 @@ export const PrivateRoutes: React.FC<PrivateRoutesProps> = ({ children, redirect
 	const navigation = useNavigate();
 	const location = useLocation();
 	useEffect(() => {
-		if (userInfo.isloaded && !userInfo.isAuth && isAllow) {
+		if (userInfo.isloaded && ((!userInfo.isAuth && isAllow) || (userInfo.isAuth && !isAllow))) {
 			navigation(redirectPath, { replace: true });
 		}
 	}, [isAllow, location, navigation, redirectPath, userInfo.isAuth, userInfo.isloaded]);
 
-	return <>{!(userInfo.isloaded && !userInfo.isAuth && isAllow) && children}</>;
+	return <>{userInfo.isloaded && ((userInfo.isAuth && isAllow) || (!userInfo.isAuth && !isAllow)) ? children : <></>}</>;
 };
