@@ -17,12 +17,12 @@ module.exports = (webSocketServer, socket, req) => {
 			throw new Error('Error!. Missing required userId');
 		}
 
-		const cookies = parseCookie(req.headers.cookie ?? '');
+		// const cookies = parseCookie(req.headers.cookie ?? '');
 
-		if (!websocketAuthCheck(cookies.firebase_token)) {
-			socket.send(JSON.stringify({ event: 'CANT_ACCESS_THE_SERVER', error: "Can't access the server" }));
-			socket.close();
-		}
+		// if (!websocketAuthCheck(cookies.firebase_token)) {
+		// 	socket.send(JSON.stringify({ event: 'CANT_ACCESS_THE_SERVER', error: "Can't access the server" }));
+		// 	socket.close();
+		// }
 
 		if (usersId.get(query.userId)) {
 			console.log('already');
