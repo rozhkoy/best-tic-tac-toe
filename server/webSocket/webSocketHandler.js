@@ -6,12 +6,26 @@ const friendsBtnStatuses = require('../constants/friendBtnStatuses');
 const userStatuses = require('../constants/userStatuses');
 const updateUsersRating = require('../services/updateUsersRating');
 const sendMessage = require('../services/sendMessage');
+const websocketAuthCheck = require('../services/websocketAuthCheck');
 
 class WebSocketHandler {
-	async message({ webSocketServer, client, usersId, message, req, sessions }) {
+	async message({ socket, usersId, message, sessions, userId }) {
 		message = JSON.parse(message);
 
 		switch (message.event) {
+			case webSocketEventNames.AUTH_CHECK:
+				try {
+					if (!websocketAuthCheck(message) && !userId) {
+						socket.send(JSON.stringify({ event: 'CANT_ACCESS_THE_SERVER', error: "Can't access the server" }));
+						socket.close();
+						return;
+					}
+					usersId.set(userId, socket);
+					socket.send(JSON.stringify(message));
+				} catch (e) {
+					console.log(e);
+				}
+				break;
 			case webSocketEventNames.INVITE_TO_GAME:
 				gameController.inviteToGame({ usersId, message });
 				break;
@@ -47,12 +61,9 @@ class WebSocketHandler {
 				break;
 		}
 	}
-	async close({ userId, usersId, sessions }) {
-		console.log('close');
+	async close({ userId, usersId, sessions, socket }) {
 		try {
-			usersId.delete(userId);
-
-			console.log({ userId, usersId, sessions });
+			if (socket === usersId.get(userId)) usersId.delete(userId);
 
 			const updateUserStatus = await users.update(
 				{

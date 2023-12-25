@@ -1,10 +1,18 @@
 const { getAuth } = require('firebase-admin/auth');
+const { users } = require('../database/models');
+const userStatuses = require('../constants/userStatuses');
 
-module.exports = async (token) => {
+module.exports = async ({ data, userId }) => {
 	try {
-		if (token) {
-			const verifyResponse = await getAuth().verifyIdToken(token);
+		if (data.token) {
+			const verifyResponse = await getAuth().verifyIdToken(data.token);
 			if (verifyResponse) {
+				const upateUserStatusResponse = await users.update({ status: userStatuses.ONLINE }, { where: { user_id: userId } });
+
+				if (!upateUserStatusResponse) {
+					throw new Error('Error!. Failed to update user status');
+				}
+
 				return true;
 			}
 		} else {
@@ -12,5 +20,6 @@ module.exports = async (token) => {
 		}
 	} catch (e) {
 		console.log(e);
+		return false;
 	}
 };

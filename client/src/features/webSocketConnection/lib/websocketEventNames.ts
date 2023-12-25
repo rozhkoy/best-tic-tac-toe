@@ -19,4 +19,5 @@ export const websocketEventNames: Record<string, string> = {
 	INTERNEL_SERVER_ERROR: 'INTERNEL_SERVER_ERROR',
 	SESSIONS_IS_CLOSED: 'SESSIONS_IS_CLOSED',
 	APP_IS_ALREADY_OPEN: 'APP_IS_ALREADY_OPEN',
+	AUTH_CHECK: 'AUTH_CHECK',
 } as const;
