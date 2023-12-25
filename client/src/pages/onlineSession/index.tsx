@@ -17,7 +17,7 @@ import { updateIsPlayingStatus } from '@/entities/user';
 import { WarningPopup } from '@/shared/ui/warning';
 
 export const OnlineSession = () => {
-	const NUMBER_OF_GAMES = 3;
+	const NUMBER_OF_GAMES = 5;
 	const { sessionId } = useParams();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
@@ -103,7 +103,6 @@ export const OnlineSession = () => {
 			});
 		},
 		({ playFieldState, currentMove }, isWinnerFound) => {
-			setIsBlockMove(true);
 			updateGameboard(friendId, playFieldState, currentMove, isWinnerFound);
 		}
 	);
@@ -344,6 +343,11 @@ export const OnlineSession = () => {
 		if (blocker.state === 'blocked') blocker.proceed();
 	}
 
+	function onClickOnCell(index: number) {
+		setIsBlockMove(false);
+		markCell(index);
+	}
+
 	function onNo() {
 		setIsVisibleWarningPopup(false);
 		if (blocker.state === 'blocked') blocker.reset();
@@ -367,7 +371,7 @@ export const OnlineSession = () => {
 				<GameInfo gameStatusMessage={gameStatusMessage} currentMove={currentMove} playersData={playersData} />
 				<PlayField>
 					{playFieldState.map((item, index) => {
-						return <FieldCell blockMove={isBlockMove} key={item.id} symbolName={item.symbol} highlight={item.highlight} markCell={markCell} index={index} />;
+						return <FieldCell blockMove={isBlockMove} key={item.id} symbolName={item.symbol} highlight={item.highlight} markCell={onClickOnCell} index={index} />;
 					})}
 				</PlayField>
 			</GameBoardWrap>
