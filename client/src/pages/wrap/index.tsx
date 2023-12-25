@@ -10,11 +10,12 @@ import { addNotif, removeNotifByUserId } from '@/features/notifications/store';
 import { nanoid } from 'nanoid';
 import { AlertProvider, addAlert } from '@/features/alertProvider';
 import { Settings } from '@/features/settings/ui';
-
 import { updateUserRating } from '@/entities/user';
 import { useQuery } from '@tanstack/react-query';
 import { getUserRating } from '@/features/accountAuth/api';
 import { MobileNav } from '@/features/navigation/ui/mobileNavbar';
+import { IWebSocketMessage } from '@/shared/types/webSocketMessage';
+import { getUserIdToken } from '@/shared/lib/getUserIdToken';
 
 export const Wrap = () => {
 	const dispatch = useAppDispatch();
@@ -38,6 +39,12 @@ export const Wrap = () => {
 			setIsFetchUserRating(true);
 		}
 	}, [userInfo.isPlaying, userInfo.isloaded, userInfo.isAuth]);
+
+	useEffect(() => {
+		if (userInfo.isAuth) {
+			sendTokenForAuth();
+		}
+	}, [userInfo.isAuth]);
 
 	useEffect(() => {
 		if (webSocket) {
@@ -66,6 +73,10 @@ export const Wrap = () => {
 				dispatch(addAlert({ heading: 'Application Already Running!', text: error }));
 			});
 
+			webSocket.subscribeToOnUpdate(websocketEventNames.CANT_ACCESS_THE_SERVER, ({ error }) => {
+				dispatch(addAlert({ heading: 'Authorization error', text: error }));
+			});
+
 			return () => {
 				webSocket.unSubscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME);
 				webSocket.unSubscribeToOnUpdate(websocketEventNames.INVITE_TO_GAME_IS_DECLINE);
@@ -74,6 +85,16 @@ export const Wrap = () => {
 			};
 		}
 	}, []);
+
+	async function sendTokenForAuth() {
+		const token = await getUserIdToken();
+		const message: IWebSocketMessage<{ token: string }> = {
+			event: websocketEventNames.AUTH_CHECK,
+			userId: userInfo.userId,
+			data: { token },
+		};
+		webSocket?.send(JSON.stringify(message));
+	}
 
 	return (
 		<div className='wrap'>

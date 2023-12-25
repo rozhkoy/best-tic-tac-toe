@@ -1,9 +1,9 @@
 const { getAuth } = require('firebase-admin/auth');
 
-module.exports = async (token) => {
+module.exports = async ({ data }) => {
 	try {
-		if (token) {
-			const verifyResponse = await getAuth().verifyIdToken(token);
+		if (data.token) {
+			const verifyResponse = await getAuth().verifyIdToken(data.token);
 			if (verifyResponse) {
 				return true;
 			}
