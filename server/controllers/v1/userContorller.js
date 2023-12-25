@@ -113,11 +113,6 @@ class UserController {
 				return res.status(404).send({ message: 'User not found' });
 			}
 
-			const upateUserStatusResponse = await users.update({ status: userStatuses.ONLINE }, { where: { user_id: userResponse.user_id } });
-
-			if (!upateUserStatusResponse) {
-				throw new Error('Error!. Failed to update user status');
-			}
 			/* 
             #swagger.responses[200] = { 
                 schema: { "$ref": "#/definitions/GetUserInfoByUidResponse" },
