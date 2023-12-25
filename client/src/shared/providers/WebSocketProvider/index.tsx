@@ -1,7 +1,6 @@
 import webSocketConnection from '@/shared/api/webSocketConnection';
 import { createContext, useCallback, useEffect, useRef } from 'react';
 import { IWebSocketProvider, WebsoketProviderProps } from './types';
-import { error } from 'console';
 
 export const WebSocketContext = createContext<IWebSocketProvider | null>(null);
 
