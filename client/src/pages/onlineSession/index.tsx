@@ -344,7 +344,7 @@ export const OnlineSession = () => {
 	}
 
 	function onClickOnCell(index: number) {
-		setIsBlockMove(false);
+		setIsBlockMove(true);
 		markCell(index);
 	}
 
