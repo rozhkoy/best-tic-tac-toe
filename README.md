@@ -2,6 +2,8 @@
 
 The "Best tic-tac-toe" project is an interactive web game that combines three exciting game modes for a diverse gaming experience.
 
+![best tic-tac-toe banner](/assets/Banner.png)
+
 1. **Online Mode:** Play Tic-Tac-Toe in real-time with opponents from around the world. Create or join games, interact with other players, and test your skills in battles over the internet.
 2. **Bot Mode:** The artificial intelligence, based on the miniMax algorithm, provides an intelligent and challenging opponent for single-player mode. The bot adapts to the player's style and offers high-level difficulty strategies.
 3. **Two-Player Mode:** Allows playing Tic-Tac-Toe with a friend or family member. Optimized for interactive interaction between two players, creating a competitive and engaging gaming space.
