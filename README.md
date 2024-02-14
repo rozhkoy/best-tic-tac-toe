@@ -1,6 +1,6 @@
-# Best tic-tac-toe with multiplayer
+# The Best Tic-tac-toe with multiplayer
 
-The "Best tic-tac-toe" project is an interactive web game that combines three exciting game modes for a diverse gaming experience.
+The "Best Tic-tac-toe" project is an interactive web game that combines three exciting game modes for a diverse gaming experience.
 
 ![best tic-tac-toe banner](/assets/Banner.png)
 
